@@ -357,7 +357,8 @@ N_field_loss <- left_join(N_input, N_crop_yield_residue, by = c("StatCan_name" =
 #N_Cont_Lassaletta <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
 #Could use values from 2010 StatsCan estimates of food losses during storage and transport, across major food groups in Canada.
 
-crop_processing <- read_excel("Data/Food/Food_waste/crop_waste.xlsx")
+#leach/FAO
+food_processing_waste <- read_excel("Data/Food/Food_waste/food_waste_FAO.xlsx")
 
 #Processing loss
 N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name == "Spring wheat" ~ "cereals",
@@ -383,7 +384,7 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name == "
                                                  StatCan_name == "Tomatoes" ~ "vegetables",
                                                  StatCan_name == "Cabbage" ~ "vegetables",
                                                  TRUE ~ StatCan_name))%>%
-  left_join(crop_processing, by = c("key_process" = "Percent N lost"))%>%
+  left_join(food_processing_waste, by = c("key_process" = "Percent N lost"))%>%
   #processing N loss
   mutate(retail_N_kg = yield_N_kg * (1-`Processing and packaging`))%>%
   mutate(retail_kg = yield_kg * (1-`Processing and packaging`))%>%
@@ -448,24 +449,24 @@ Most of dairy emission including all cows, calves and heifers attributed to milk
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100121-eng.zip")
 eggs_raw <- read_csv("Data/Food/Production/Animal/32100119.csv")
 
-chicken_prod <- as_tibble(eggs_raw)%>%
+layer_prod <- as_tibble(eggs_raw)%>%
   rename("year" = "REF_DATE", "quantity" = "VALUE", "Province"= "GEO")%>%
   filter(`Production and disposition` %in% c("Disposition of eggs in shell sold for consumption [116111111]", "Average number of layers"))
 
-layer_pop <- chicken_prod%>%
+layer_pop <- layer_prod%>%
   mutate(StatCan_name = case_when(`Production and disposition` == "Average number of layers" ~ "Layers"))%>%
   select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)%>%
   drop_na()
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100117-eng.zip")
 poultry_prod_raw <- read_csv("Data/Food/Production/Animal/32100117.csv")
-poultry_pop <- as_tibble(poultry_prod_raw)%>%
+poultry_prod <- as_tibble(poultry_prod_raw)%>%
   filter(`Commodity`== "Chicken (including stewing hen)", `Production and disposition`=="Production, total", Estimates == "Birds")%>%
   rename( "year" = "REF_DATE", "quantity" = "VALUE", "Province"= "GEO")%>%
   mutate("StatCan_name" = "Chickens")%>%
   select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)
 
-broiler_pop <- left_join(poultry_pop,layer_pop, by = c("year" = "year","Province" = "Province", "SCALAR_FACTOR" = "SCALAR_FACTOR"))%>%
+broiler_pop <- left_join(poultry_prod,layer_pop, by = c("year" = "year","Province" = "Province", "SCALAR_FACTOR" = "SCALAR_FACTOR"))%>%
   filter(StatCan_name.y != "Eggs")%>%
   mutate(quantity = `quantity.x`-`quantity.y`)%>%
   mutate(StatCan_name = "Broilers")%>%
@@ -497,8 +498,7 @@ animal_pop <- bind_rows(beef_pop, pork_pop, broiler_pop, layer_pop)%>%
 ```
 
 ## Manure N
-Manure excretion emissions and storage losses were based on data published by @huffmanEstimation2008, which are based on provincial feed and manure storage practices.
-Need to think about manure recycling. Do I bother including it since it's recycled and therefore not new N?
+Manure excretion emissions and storage losses were based on data published by @huffmanEstimation2008, which are based on provincial feed and manure storage practices. Need to think about manure recycling. Do I bother including it since it's recycled and therefore not new N?
 
 ```{r N_manure, echo=FALSE, message = FALSE}
 
@@ -650,40 +650,22 @@ VN_feed <- animal_pop%>%
 ```
 
 ## N loss meat processing and edible meat ##
-(pork and beef are only available at the national scale)
-N losses during meat processing were estimated difference between N content of animals slaughtered (from @Leach2012) and N content of meat (N contents of meat from @FAO/Lassaletta).
+N losses during meat processing were estimated difference between N content of animals slaughtered (from @Leach2012) and N content of meat (N contents of meat from @FAO/Lassaletta).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal), 
+Used Canadian meat conversion factors published by @sheppardLinkage2015 * provincial livestock populations to estimate animal slaughtered
+How close were they to national values?
+N losses during meat processing were estimated using N content of live animals from @Leach2012, average processing losses from @sheppardLinkage2015, and N contents of meat from @FAO/Lassaletta.
 
 ```{r N_process_meat, echo=FALSE, message = FALSE}
+
+#@sheppardLinkage2015
+meat_process_conv <- read_excel("Data/Food/Production/Animal/animal_processing_conversion.xlsx")
+
 N_Cont_meat <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
-
-#animals slaughtered
-#Beef (only Canada)
-cow_slaugh_raw <- read_csv("Data/Food/Production/Animal/32100125.csv")
-
-cow_slaugh <- cow_slaugh_raw%>%
-  as_tibble()%>%
-  rename("Province"="GEO", "year" = "REF_DATE")%>%
-  filter(`Livestock statistics`== "Total slaughterings, farm and meat production",
-         `Livestock` == "Cattle",
-         year %in% years)%>%
-  group_by(Province)%>%
-  summarise(quantity = mean(VALUE)*1000)
-
-#Pork (Canada and Provinces)
-pig_slaugh_raw <- read_csv("Data/Food/Production/Animal/32100160.csv")
-
-pig_slaugh <- pig_slaugh_raw%>%
-  as_tibble()%>%
-  rename("Province"="GEO", "year" = "REF_DATE")%>%
-  filter(`Survey date`== "At January 1",
-         `Livestock` == "Hogs, total",
-         year %in% years)%>%
-  group_by(Province)%>%
-  summarise(quantity = mean(VALUE)*1000)
 
 N_meat_process <- animal_pop%>%
   left_join(meat_process_conv, by = c("StatCan_name" = "StatCan_description"))%>%
   drop_na(Conversion_factor)%>%
+  #this is to check against national stats
   mutate(animals_slaughtered = quantity * 1000 * `Fraction Population slaughtered`)%>%
   mutate(meat_type = case_when(StatCan_name == "All other hogs"  ~ "Pork",
                                StatCan_name == "Beef cows" ~ "Beef meat",
@@ -697,7 +679,7 @@ N_meat_process <- animal_pop%>%
                                StatCan_name == "Steers, 1 year and over" ~ "Beef meat",
                                StatCan_name == "Total beef heifers" ~ "Beef meat",
                                TRUE ~ StatCan_name))%>%
-  #animal N content from @Leach2012
+  #animal N content from @Leach2020
   mutate(animal_N_cont = case_when(meat_type == "Beef meat" ~ 0.02,
                                    meat_type == "Pork" ~  0.02,
                                    meat_type == "Chicken meat" ~ 0.023))%>%
@@ -715,12 +697,47 @@ N_meat_process <- animal_pop%>%
   mutate(meat_yield_N_kg = meat_yield_kg * `%N content`/100)%>%
   mutate(N_loss_processing_kg = animal_N_kg - meat_edible_N_kg)%>%
   #household N loss from Leach FAO
-  mutate(meat_consumed_kg = meat_edible_kg * (1-0.11))%>%
-  mutate(meat_consumed_N_kg = meat_edible_N_kg * (1-0.11))%>%
-  mutate(N_loss_household_kg = meat_edible_N_kg - meat_consumed_N_kg)%>%
-  mutate(N_domestic_consumed_kg = meat_edible_N_kg - N_loss_household_kg)
+  mutate(meat_consumed_kg = meat_edible_kg * (1-0.11),
+         meat_consumed_N_kg = meat_edible_N_kg * (1-0.11),
+         N_loss_household_N_kg = meat_edible_N_kg - meat_consumed_N_kg,
+         N_loss_household_kg = meat_edible_kg - meat_consumed_kg,
+         N_domestic_consumed_N_kg = meat_edible_N_kg - N_loss_household_N_kg,
+         N_domestic_consumed_kg = meat_edible_kg - N_loss_household_kg)
 
 ```
+
+
+```{r, N_process_animal_product, echo=FALSE, message = FALSE}
+
+#Disposition of eggs in shell, leakers and rejects [116111311] for waste?
+
+eggs <- eggs_raw%>%
+  as_tibble()%>%
+  filter(`Production and disposition` == "Disposition of eggs in shell sold for consumption [116111111]",
+         REF_DATE %in% years)%>%
+  mutate(quantity = VALUE * 12 * 1000)
+  
+  
+milk_raw <- read_csv("Data/Food/Production/Animal/32100113.csv")
+
+```
+
+
+
+## VNF Meat and animal products
+```{r, echo=FALSE, message = FALSE}
+VNF_meat <-  left_join(N_manure, VN_feed)%>%
+  left_join(N_meat_process)%>%
+  filter(food_group %in% c("Beef", "Pork", "Chicken"))%>%
+  mutate(VNF_meat_kgN_kg = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_kg,
+         VNF_meat_kgN_kgN = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_N_kg)%>%
+  filter(Province == "Canada")%>%
+  group_by(food_group)%>%
+  summarise(VNF_meat_kgN_kg = mean(VNF_meat_kgN_kg), VNF_meat_kgN_kgN = mean(VNF_meat_kgN_kgN))
+
+```
+
+
 
 
 # Food Consumption

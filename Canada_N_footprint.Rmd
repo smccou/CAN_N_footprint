@@ -42,17 +42,16 @@ feed_crop_list = c("Spring wheat", "Winter wheat", "Corn for silage", "Oats", "S
 pop_raw <- read_csv("Data/Population/17100009.csv")
 
 prov_pop <- as_tibble(pop_raw)%>%
-  rename("year" = "REF_DATE", "Province"= "GEO", "Population"="VALUE")%>%
-  separate(year, sep="-", into=c("year", "month"))%>%
+  separate(REF_DATE, sep="-", into=c("REF_DATE", "month"))%>%
   filter(month == "01")%>%
-  select(year, Province, Population)
+  select(REF_DATE, GEO, VALUE)
 
-prov_pop$year <- as.integer(prov_pop$year)
+prov_pop$REF_DATE <- as.integer(prov_pop$REF_DATE)
 
 prov_pop <- prov_pop%>%
-  filter(year %in% years)%>%
-  group_by(Province)%>%
-  summarize(Population = mean(Population))
+  filter(REF_DATE %in% years)%>%
+  group_by(GEO)%>%
+  summarize(Population = mean(VALUE))
 ```
 
 ## Download and clean crop files
@@ -64,12 +63,11 @@ prov_pop <- prov_pop%>%
 field_crop_raw <- read_csv("Data/Food/Production/Crop/32100359.csv")
 
 grain_legume <- as_tibble(field_crop_raw)%>% 
-  rename("year" = "REF_DATE", "Province"= "GEO")%>%
   mutate(StatCan_name = case_when(`Type of crop` == "Wheat, spring" ~ "Spring wheat",
                                   `Type of crop` == "Wheat, winter remaining" ~ "Winter wheat",
                                   `Type of crop` == "Canola (rapeseed)" ~ "Canola",
                                   TRUE ~ `Type of crop`))%>%
-  filter(year %in% (years))%>%
+  filter(REF_DATE %in% (years))%>%
   filter(StatCan_name %in% crop_list)
 
 #Potatoes
@@ -77,16 +75,14 @@ grain_legume <- as_tibble(field_crop_raw)%>%
 potatoes_raw <- read_csv("Data/Food/Production/Crop/32100358.csv")
 
 potato <- as_tibble(potatoes_raw)%>%
-  rename("year" = "REF_DATE", "Province"= "GEO")%>%
   mutate("StatCan_name" = "Potatoes")%>%
-  filter(year %in% (years))
+  filter(REF_DATE %in% (years))
 
 #Fruits
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100364-eng.zip")
 fruits_raw <- read_csv("Data/Food/Production/Crop/32100364.csv")
 
 fruit <- as_tibble(fruits_raw)%>%
-  rename("year" = "REF_DATE", "Province"= "GEO")%>%
   separate(Commodity, sep='\\[', into=c("name", "number"))%>%
   #NAs "total fresh fruit" with no number
   mutate(StatCan_name = case_when(name == "Fresh apples " ~ "Apples",
@@ -96,14 +92,13 @@ fruit <- as_tibble(fruits_raw)%>%
                                   name == "Fresh strawberries " ~ "Strawberries",
                                   name == "Fresh peaches " ~ "Peaches"))%>%
   drop_na(StatCan_name)%>%
-  filter(year %in% (years))
+  filter(REF_DATE %in% (years))
 
 #Vegetables
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100365-eng.zip",)
 vegetables_raw <- read_csv("Data/Food/Production/Crop/32100365.csv") 
 
 vegetable <- as_tibble(vegetables_raw)%>%
-  rename( "year" = "REF_DATE", "Province"= "GEO")%>%
   separate(Commodity, sep='\\[', into=c("name", "number"))%>%
   #NA are from 'fresh gherkins', total fresh veg, etc with no number
   mutate(StatCan_name = case_when(name == "Fresh tomatoes " ~ "Tomatoes",
@@ -112,15 +107,14 @@ vegetable <- as_tibble(vegetables_raw)%>%
                                   name == "Fresh cabbage " ~ "Cabbage", 
                                   name == "Fresh pumpkins " ~ "Pumpkins"))%>%
   drop_na(StatCan_name)%>%
-  filter(year %in% (years))
-
+  filter(REF_DATE %in% (years))
 
 ## get crop areas in ha, average over years, and bind together ##
 grain_legume_area <- grain_legume%>% 
   filter(`Harvest disposition` == "Harvested area (hectares)")%>%
   rename("area_ha" = VALUE)%>%
   replace_na(list(area_ha = 0))%>%
-  group_by(Province, StatCan_name)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
 potato_area <- potato%>%
@@ -128,23 +122,23 @@ potato_area <- potato%>%
   #convert acres to hectares
   mutate(area_ha = VALUE/2.471)%>%
   replace_na(list(area_ha = 0))%>%
-  group_by(Province, StatCan_name)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
 fruit_area <- fruit%>%
   filter(Estimates == "Bearing area", UOM == "Hectares")%>%
   rename("area_ha" = VALUE)%>%
   replace_na(list(area_ha = 0))%>%
-  select(StatCan_name, Province, area_ha)%>%
-  group_by(Province, StatCan_name)%>%
+  select(StatCan_name, GEO, area_ha)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
 vegetable_area <- vegetable%>%
   filter(Estimates == "Area harvested (hectares)")%>%
   rename("area_ha" = VALUE)%>%
   replace_na(list(area_ha = 0))%>%
-  select(StatCan_name, Province, area_ha)%>%
-  group_by(Province, StatCan_name)%>%
+  select(StatCan_name, GEO, area_ha)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
 crop_area <- bind_rows(grain_legume_area, potato_area, fruit_area, vegetable_area)%>%
@@ -155,8 +149,8 @@ grain_legume_prod <- as_tibble(grain_legume)%>%
   filter(`Harvest disposition` == "Production (metric tonnes)")%>%
   mutate(yield_kg = VALUE*1000)%>%
   replace_na(list(yield_kg = 0))%>%
-  select(StatCan_name, Province, yield_kg)%>%
-  group_by(Province, StatCan_name)%>%
+  select(StatCan_name, GEO, yield_kg)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
 potato_prod <- as_tibble(potato)%>%
@@ -164,36 +158,27 @@ potato_prod <- as_tibble(potato)%>%
   #convert hundredweight * 1000 to kg
   mutate(yield_kg = VALUE*50.8*1000)%>%
   replace_na(list(yield_kg = 0))%>%
-  select(StatCan_name, Province, yield_kg)%>%
-  group_by(Province, StatCan_name)%>%
+  select(StatCan_name, GEO, yield_kg)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
 fruit_prod <- as_tibble(fruit)%>%
   filter(Estimates == "Marketed production", UOM == "Metric tonnes")%>%
   mutate(yield_kg = VALUE*1000)%>%
   replace_na(list(yield_kg = 0))%>%
-  select(StatCan_name, Province, yield_kg)%>%
-  group_by(Province, StatCan_name)%>%
+  select(StatCan_name, GEO, yield_kg)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
 vegetable_prod <- as_tibble(vegetable)%>%
   filter(Estimates == "Marketed production (metric tonnes)")%>%
   mutate(yield_kg = VALUE*1000)%>%
   replace_na(list(yield_kg = 0))%>%
-  select(StatCan_name, Province, yield_kg)%>%
-  group_by(Province, StatCan_name)%>%
+  select(StatCan_name, GEO, yield_kg)%>%
+  group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
 crop_prod <- bind_rows(grain_legume_prod, potato_prod, fruit_prod, vegetable_prod)
-```
-
-## Food Supply Data
-read_csv("Data/Food/Supply/32100053.csv")%>%
-  rename("year" = "REF_DATE", "Province"= "GEO")
-```{r, echo=FALSE, message = FALSE}
-food_supply <- read_csv("Data/Food/Supply/32100053.csv")%>%
-  rename("year" = "REF_DATE", "Province"= "GEO")
-
 ```
 
 # Crop VNF 
@@ -211,14 +196,13 @@ based on fertilizer sales adjusted by rate, instead of recommended rate
 fert_sales_raw <- read_csv("Data/Food/Fertilizer/32100039.csv")
 
 N_fert_sales <- as_tibble(fert_sales_raw)%>%
-  rename("Province" = "GEO")%>%
-  separate(`REF_DATE`, sep="/", into=c("year", "year2"))%>%
-  filter(`Fertilizer nutrient content` == "Nitrogen")%>%
-  filter(Period == "July to June")%>%
-  filter(year %in% (years))%>%
+  separate(`REF_DATE`, sep="/", into=c("REF_DATE", "month"))%>%
+  filter(`Fertilizer nutrient content` == "Nitrogen",
+         Period == "July to June",
+         REF_DATE %in% (years))%>%
   #BC missing a value for 2018, used average of previous two years
   replace_na(list(VALUE = 24.5))%>%
-  group_by(Province, `Fertilizer nutrient content`, UOM, SCALAR_FACTOR)%>%
+  group_by(GEO, `Fertilizer nutrient content`, UOM, SCALAR_FACTOR)%>%
   summarise(quantity = mean(VALUE))%>%
   mutate(sales_N_kg = quantity*1000000)
 
@@ -226,7 +210,7 @@ N_fert_sales <- as_tibble(fert_sales_raw)%>%
 #from @yangDevelopment2007
 recommended_rates <- read_csv("Data/Food/Fertilizer/recommended_fertilizer.csv")%>%
   mutate("Canada" = (rowSums(.[2:7])/7))%>%
-  gather(Province, Rate_kg_ha, `British Columbia`:`Canada`)
+  gather(GEO, Rate_kg_ha, `British Columbia`:`Canada`)
 
 #Fertilizer N Application adjusted
 #actual N applied on each crop estimated by adjusting the recommended rate for each crop type by the ratio of total N sold provincially(kg) to the total N if recommended rates were used
@@ -247,12 +231,12 @@ N_adjusted_fert <- mutate(crop_area, key_fert = case_when(StatCan_name == "Carro
                                                           StatCan_name == "Canary seed" ~ "Other field",
                                                           TRUE ~ StatCan_name))%>%
   #StatCan crop names were matched to crop categories for recommended fertilization rates
-  left_join(recommended_rates, by  = c("key_fert" = "Crop", "Province"="Province"))%>%
+  left_join(recommended_rates, by  = c("key_fert" = "Crop", "GEO"="GEO"))%>%
   #total *recommended* fertilizer use for a given crop in a province
   mutate(N_rec_crop_kg = area_ha*Rate_kg_ha)
 
 #total *recommended* fertilizer use
-N_rec_fert <- group_by(N_adjusted_fert, Province)%>%
+N_rec_fert <- group_by(N_adjusted_fert, GEO)%>%
   summarize(Total_N_rec_prov = sum(N_rec_crop_kg))
 
 N_adjusted_fert <- left_join(N_adjusted_fert, N_rec_fert)%>%
@@ -281,10 +265,10 @@ BNF_rates$BNF_kg_ha <- as.numeric(BNF_rates$BNF_kg_ha)
 #BNF fixation
 N_BNF <- mutate(crop_area, key = case_when(StatCan_name == "Tame hay" ~ "Hay",
                                            TRUE ~ StatCan_name))%>%
-  left_join(BNF_rates, by = c("key" = "crop", "Province" = "Province"))%>%
+  left_join(BNF_rates, by = c("key" = "crop", "GEO" = "Province"))%>%
   mutate(BNF_N_kg = area_ha * BNF_kg_ha)%>%
   replace_na(list(BNF_N_kg = 0))%>%
-  select(StatCan_name, Province, area_ha, BNF_kg_ha, BNF_N_kg)
+  select(StatCan_name, GEO, area_ha, BNF_kg_ha, BNF_N_kg)
 ```
 
 ### TOTAL N INPUTS
@@ -331,21 +315,21 @@ N_crop_yield_residue <- mutate(crop_prod, key_yield = case_when(StatCan_name == 
   #matching StatCan names to HI values
   left_join(yield_residue_N_conc_HI, by  = c("key_yield" = "Crop"))%>%
   #Crop N, using dry matter! 
-  mutate(yield_kg_DM = yield_kg * (1 - (`H20 content (%w/w)`/100)))%>%
-  mutate(yield_N_kg = yield_kg_DM * (`N conc prod (%DM)`/100))%>%
-  #Residue N
-  mutate(residue_kg = yield_kg_DM * (1 - `HI`))%>%
-  mutate(residue_N_kg = residue_kg * (`N conc res (%DM)`/100))%>%
-  #Residue N to soil
+  mutate(yield_kg_DM = yield_kg * (1 - (`H20 content (%w/w)`/100)),
+         yield_N_kg = yield_kg_DM * (`N conc prod (%DM)`/100),
+         #Residue N
+         residue_kg = yield_kg_DM * (1 - `HI`),
+         residue_N_kg = residue_kg * (`N conc res (%DM)`/100))%>%
+         #Residue N to soil
   left_join(residue_allocation, by  = c("key_yield" = "Crop"))%>%
-  mutate(residue_N_soil_kg = residue_N_kg * `Residue: Soil %`)%>%
-  #Root N
-  mutate(root_kg = yield_kg_DM * (`Below Ground Residue (roots) (% of DM)`/100))%>%
-  mutate(root_N_kg = root_kg * (`N conc root (%DM)`/100))%>%
-  mutate(root_N_soil_kg = root_N_kg * `Root: Soil %`)
+  mutate(residue_N_soil_kg = residue_N_kg * `Residue: Soil %`,
+         #Root N
+         root_kg = yield_kg_DM * (`Below Ground Residue (roots) (% of DM)`/100),
+         root_N_kg = root_kg * (`N conc root (%DM)`/100),
+         root_N_soil_kg = root_N_kg * `Root: Soil %`)
   
 #Field N loss
-N_field_loss <- left_join(N_input, N_crop_yield_residue, by = c("StatCan_name" = "StatCan_name", "Province"="Province"))%>%
+N_field_loss <- left_join(N_input, N_crop_yield_residue, by = c("StatCan_name" = "StatCan_name", "GEO"="GEO"))%>%
   mutate(N_loss_field_kg = Total_new_N - yield_N_kg + residue_N_soil_kg + root_N_soil_kg)%>%
   select(-c(3:11, key_yield, "Source.x", "Source.y"))
 #there are some negative values. Soil N mining?  avg spring wheat and winter wheat? 
@@ -357,7 +341,7 @@ N_field_loss <- left_join(N_input, N_crop_yield_residue, by = c("StatCan_name" =
 #N_Cont_Lassaletta <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
 #Could use values from 2010 StatsCan estimates of food losses during storage and transport, across major food groups in Canada.
 
-#leach/FAO
+#leach 2020/FAO 
 food_processing_waste <- read_excel("Data/Food/Food_waste/food_waste_FAO.xlsx")
 
 #Processing loss
@@ -386,17 +370,17 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name == "
                                                  TRUE ~ StatCan_name))%>%
   left_join(food_processing_waste, by = c("key_process" = "Percent N lost"))%>%
   #processing N loss
-  mutate(retail_N_kg = yield_N_kg * (1-`Processing and packaging`))%>%
-  mutate(retail_kg = yield_kg * (1-`Processing and packaging`))%>%
-  mutate(N_loss_processing_waste_kg = yield_N_kg - retail_N_kg)%>%
-  #retail N loss
-  mutate(edible_N_kg = retail_N_kg * (1-`Distribution: Supermarket Retail`))%>%
-  mutate(edible_kg = retail_kg * (1-`Distribution: Supermarket Retail`))%>%
-  mutate(N_loss_retail_waste_kg = retail_N_kg - edible_N_kg)%>%
-  #household N loss & N consumed
-  mutate(consumed_N_kg = edible_N_kg * (1-`Household Waste`))%>%
-  mutate(consumed_kg = edible_kg * (1-`Household Waste`))%>%
-  mutate(N_loss_household_waste_kg = edible_N_kg - consumed_N_kg)%>%
+  mutate(retail_N_kg = yield_N_kg * (1-`Processing and packaging`),
+         retail_kg = yield_kg * (1-`Processing and packaging`),
+         N_loss_processing_waste_kg = yield_N_kg - retail_N_kg,
+         #retail N loss
+         edible_N_kg = retail_N_kg * (1-`Distribution: Supermarket Retail`),
+         edible_kg = retail_kg * (1-`Distribution: Supermarket Retail`),
+         N_loss_retail_waste_kg = retail_N_kg - edible_N_kg,
+         #household N loss & N consumed
+         consumed_N_kg = edible_N_kg * (1-`Household Waste`),
+         consumed_kg = edible_kg * (1-`Household Waste`),
+         N_loss_household_waste_kg = edible_N_kg - consumed_N_kg)%>%
   rename("food_group"= "key_process")
 ```
 
@@ -405,16 +389,16 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name == "
 VNF_food_crop <- N_crop_process%>%
   filter(StatCan_name %in% food_crop_list)%>%
   filter(yield_N_kg>0)%>%
-  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg)%>%
-  #VNF 
-  mutate(VNF_kgN_kg = (Total_N_loss_kg / edible_kg))%>%
-  mutate(VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
-  filter(Province == "Canada")
+  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg,
+         #VNF
+         VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
+         VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
+  filter(GEO == "Canada")
   #write_csv(VNF_food_crop, file.path("Results_Images/VNF_CAN_crop.csv"))
 
 #Food Group Avgs
 VNF_crop_avg <- VNF_food_crop%>%
-  filter(Province == "Canada")%>%
+  filter(GEO == "Canada")%>%
   group_by(food_group)%>%
   summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))
   #filter(food_group %in% c("vegetables", "roots", "fruits", "cereals"))
@@ -450,50 +434,48 @@ Most of dairy emission including all cows, calves and heifers attributed to milk
 eggs_raw <- read_csv("Data/Food/Production/Animal/32100119.csv")
 
 layer_prod <- as_tibble(eggs_raw)%>%
-  rename("year" = "REF_DATE", "quantity" = "VALUE", "Province"= "GEO")%>%
   filter(`Production and disposition` %in% c("Disposition of eggs in shell sold for consumption [116111111]", "Average number of layers"))
 
 layer_pop <- layer_prod%>%
   mutate(StatCan_name = case_when(`Production and disposition` == "Average number of layers" ~ "Layers"))%>%
-  select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)%>%
+  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)%>%
   drop_na()
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100117-eng.zip")
 poultry_prod_raw <- read_csv("Data/Food/Production/Animal/32100117.csv")
 poultry_prod <- as_tibble(poultry_prod_raw)%>%
   filter(`Commodity`== "Chicken (including stewing hen)", `Production and disposition`=="Production, total", Estimates == "Birds")%>%
-  rename( "year" = "REF_DATE", "quantity" = "VALUE", "Province"= "GEO")%>%
   mutate("StatCan_name" = "Chickens")%>%
-  select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)
+  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
 
-broiler_pop <- left_join(poultry_prod,layer_pop, by = c("year" = "year","Province" = "Province", "SCALAR_FACTOR" = "SCALAR_FACTOR"))%>%
+broiler_pop <- left_join(poultry_prod,layer_pop, by = c("REF_DATE" = "REF_DATE","GEO" = "GEO", "SCALAR_FACTOR" = "SCALAR_FACTOR"))%>%
   filter(StatCan_name.y != "Eggs")%>%
-  mutate(quantity = `quantity.x`-`quantity.y`)%>%
+  mutate(VALUE = `VALUE.x`-`VALUE.y`)%>%
   mutate(StatCan_name = "Broilers")%>%
   mutate(UOM = "Birds")%>%
-  select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)
+  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100130-eng.zip")
 beef_prod_raw <- read_csv("Data/Food/Production/Animal/32100130.csv")
 
 beef_pop <- as_tibble(beef_prod_raw)%>%
-  rename("year" = "REF_DATE", "StatCan_name" = "Livestock", "quantity" = "VALUE", "Province"= "GEO")%>%
+  rename("StatCan_name" = "Livestock")%>%
   filter(`Survey date` == "At January 1", `Farm type` %in% c("On dairy operations", "On beef operations"), !(StatCan_name %in% c("Total cattle", "Total heifers", "Heifers for beef replacement", "Heifers for slaughter")))%>%
-  select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)
+  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100160-eng.zip")
 pork_prod_raw <- read_csv("Data/Food/Production/Animal/32100160.csv")
 
 pork_pop <- as_tibble(pork_prod_raw)%>% 
-  rename("year" = "REF_DATE", "StatCan_name" = "Livestock", "quantity" = "VALUE", "Province"= "GEO")%>%
+  rename("StatCan_name" = "Livestock")%>%
   filter(`Survey date` == "At January 1", StatCan_name %in% c("Boars, 6 months and over", "Sows and gilts, 6 months and over", 	"All other hogs"))%>%
-  select(year, StatCan_name, Province, UOM, SCALAR_FACTOR, quantity)
+  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
 
 animal_pop <- bind_rows(beef_pop, pork_pop, broiler_pop, layer_pop)%>%
-  filter(year %in% years)%>%
-  drop_na(quantity)%>%
-  group_by(Province, StatCan_name, UOM, SCALAR_FACTOR)%>%
-  summarise(quantity = mean(quantity))
+  filter(REF_DATE %in% years)%>%
+  drop_na(VALUE)%>%
+  group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
+  summarise(VALUE = mean(VALUE))
 
 ```
 
@@ -534,8 +516,8 @@ N_manure <- animal_pop%>%
                               StatCan_name == "Steers, 1 year and over" ~ "Steers",
                               StatCan_name == "Total beef heifers"~ "Heifers",
                               StatCan_name == "Layers"~ "Laying hens",
-                              TRUE ~ StatCan_name))%>%
-  mutate(key_storage = case_when(StatCan_name == "All other hogs" ~ "Pigs",
+                              TRUE ~ StatCan_name),
+         key_storage = case_when(StatCan_name == "All other hogs" ~ "Pigs",
                               StatCan_name == "Beef cows" ~ "Cattle",
                               StatCan_name == "Boars, 6 months and over"~ "Pigs",
                               StatCan_name == "Bulls, 1 year and over" ~ "Cattle",
@@ -547,8 +529,8 @@ N_manure <- animal_pop%>%
                               StatCan_name == "Total beef heifers"~ "Cattle",
                               StatCan_name == "Layers"~ "Poultry",
                               StatCan_name == "Broilers"~ "Poultry",
-                         TRUE ~ StatCan_name))%>%
-  mutate(food_group = case_when(StatCan_name == "All other hogs" ~ "Pork",
+                         TRUE ~ StatCan_name),
+         food_group = case_when(StatCan_name == "All other hogs" ~ "Pork",
                               StatCan_name == "Beef cows" ~ "Beef",
                               StatCan_name == "Boars, 6 months and over"~ "Pork",
                               StatCan_name == "Bulls, 1 year and over" ~ "Beef",
@@ -561,9 +543,9 @@ N_manure <- animal_pop%>%
                               StatCan_name == "Layers"~ "Eggs",
                               StatCan_name == "Broilers"~ "Chicken",
                          TRUE ~ StatCan_name))%>%
-  left_join(N_manure_rate, by = c("key_manure" = "Animal", "Province" = "Province"))%>%
-  left_join(storage_loss, by = c("key_storage" = "Animal", "Province" = "Province"))%>%
-  mutate(N_loss_manure_kg = ((quantity - (`% on pasture`/100)) * 1000 * `Kg N / head / yr` * (`N% after storage`/100))) 
+  left_join(N_manure_rate, by = c("key_manure" = "Animal", "GEO" = "Province"))%>%
+  left_join(storage_loss, by = c("key_storage" = "Animal", "GEO" = "Province"))%>%
+  mutate(N_loss_manure_kg = ((VALUE - (`% on pasture`/100)) * 1000 * `Kg N / head / yr` * (`N% after storage`/100))) 
 #not sure what to do about pasture check Hoffman
 ```
 
@@ -572,18 +554,17 @@ N_manure <- animal_pop%>%
 VNF_feed <- left_join(N_field_loss, N_crop_process)%>%
   filter(StatCan_name %in% feed_crop_list)%>%
   mutate(edible_kg = case_when(StatCan_name == "Tame hay" ~ yield_kg,
-                               TRUE ~ yield_kg * (1-`Processing and packaging`))
-         )%>%
-  mutate(edible_kg_DM = edible_kg * (1-(`H20 content (%w/w)`/100)))%>%
-  mutate(edible_N_kg = edible_kg_DM * (`N conc prod (%DM)`/100))%>%
-  #N loss through feed processing
-  mutate(N_loss_processing_waste_kg = yield_N_kg - edible_N_kg)%>%
-  #Total N loss
-  mutate(Total_N_loss_kg = N_loss_processing_waste_kg + N_loss_field_kg)%>%
-  #VNF 
-  mutate(VNF_kgN_kg = (Total_N_loss_kg / edible_kg))%>%
-  mutate(VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
-  filter(Province == "Canada")%>%
+                               TRUE ~ yield_kg * (1-`Processing and packaging`)),
+         edible_kg_DM = edible_kg * (1-(`H20 content (%w/w)`/100)),
+         edible_N_kg = edible_kg_DM * (`N conc prod (%DM)`/100),
+         #N loss through feed processing
+         N_loss_processing_N_kg = yield_N_kg - edible_N_kg,
+         #Total N loss
+         Total_N_loss_kg = N_loss_processing_N_kg + N_loss_field_kg,
+         #VNF 
+         VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
+         VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
+  filter(GEO == "Canada")%>%
   filter(StatCan_name != "Soybeans") #doing something strange also not used in feed (Hoffman?)
 #write_csv(VNF_feed, file.path("Data/Results/VNF_feed.csv"))
 
@@ -639,7 +620,7 @@ VN_feed <- animal_pop%>%
                               TRUE ~ StatCan_name))%>%
   left_join(feed_ratio, by = c("key_feed"="Animal"))%>%
   #total amount of feed
-  mutate(feed_kg = quantity * 1000 * `Feed kg/animal/year`)%>%
+  mutate(feed_kg = VALUE * 1000 * `Feed kg/animal/year`)%>%
   #amount of feed by type
   mutate(grain_kg = feed_kg * `%Grain`)%>%
   mutate(corn_kg = feed_kg * `%Corn for silage`)%>%
@@ -660,13 +641,13 @@ N losses during meat processing were estimated using N content of live animals f
 #@sheppardLinkage2015
 meat_process_conv <- read_excel("Data/Food/Production/Animal/animal_processing_conversion.xlsx")
 
-N_Cont_meat <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
+N_Cont_food <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
 
 N_meat_process <- animal_pop%>%
   left_join(meat_process_conv, by = c("StatCan_name" = "StatCan_description"))%>%
   drop_na(Conversion_factor)%>%
   #this is to check against national stats
-  mutate(animals_slaughtered = quantity * 1000 * `Fraction Population slaughtered`)%>%
+  mutate(animals_slaughtered = VALUE * 1000 * `Fraction Population slaughtered`)%>%
   mutate(meat_type = case_when(StatCan_name == "All other hogs"  ~ "Pork",
                                StatCan_name == "Beef cows" ~ "Beef meat",
                                StatCan_name == "Boars, 6 months and over" ~ "Pork",
@@ -696,33 +677,72 @@ N_meat_process <- animal_pop%>%
   mutate(meat_edible_N_kg = meat_edible_kg * `%N content`/100)%>%
   mutate(meat_yield_N_kg = meat_yield_kg * `%N content`/100)%>%
   mutate(N_loss_processing_kg = animal_N_kg - meat_edible_N_kg)%>%
-  #household N loss from Leach FAO
+  #household N loss from Leach/FAO
   mutate(meat_consumed_kg = meat_edible_kg * (1-0.11),
          meat_consumed_N_kg = meat_edible_N_kg * (1-0.11),
          N_loss_household_N_kg = meat_edible_N_kg - meat_consumed_N_kg,
          N_loss_household_kg = meat_edible_kg - meat_consumed_kg,
          N_domestic_consumed_N_kg = meat_edible_N_kg - N_loss_household_N_kg,
          N_domestic_consumed_kg = meat_edible_kg - N_loss_household_kg)
-
 ```
 
-
+## N loss processing and edible animal products 
 ```{r, N_process_animal_product, echo=FALSE, message = FALSE}
 
-#Disposition of eggs in shell, leakers and rejects [116111311] for waste?
-
-eggs <- eggs_raw%>%
+N_eggs <- eggs_raw%>%
   as_tibble()%>%
-  filter(`Production and disposition` == "Disposition of eggs in shell sold for consumption [116111111]",
+  filter(`Production and disposition` %in% c("Disposition of eggs in shell sold for consumption [116111111]",
+                                             "Disposition of eggs in shell, leakers and rejects [116111311]"),
          REF_DATE %in% years)%>%
-  mutate(quantity = VALUE * 12 * 1000)
+  mutate(quantity_kg = VALUE * 12 * 1000 * 0.056)%>% #avg large egg weight
+  select(REF_DATE, GEO, `Production and disposition`, quantity_kg)%>%
+  pivot_wider(names_from = `Production and disposition`, values_from = quantity_kg)%>%
+  mutate(yield_N_kg = `Disposition of eggs in shell sold for consumption [116111111]` * 0.0172, #from Lasaletta 
+         N_loss_processing_kg = `Disposition of eggs in shell, leakers and rejects [116111311]` * 0.0172,
+         edible_N_kg = yield_N_kg - N_loss_processing_kg,
+         edible_kg = `Disposition of eggs in shell sold for consumption [116111111]` - `Disposition of eggs in shell, leakers and rejects [116111311]`,
+         consumed_kg = edible_kg,
+         consumed_N_kg = edible_N_kg,
+         food_group = "Eggs")%>%
+  left_join(N_manure)
+         VNF_kgN_kg = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_kg,
+         VNF_meat_kgN_kgN = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_N_kg))%>%
+  filter(Province == "Canada")%>%
+  group_by(food_group)%>%
+  summarise(VNF_meat_kgN_kg = mean(VNF_meat_kgN_kg), VNF_meat_kgN_kgN = mean(VNF_meat_kgN_kgN))
+
   
-  
-milk_raw <- read_csv("Data/Food/Production/Animal/32100113.csv")
+# included Milk sold for industrial purposes (for cheese yogurt, icecream etc)?
+milk_raw <- read_csv("Data/Food/Production/Animal/32100113.csv")%>%
+  as_tibble()%>%
+  separate(`REF_DATE`, sep="-", into=c("year", "month"))
+
+milk_raw$month = as.double(milk_raw$month)
+milk_raw$year = as.double(milk_raw$year)
+
+N_milk <- milk_raw%>%
+  filter(month == 1,
+         year %in% years,
+         `Dairy distribution` == "Milk sold off farms, total")%>%
+  mutate(food_group = "milk")%>%
+  left_join(food_processing_waste, by = c (food_group = "Percent N lost"))%>%
+  mutate(yield_kg = VALUE * 1000,
+         yield_N_kg = VALUE * 1000 * 0.00528, #from Lasaletta cow milk whole fresh
+         retail_N_kg = yield_N_kg * (1-`Processing and packaging`),
+         retail_kg = yield_kg * (1-`Processing and packaging`),
+         N_loss_processing_N_kg = yield_N_kg - retail_N_kg,
+         #retail N loss
+         edible_N_kg = retail_N_kg * (1-`Distribution: Supermarket Retail`),
+         edible_kg = retail_kg * (1-`Distribution: Supermarket Retail`),
+         N_loss_retail_N_kg = retail_N_kg - edible_N_kg,
+         #household N loss & N consumed
+         consumed_N_kg = edible_N_kg * (1-`Household Waste`),
+         consumed_kg = edible_kg * (1-`Household Waste`),
+         N_loss_household_N_kg = edible_N_kg - consumed_N_kg)
+
+
 
 ```
-
-
 
 ## VNF Meat and animal products
 ```{r, echo=FALSE, message = FALSE}
@@ -735,9 +755,16 @@ VNF_meat <-  left_join(N_manure, VN_feed)%>%
   group_by(food_group)%>%
   summarise(VNF_meat_kgN_kg = mean(VNF_meat_kgN_kg), VNF_meat_kgN_kgN = mean(VNF_meat_kgN_kgN))
 
+
+
 ```
 
+## Food Supply Data
+```{r, echo=FALSE, message = FALSE}
+food_supply <- read_csv("Data/Food/Supply/32100053.csv")%>%
+  rename("year" = "REF_DATE", "Province"= "GEO")
 
+```
 
 
 # Food Consumption

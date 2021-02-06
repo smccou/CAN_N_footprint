@@ -13,27 +13,11 @@ library(ggplot2)
 library(wesanderson)
 ```
 
-
 # SCOPE & DATA
 
 ## Temporal
 ```{r temporal_scope , echo=FALSE, message = FALSE}
 years = c(2016, 2017, 2018)
-```
-
-## Food Categories
-24 food items were chosen based on high production volume/area, large contributors to food N-prints (meat and animal products), representative items from different food groups (e.g. fruit, vegetables)
-Fish was not included because of limited food trade data 
-Chose crop types by area of production adding until adjusted fertilizer rate did not change at 3 digits
-
-```{r food_categories , echo=FALSE, message = FALSE}
-animal_list = c("Beef", "Pork", "Chicken", "Milk", "Eggs")
-
-crop_list = c("Spring wheat", "Winter wheat", "Corn for grain", "Corn for silage", "Canola", "Oats", "Soybeans", "Tame hay", "Barley", "Buckwheat", "Canary seed", "Potatoes", "Apples", "Grapes", "Blueberries", " Cranberries", "Strawberries", "Peaches", "Tomatoes", "Carrots", "Onions", "Cabbage", "Pumpkins")
-
-food_crop_list = c("Spring wheat", "Winter wheat", "Corn for grain", "Canola", "Soybeans", "Potatoes", "Apples", "Grapes", "Blueberries", "Strawberries", "Peaches", "Cranberries", "Tomatoes", "Carrots", "Onions", "Cabbage", "Pumpkins")
-
-feed_crop_list = c("Spring wheat", "Winter wheat", "Corn for silage", "Oats", "Soybeans", "Tame hay", "Barley")
 ```
 
 ## Population 
@@ -54,6 +38,25 @@ prov_pop <- prov_pop%>%
   summarize(Population = mean(VALUE))
 ```
 
+```{r crop_categories , echo=FALSE, message = FALSE}
+animal_list = c("Beef", "Pork", "Chicken", "Milk", "Eggs")
+
+field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Oats", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
+#removed subcategories/duplicates "Beans, dry white", "Beans, dry coloured", "Rye, all including fall rye remaining" "Rye, fall remaining" "Rye, spring" "Rye, fall seeded in previous fall" "Wheat, all including winter wheat remaining" "Wheat, durum" "Wheat, spring" "Wheat, Canada Western Extra Strong (CWES)" "Wheat, Canada Western Red Spring (CWRS)"  "Wheat, Canada Prairie Spring Red (CPSR) and Canada Prairie Spring White (CPSW)" "Wheat, Canada Western Soft White Spring (CWSWS)" "Wheat, other spring" "Wheat, winter remaining" "Wheat, winter seeded in fall" "Wheat, all excluding durum wheat""Wheat, Canada Western Special Purpose (CWSP)" "Wheat, Canada Western Hard White Spring (CWHWS)" "Wheat, Canada Northern Hard Red (CNHR)" "Wheat, Canada Eastern Red Spring (CERS)"
+#removed "Borage seed" "Caraway seed" "Coriander seed" "Mustard seed" "Safflower" "Hemp" (no recommended fert rates or no longer reported)                     
+fruit_list = c("apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps")
+# removed subcategories/duplicates  "highbush blueberries" "lowbush blueberries" "Labrusca grapes" "vinifera, fresh French hybrid grapes "                
+
+vegetable_list = c("cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
+#removed parsely, regular cabbage" "Chinese cabbage" watermelons
+
+crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Oats", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all", "apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
+
+#food_crop_list = c("Spring wheat", "Winter wheat", "Corn for grain", "Canola", "Soybeans", "Potatoes", "Apples", "Grapes", "Blueberries", "Strawberries", #"Peaches", "Cranberries", "Tomatoes", "Carrots", "Onions", "Cabbage", "Pumpkins")
+
+#feed_crop_list = c("Spring wheat", "Winter wheat", "Corn for silage", "Oats", "Soybeans", "Tame hay", "Barley")
+```
+
 ## Download and clean crop files
 ```{r crop_data, echo=FALSE, message = FALSE}
 
@@ -63,12 +66,8 @@ prov_pop <- prov_pop%>%
 field_crop_raw <- read_csv("Data/Food/Production/Crop/32100359.csv")
 
 grain_legume <- as_tibble(field_crop_raw)%>% 
-  mutate(StatCan_name = case_when(`Type of crop` == "Wheat, spring" ~ "Spring wheat",
-                                  `Type of crop` == "Wheat, winter remaining" ~ "Winter wheat",
-                                  `Type of crop` == "Canola (rapeseed)" ~ "Canola",
-                                  TRUE ~ `Type of crop`))%>%
-  filter(REF_DATE %in% (years))%>%
-  filter(StatCan_name %in% crop_list)
+  rename(StatCan_name = "Type of crop")%>%
+  filter(REF_DATE %in% (years))
 
 #Potatoes
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100358-eng.zip")
@@ -83,14 +82,9 @@ potato <- as_tibble(potatoes_raw)%>%
 fruits_raw <- read_csv("Data/Food/Production/Crop/32100364.csv")
 
 fruit <- as_tibble(fruits_raw)%>%
-  separate(Commodity, sep='\\[', into=c("name", "number"))%>%
-  #NAs "total fresh fruit" with no number
-  mutate(StatCan_name = case_when(name == "Fresh apples " ~ "Apples",
-                                  name == "Fresh cranberries " ~ "Cranberries",
-                                  name == "Fresh blueberries " ~ "Blueberries",
-                                  name == "Fresh grapes " ~ "Grapes",
-                                  name == "Fresh strawberries " ~ "Strawberries",
-                                  name == "Fresh peaches " ~ "Peaches"))%>%
+  separate(Commodity, sep=' \\[', into=c("name", "number"))%>%
+  separate(name, sep='Fresh ', into=c("prefix", "StatCan_name"))%>%
+  #NAs "total fresh fruit" and "other fresh fruit nes"
   drop_na(StatCan_name)%>%
   filter(REF_DATE %in% (years))
 
@@ -99,17 +93,13 @@ fruit <- as_tibble(fruits_raw)%>%
 vegetables_raw <- read_csv("Data/Food/Production/Crop/32100365.csv") 
 
 vegetable <- as_tibble(vegetables_raw)%>%
-  separate(Commodity, sep='\\[', into=c("name", "number"))%>%
-  #NA are from 'fresh gherkins', total fresh veg, etc with no number
-  mutate(StatCan_name = case_when(name == "Fresh tomatoes " ~ "Tomatoes",
-                                  name == "Fresh carrots " ~ "Carrots",
-                                  name == "Fresh dry onions " ~ "Onions",
-                                  name == "Fresh cabbage " ~ "Cabbage", 
-                                  name == "Fresh pumpkins " ~ "Pumpkins"))%>%
+  separate(Commodity, sep=' \\[', into=c("name", "number"))%>%
+  separate(name, sep='Fresh ', into=c("prefix", "StatCan_name"))%>%
+  #NAs are from , "total fresh veg", "other fresh veg" etc with no number
   drop_na(StatCan_name)%>%
   filter(REF_DATE %in% (years))
 
-## get crop areas in ha, average over years, and bind together ##
+## get crop areas in ha, average over 3 years, and bind together ##
 grain_legume_area <- grain_legume%>% 
   filter(`Harvest disposition` == "Harvested area (hectares)")%>%
   rename("area_ha" = VALUE)%>%
@@ -142,9 +132,10 @@ vegetable_area <- vegetable%>%
   summarise(area_ha = mean(area_ha))
 
 crop_area <- bind_rows(grain_legume_area, potato_area, fruit_area, vegetable_area)%>%
-  filter(area_ha >= 100)
+  filter(StatCan_name %in% crop_list,
+         GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))
 
-## get crop production in kg, average over years, and bind together ##
+## get crop production in kg, average over 3 years, and bind together ##
 grain_legume_prod <- as_tibble(grain_legume)%>% 
   filter(`Harvest disposition` == "Production (metric tonnes)")%>%
   mutate(yield_kg = VALUE*1000)%>%
@@ -178,18 +169,21 @@ vegetable_prod <- as_tibble(vegetable)%>%
   group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
-crop_prod <- bind_rows(grain_legume_prod, potato_prod, fruit_prod, vegetable_prod)
+crop_prod <- bind_rows(grain_legume_prod, potato_prod, fruit_prod, vegetable_prod)%>%
+  filter(StatCan_name %in% crop_list,
+         GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))
 ```
+
 
 # Crop VNF 
 VNF = kg N loss/ kg food OR kg N loss/ kg N food
 N lost between N inputs and crop harvest (field N), harvest and edible N (procesessing), and household waste
 
 ## N inputs 
-N inputs = N from fertilizer + N from BNF (maybe manure but it's recycled?) may also want to adjust recommended rates by crop area?
+N inputs = N from fertilizer + N from BNF (not manure since it's recycled)
 
 ### Fertilizer N
-based on fertilizer sales adjusted by rate, instead of recommended rate
+based on fertilizer sales adjusted by crop recommended rate
 ```{r N_fertilizer, echo=FALSE, message = FALSE}
 #Fertilizer Sales N
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100039-eng.zip", "Data/Food/Fertilizer/32100039-eng.zip")
@@ -199,6 +193,7 @@ N_fert_sales <- as_tibble(fert_sales_raw)%>%
   separate(`REF_DATE`, sep="/", into=c("REF_DATE", "month"))%>%
   filter(`Fertilizer nutrient content` == "Nitrogen",
          Period == "July to June",
+         #get whole year, intead of just growing season
          REF_DATE %in% (years))%>%
   #BC missing a value for 2018, used average of previous two years
   replace_na(list(VALUE = 24.5))%>%
@@ -208,7 +203,9 @@ N_fert_sales <- as_tibble(fert_sales_raw)%>%
 
 #Recommended N Application Rates
 #from @yangDevelopment2007
-recommended_rates <- read_csv("Data/Food/Fertilizer/recommended_fertilizer.csv")%>%
+#added wheat as average of spring and winter (almost the same)
+#added atlantic province recommendations seperately
+recommended_rates <- read_excel("Data/Food/Fertilizer/recommended_fertilizer.xlsx")%>%
   mutate("Canada" = (rowSums(.[2:7])/7))%>%
   gather(GEO, Rate_kg_ha, `British Columbia`:`Canada`)
 
@@ -216,31 +213,34 @@ recommended_rates <- read_csv("Data/Food/Fertilizer/recommended_fertilizer.csv")
 #actual N applied on each crop estimated by adjusting the recommended rate for each crop type by the ratio of total N sold provincially(kg) to the total N if recommended rates were used
 #@huffmanEstimation2008, @yangDevelopment2007
 #Due to a lack of data for some recommended fertilizer rates and sales data, PEI, NB NFLD and NS were grouped together as the Atlantic Provinces, the avg fertilizer rate was applied to each province 
-N_adjusted_fert <- mutate(crop_area, key_fert = case_when(StatCan_name == "Carrots" ~ "Vegetables",
-                                                          StatCan_name == "Onions" ~ "Vegetables",
-                                                          StatCan_name == "Pumpkins" ~ "Vegetables",
-                                                          StatCan_name == "Tomatoes" ~ "Vegetables",
-                                                          StatCan_name == "Cabbage" ~ "Vegetables",
-                                                          StatCan_name == "Apples" ~ "Tree fruits",
-                                                          StatCan_name == "Peaches" ~ "Tree fruits",
-                                                          StatCan_name == "Cranberries" ~ "Berries",
-                                                          StatCan_name == "Blueberries" ~ "Berries",
-                                                          StatCan_name == "Strawberries" ~ "Berries",
-                                                          StatCan_name == "Grapes" ~ "Grapes",
-                                                          StatCan_name == "Barley" ~ "Other field",
-                                                          StatCan_name == "Canary seed" ~ "Other field",
+N_rec_fert_crop <- mutate(crop_area, key_rec_fert = case_when(StatCan_name %in% vegetable_list ~ "Vegetables",
+                                                          StatCan_name %in% c("blueberries", "raspberries", "strawberries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps") ~ "Berries",
+                                                          StatCan_name %in% c("apples", "peaches", "pears", "plums and prune plums", "nectarines", "apricots", "sour cherries", "sweet cherries") ~ "Tree fruits",
+                                                          StatCan_name %in% c("Barley", "Canary seed", "Rye, all", "Triticale") ~ "Other field",
+                                                          StatCan_name %in% c("Beans, all dry (white and coloured)", "Chick peas", "Faba beans", "Lentils", "Peas, dry") ~ "Pulses",
+                                                          StatCan_name == "Canola (rapeseed)" ~ "Canola",
+                                                          StatCan_name == "Flaxseed" ~ "Flax seed",
+                                                          StatCan_name == "Sunflower seed" ~ "Sunflower",
+                                                          StatCan_name == "Sugar beets" ~ "Sugar beet",
+                                                          StatCan_name == "Wheat, all" ~ "Wheat",
+                                                          StatCan_name == "grapes" ~ "Grapes",
+                                                          StatCan_name == "Wheat, all" ~ "Wheat",
                                                           TRUE ~ StatCan_name))%>%
   #StatCan crop names were matched to crop categories for recommended fertilization rates
-  left_join(recommended_rates, by  = c("key_fert" = "Crop", "GEO"="GEO"))%>%
+  left_join(recommended_rates, by  = c("key_rec_fert" = "Crop", "GEO"="GEO"))%>%
   #total *recommended* fertilizer use for a given crop in a province
-  mutate(N_rec_crop_kg = area_ha*Rate_kg_ha)
+  mutate(N_rec_crop_kg = area_ha*Rate_kg_ha)%>%
+  mutate(key_prov_fert = case_when(GEO %in% c("Prince Edward Island", "New Brunswick", "Nova Scotia", "Newfoundland and Labrador") ~ "Atlantic provinces",
+                                   TRUE ~ GEO))
 
-#total *recommended* fertilizer use
-N_rec_fert <- group_by(N_adjusted_fert, GEO)%>%
+#total *recommended* fertilizer use by province
+N_rec_fert_prov <- mutate(N_rec_fert_crop, key_prov_fert = case_when(GEO %in% c("Prince Edward Island", "New Brunswick", "Nova Scotia", "Newfoundland and Labrador") ~ "Atlantic provinces",
+                                                                     TRUE ~ GEO))%>%
+  group_by(key_prov_fert)%>%
   summarize(Total_N_rec_prov = sum(N_rec_crop_kg))
 
-N_adjusted_fert <- left_join(N_adjusted_fert, N_rec_fert)%>%
-  left_join(N_fert_sales)%>%
+N_adjusted_fert <- left_join(N_rec_fert_crop, N_rec_fert_prov)%>%
+  left_join(N_fert_sales, by = c("key_prov_fert" = "GEO"))%>%
   #adjusted by sale/recommended ratio
   mutate(N_applied_crop_kg = (N_rec_crop_kg * sales_N_kg / Total_N_rec_prov))%>%
   #calculated the difference between what the total N value should be if recommended rates were being used, and sales-based values
@@ -491,6 +491,7 @@ N_manure_rate <- N_manure_rate_raw%>%
   mutate("Canada" = (rowSums(.[2:12])/10))%>%
   gather(Province, `% on pasture`, `British Columbia`:`Canada`, factor_key = TRUE)
 
+#Huffman 2008
 storage_loss_raw <- read_excel("Data/Food/Production/Animal/manure_storage.xlsx")
 
 storage_loss <- storage_loss_raw%>%

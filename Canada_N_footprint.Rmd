@@ -41,14 +41,21 @@ prov_pop <- prov_pop%>%
 ```{r crop_categories , echo=FALSE, message = FALSE}
 animal_list = c("Beef", "Pork", "Chicken", "Milk", "Eggs")
 
-field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Oats", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
+field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
 #removed subcategories/duplicates "Beans, dry white", "Beans, dry coloured", "Rye, all including fall rye remaining" "Rye, fall remaining" "Rye, spring" "Rye, fall seeded in previous fall" "Wheat, all including winter wheat remaining" "Wheat, durum" "Wheat, spring" "Wheat, Canada Western Extra Strong (CWES)" "Wheat, Canada Western Red Spring (CWRS)"  "Wheat, Canada Prairie Spring Red (CPSR) and Canada Prairie Spring White (CPSW)" "Wheat, Canada Western Soft White Spring (CWSWS)" "Wheat, other spring" "Wheat, winter remaining" "Wheat, winter seeded in fall" "Wheat, all excluding durum wheat""Wheat, Canada Western Special Purpose (CWSP)" "Wheat, Canada Western Hard White Spring (CWHWS)" "Wheat, Canada Northern Hard Red (CNHR)" "Wheat, Canada Eastern Red Spring (CERS)"
 #removed "Borage seed" "Caraway seed" "Coriander seed" "Mustard seed" "Safflower" "Hemp" (no recommended fert rates or no longer reported)                     
 fruit_list = c("apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps")
 # removed subcategories/duplicates  "highbush blueberries" "lowbush blueberries" "Labrusca grapes" "vinifera, fresh French hybrid grapes "                
-
 vegetable_list = c("cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
 #removed parsely, regular cabbage" "Chinese cabbage" watermelons
+
+grain_list = c("Barley", "Corn for grain", "Oats", "Wheat, all")
+
+legume_list = c("Beans, all dry (white and coloured)", "Chick peas", "Faba beans", "Lentils", "Soybeans", "Peas, dry")
+
+oilseed_list = c("Canola (rapeseed)")
+
+root_list = c("Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes")
 
 crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Oats", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all", "apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
 
@@ -133,7 +140,8 @@ vegetable_area <- vegetable%>%
 
 crop_area <- bind_rows(grain_legume_area, potato_area, fruit_area, vegetable_area)%>%
   filter(StatCan_name %in% crop_list,
-         GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))
+         GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))%>%
+  filter(area_ha > 100)
 
 ## get crop production in kg, average over 3 years, and bind together ##
 grain_legume_prod <- as_tibble(grain_legume)%>% 
@@ -171,9 +179,9 @@ vegetable_prod <- as_tibble(vegetable)%>%
 
 crop_prod <- bind_rows(grain_legume_prod, potato_prod, fruit_prod, vegetable_prod)%>%
   filter(StatCan_name %in% crop_list,
-         GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))
+         GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))%>%
+  filter(yield_kg > 1000)
 ```
-
 
 # Crop VNF 
 VNF = kg N loss/ kg food OR kg N loss/ kg N food
@@ -224,7 +232,6 @@ N_rec_fert_crop <- mutate(crop_area, key_rec_fert = case_when(StatCan_name %in% 
                                                           StatCan_name == "Sugar beets" ~ "Sugar beet",
                                                           StatCan_name == "Wheat, all" ~ "Wheat",
                                                           StatCan_name == "grapes" ~ "Grapes",
-                                                          StatCan_name == "Wheat, all" ~ "Wheat",
                                                           TRUE ~ StatCan_name))%>%
   #StatCan crop names were matched to crop categories for recommended fertilization rates
   left_join(recommended_rates, by  = c("key_rec_fert" = "Crop", "GEO"="GEO"))%>%
@@ -248,91 +255,62 @@ N_adjusted_fert <- left_join(N_rec_fert_crop, N_rec_fert_prov)%>%
 ```
 
 ### BNF N 
-Nitrogen from BNF = crop area * BNF rate of crop
-crop residue N for BNF, is included in Yang calculations BNF rates from @yang_estimating_2010
-inclusion of root N recyling may be different than Leach
+Nitrogen from BNF = total crop N (root, residue and product N) * % fixed from atmosphere used vaules from @karimiupdated2020
 include alfalfa?
 ```{r N_BNF, echo=FALSE, message = FALSE}
-#BNF rates
-#Nitrogen fixation rate based on how well plants grow of legumes (25 year mean of the adjusted N2 fixation rates across provinces of Canada) from @yang_estimating_2010
-BNF_rates_raw <- read_excel("Data/Food/Production/Crop/BNF_rates.xlsx")
+#BNF rates, HI and residues from @karimi2020
+HI_Nconc_BNF_raw <- read_excel("Data/Food/Production/Crop/HI_Nconc_BNF.xlsx")
 
-BNF_rates <- as_tibble(BNF_rates_raw)%>%
-  gather(crop, BNF_kg_ha, Pulse:Alfalfa, factor_key = TRUE)
-
-BNF_rates$BNF_kg_ha <- as.numeric(BNF_rates$BNF_kg_ha)
+HI_Nconc_BNF <- as_tibble(HI_Nconc_BNF_raw)
 
 #BNF fixation
-N_BNF <- mutate(crop_area, key = case_when(StatCan_name == "Tame hay" ~ "Hay",
+N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% c("apples", "peaches", "pears", "plums and prune plums", "nectarines", "apricots", "sour cherries", "sweet cherries") ~ "Tree fruit",
+                                           StatCan_name %in% c("blueberries", "raspberries", "strawberries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "grapes") ~ "Berries and grapes",
+                                           StatCan_name %in% vegetable_list ~"Vegetables",
+                                           StatCan_name %in% c("Buckwheat") ~ "Other field crops",
                                            TRUE ~ StatCan_name))%>%
-  left_join(BNF_rates, by = c("key" = "crop", "GEO" = "Province"))%>%
-  mutate(BNF_N_kg = area_ha * BNF_kg_ha)%>%
-  replace_na(list(BNF_N_kg = 0))%>%
-  select(StatCan_name, GEO, area_ha, BNF_kg_ha, BNF_N_kg)
+  left_join(HI_Nconc_BNF, by = c("key" = "Crop"))%>%
+  mutate(yield_DM_kg = yield_kg * ((1-(`H20 content (%w/w)`/100))),
+         yield_N_kg = yield_DM_kg * (`N conc res (%DM)`/100),
+         residue_kg = yield_DM_kg * ((1 - HI)/HI),
+         residue_N_kg = residue_kg * `N conc res (%DM)`/ 100,
+         root_kg = `Below Ground Residue (% of DM harvest)`/(100 - `Below Ground Residue (% of DM harvest)`) * (yield_kg + residue_kg),
+         root_N_kg = root_kg * (`N conc root (%DM)`/100),
+         N_BNF_kg = (yield_N_kg + residue_N_kg + root_N_kg) * (`%BNFA`/100))%>%
+  replace_na(list(N_BNF_kg=0))
 ```
 
 ### TOTAL N INPUTS
 ```{r N_total_input, echo=FALSE, message = FALSE}
-N_input <- left_join(N_adjusted_fert, N_BNF)%>%
-  mutate(Total_new_N = N_applied_crop_kg + BNF_N_kg)%>%
-  select(-c(key_fert, "Fertilizer nutrient content", UOM, SCALAR_FACTOR, quantity))
+N_input <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_name"="StatCan_name"))%>%
+  mutate(total_new_N_kg = N_applied_crop_kg + N_BNF_kg)%>%
+  select(-c(key_prov_fert, "Fertilizer nutrient content", UOM, SCALAR_FACTOR, quantity))
 ```
 
 ## Crop yield N and field N losses
-Field N loss = N fertilizer + N BNF + N loss crop residue + N loss root residue - crop N
-assumed that most of the N in decomposing root material reabsorbed by the growing crop, also very minor flow @karimiupdated2020
-Crop N = crop yields * crop N conc (as wet matter!)
-residue N = residue * residue N conc
-residue based on HI
+Field N loss = N fertilizer + N BNF + N loss crop residue - crop N export - residue N export (feed?) - denitrification
+assumed that remaining residue and decomposing root material are recycled and reabsorbed by the growing crop, also very minor flow @karimiupdated2020
+they assume 10% of remaining organic N in soil is denitrified (sensitivity analysis?), 1:1 N20 to N2 @yang2007
+
 ```{r N_field_loss, echo=FALSE, message = FALSE}
-#HI, crop and residue N conc
+
 #Yield N concentrations and allocations of products and aboveground residues taken from @karimiupdated2020
-yield_residue_N_conc_HI <- read_excel("Data/Food/Production/Crop/yield_residue_Nconc_HI.xlsx")
 residue_allocation <- read_excel("Data/Food/Production/Crop/residue_allocation.xlsx")
 
 #crop StatCan names matched to N concentration names
-N_crop_yield_residue <- mutate(crop_prod, key_yield = case_when(StatCan_name == "Carrots" ~ "Vegetables",
-                                                         StatCan_name == "Corn for silage" ~ "Corn (silage)",
-                                                         StatCan_name == "Onions" ~ "Vegetables",
-                                                         StatCan_name == "Pumpkins" ~ "Vegetables",
-                                                         StatCan_name == "Tomatoes" ~ "Vegetables",
-                                                         StatCan_name == "Cabbage" ~ "Vegetables",
-                                                         StatCan_name == "Apples" ~ "Fruit and berries",
-                                                         StatCan_name == "Peaches" ~ "Fruit and berries",
-                                                         StatCan_name == "Cranberries" ~ "Fruit and berries",
-                                                         StatCan_name == "Blueberries" ~ "Fruit and berries",
-                                                         StatCan_name == "Strawberries" ~ "Fruit and berries",
-                                                         StatCan_name == "Grapes" ~ "Fruit and berries",
-                                                         StatCan_name == "Spring wheat" ~ "Wheat",
-                                                         StatCan_name == "Winter wheat" ~ "Wheat",
-                                                         StatCan_name == "Corn for grain" ~ "Corn (grain)",
-                                                         StatCan_name == "Peaches" ~ "Fruit and berries",
-                                                         StatCan_name == "Soybeans" ~ "Soybean",
-                                                         StatCan_name == "Oats" ~ "Oat",
-                                                         StatCan_name == "Buckwheat" ~ "Other field crops",
-                                                         #Potatoes, Canola already match 
-                                                         TRUE ~ StatCan_name))%>%
-  #matching StatCan names to HI values
-  left_join(yield_residue_N_conc_HI, by  = c("key_yield" = "Crop"))%>%
-  #Crop N, using dry matter! 
-  mutate(yield_kg_DM = yield_kg * (1 - (`H20 content (%w/w)`/100)),
-         yield_N_kg = yield_kg_DM * (`N conc prod (%DM)`/100),
-         #Residue N
-         residue_kg = yield_kg_DM * (1 - `HI`),
-         residue_N_kg = residue_kg * (`N conc res (%DM)`/100))%>%
-         #Residue N to soil
-  left_join(residue_allocation, by  = c("key_yield" = "Crop"))%>%
-  mutate(residue_N_soil_kg = residue_N_kg * `Residue: Soil %`,
-         #Root N
-         root_kg = yield_kg_DM * (`Below Ground Residue (roots) (% of DM)`/100),
-         root_N_kg = root_kg * (`N conc root (%DM)`/100),
-         root_N_soil_kg = root_N_kg * `Root: Soil %`)
-  
-#Field N loss
-N_field_loss <- left_join(N_input, N_crop_yield_residue, by = c("StatCan_name" = "StatCan_name", "GEO"="GEO"))%>%
-  mutate(N_loss_field_kg = Total_new_N - yield_N_kg + residue_N_soil_kg + root_N_soil_kg)%>%
-  select(-c(3:11, key_yield, "Source.x", "Source.y"))
-#there are some negative values. Soil N mining?  avg spring wheat and winter wheat? 
+N_field_loss <- left_join(N_input, residue_allocation, by = c("key" = "Crop"))%>%
+  mutate(residue_N_export_kg = case_when(key == "Tree fruit" ~ 0,
+                                     key == "Berries and grapes" ~ 0,
+                                     TRUE ~ residue_N_kg * `Residue: Export %`),
+         product_N_export_kg = yield_N_kg * (`Product: Livestock %` + `Product: Export %`),
+         denitrification_N_kg = residue_N_kg * `Residue: Soil %` * 0.10,
+         N_loss_field_kg = total_new_N_kg - product_N_export_kg - residue_N_export_kg - denitrification_N_kg
+  )%>%
+  #to get rid of oddness in surveys, e.g. some crops in some provinces have an area but no harvest or vice versa
+  filter(area_ha > 0,
+         yield_kg > 0)%>%
+  select(-c(4:8, key, "Source.x", "Source.y"))
+#there are some negative values. Soil N mining? 
 ```
 
 ## Edible N and processing losses
@@ -345,28 +323,12 @@ N_field_loss <- left_join(N_input, N_crop_yield_residue, by = c("StatCan_name" =
 food_processing_waste <- read_excel("Data/Food/Food_waste/food_waste_FAO.xlsx")
 
 #Processing loss
-N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name == "Spring wheat" ~ "cereals",
-                                                 StatCan_name == "Winter wheat" ~ "cereals",
-                                                 StatCan_name == "Corn for grain" ~ "cereals",
-                                                 StatCan_name == "Oats" ~ "cereals",
-                                                 StatCan_name == "Barley" ~ "cereals",
-                                                 StatCan_name == "Buckwheat" ~ "cereals",
-                                                 StatCan_name == "Corn for silage" ~ "cereals",
-                                                 StatCan_name == "Canola" ~ "oilseeds",
-                                                 #StatCan_name == "Canary seed" ~ "oilseeds",
-                                                 StatCan_name == "Soybeans" ~ "pulses",
-                                                 StatCan_name == "Carrots" ~ "roots",
-                                                 StatCan_name == "Potatoes" ~ "roots",
-                                                 StatCan_name == "Apples" ~ "fruits",
-                                                 StatCan_name == "Peaches" ~ "fruits",
-                                                 StatCan_name == "Cranberries" ~ "fruits",
-                                                 StatCan_name == "Blueberries" ~ "fruits",
-                                                 StatCan_name == "Strawberries" ~ "fruits",
-                                                 StatCan_name == "Grapes" ~ "fruits",
-                                                 StatCan_name == "Onions" ~ "vegetables",
-                                                 StatCan_name == "Pumpkins" ~ "vegetables",
-                                                 StatCan_name == "Tomatoes" ~ "vegetables",
-                                                 StatCan_name == "Cabbage" ~ "vegetables",
+N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in% grain_list ~ "cereals",
+                                                 StatCan_name %in% oilseed_list ~ "oilseeds",
+                                                 StatCan_name %in% legume_list ~ "pulses",
+                                                 StatCan_name %in% root_list ~ "roots",
+                                                 StatCan_name %in% fruit_list ~ "fruits",
+                                                 StatCan_name %in% vegetable_list ~ "vegetables",
                                                  TRUE ~ StatCan_name))%>%
   left_join(food_processing_waste, by = c("key_process" = "Percent N lost"))%>%
   #processing N loss
@@ -386,28 +348,30 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name == "
 
 ## VNF Food Crop
 ```{r VNF_food_crop, echo=FALSE, message = FALSE}
-VNF_food_crop <- N_crop_process%>%
-  filter(StatCan_name %in% food_crop_list)%>%
-  filter(yield_N_kg>0)%>%
+VNF_food_crop_prov <- N_crop_process%>%
   mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg,
          #VNF
          VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
          VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
-  filter(GEO == "Canada")
-  #write_csv(VNF_food_crop, file.path("Results_Images/VNF_CAN_crop.csv"))
-
-#Food Group Avgs
-VNF_crop_avg <- VNF_food_crop%>%
-  filter(GEO == "Canada")%>%
-  group_by(food_group)%>%
-  summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))
-  #filter(food_group %in% c("vegetables", "roots", "fruits", "cereals"))
+  group_by(GEO, food_group)%>%
+  summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))%>%
+  drop_na()
   #write_csv(VNF_crop_avg, file.path("Results_Images/VNF_food_group.csv"))
+
+VNF_food_crop_CAN <- VNF_food_crop_prov%>%
+  group_by(food_group)%>%
+  summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))%>%
+  mutate(GEO = "Canada")
+
+VNF_food_crop <- bind_rows(VNF_food_crop_prov, VNF_food_crop_CAN)
+#write_csv(VNF_crop_avg, file.path("Results_Images/VNF_food_group.csv"))
 
 ##GRAPHS AND FUN STUFF##
 #variation in VNFs between food groups
-ggplot(VNF_crop_avg, aes(fill = food_group, y = VNF_kgN_kg, x = food_group))+
+
+ggplot(VNF_food_crop, aes(fill = food_group, y = VNF_kgN_kg, x = food_group))+
   geom_bar(position="stack", stat="identity") +
+  facet_wrap(vars(GEO), scales = "free")+
   labs(caption = "Virtual nitrogen factors (kgN / kg) for food crops") +
   scale_fill_manual(values=wes_palette(n=6, name="IsleofDogs1"))+
   theme_classic()+

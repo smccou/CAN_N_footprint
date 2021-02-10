@@ -15,9 +15,14 @@ library(wesanderson)
 
 # SCOPE & DATA
 
-## Temporal
+## Temporal & Spatial
 ```{r temporal_scope , echo=FALSE, message = FALSE}
 years = c(2016, 2017, 2018)
+
+prov_code <- matrix(c(1, "Canada", 10, "Newfoundland Labrador", 11,	"Prince Edward Island", 12,	"Nova Scotia", 13, "New Brunswick", 24, "Quebec", 35, 	"Ontario", 46,	"Manitoba", 47, "Saskatchewan", 48, "Alberta", 59, "British Columbia"), ncol=2, byrow = TRUE)
+colnames(prov_code) <- c("GEO_code", "GEO")
+prov_code <- as_tibble(prov_code)
+prov_code$GEO_code <- as.numeric(prov_code$GEO_code)
 ```
 
 ## Population 
@@ -316,8 +321,6 @@ N_field_loss <- left_join(N_input, residue_allocation, by = c("key" = "Crop"))%>
 ## Edible N and processing losses
 ```{r N_processing_loss, echo=FALSE, message = FALSE}
 #Processing, packaging and distribution waste values were taken from Leach 2012/FAO (Used same N conc values @karimi2020 for consistency (Lassaletta's slightly different).
-#N_Cont_Lassaletta <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
-#Could use values from 2010 StatsCan estimates of food losses during storage and transport, across major food groups in Canada.
 
 #leach 2020/FAO 
 food_processing_waste <- read_excel("Data/Food/Food_waste/food_waste_FAO.xlsx")
@@ -704,9 +707,6 @@ N_milk <- milk_raw%>%
          consumed_N_kg = edible_N_kg * (1-`Household Waste`),
          consumed_kg = edible_kg * (1-`Household Waste`),
          N_loss_household_N_kg = edible_N_kg - consumed_N_kg)
-
-
-
 ```
 
 ## VNF Meat and animal products
@@ -720,28 +720,79 @@ VNF_meat <-  left_join(N_manure, VN_feed)%>%
   group_by(food_group)%>%
   summarise(VNF_meat_kgN_kg = mean(VNF_meat_kgN_kg), VNF_meat_kgN_kgN = mean(VNF_meat_kgN_kgN))
 
-
-
 ```
-
-## Food Supply Data
-```{r, echo=FALSE, message = FALSE}
-food_supply <- read_csv("Data/Food/Supply/32100053.csv")%>%
-  rename("year" = "REF_DATE", "Province"= "GEO")
-
-```
-
 
 # Food Consumption
-```{r, echo=FALSE, message = FALSE}
-food_consum_raw <- read_csv("Data/Food/Supply/32100053.csv")
+Data from the CCHS
+```{r food_consumption, echo=FALSE, message = FALSE}
+CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-side_EDITED.xlsx")%>%
+  separate(`BNS name`, sep="# ", into=c("#", "name"))%>%
+  separate(name, sep =":", into=c("BNS_code", "BNS_name"))%>%
+  #removes some names, e.g. 1%, 2% for milks but is ok for coding
+  select(2:3)%>%
+  mutate(food_group = case_when(BNS_code %in% c("BNSD01A", "BNSD01B", "BNSD01C", "BNSD02A", "BNSD03A", "BNSD03B", "BNSD04A", "BNSD04B", "BNSD04C", "BNSD04D", "BNSD04E", "BNSD04F", "BNSD05A", "BNSD06A", "BNSD07A", "BNSD07B", "BNSD07C", "BNSD08A", "BNSD08B", "BNSD08C") ~ "cereals",
+                                BNS_code %in% c("BNSD09A", "BNSD09B", "BNSD09C", "BNSD10A", "BNSD10B", "BNSD10C", "BNSD10D", "BNSD10E", "BNSD10F", "BNSD10G", "BNSD10H", "BNSD10I", "BNSD10K", "BNSD13A", "BNSD13B", "BNSD13C", "BNSD13D", "BNSD14A", "BNSD14B", "BNSD14C", "BNSD14D", "BNSD15A", "BNSD15B", "BNSD17A") ~ "dairy",
+                                BNS_code %in% c("BNSD16A") ~ "eggs",
+                                BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "vegetable oils",
+                                BNS_code %in% c("BNSD22A", "BNSD22B", "BNSD22C", "BNSD23A", "BNSD23B") ~ "beef",
+                                BNS_code %in% c("BNSD25A", "BNSD25B", "BNSD25C", "BNSD25D", "BNSD25E") ~ "pork",
+                                BNS_code %in% c("BNSD27A", "BNSD27B") ~ "chicken",
+                                BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36E", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36J", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "vegetables",
+                                BNS_code %in% c("BNSD37A", "BNSD37B")~ "pulses",
+                                BNS_code %in% c("BNSD38A", "BNSD38B", "BNSD39A") ~ "roots",
+                                BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "fruit"
+ ))
+# plant milks "BNSD10J"
+# egg alternative "BNSD16B"
+# animal fats "BNSD21B" "BNSD21C"
+# Lamb "BNSD24A" "BNSD24B"
+# other meat "BNSD27C" "BNSD27D" "BNSD27E" "BNSD27F" "BNSD28A" "BNSD28B" "BNSD29A" "BNSD30A" "BNSD31A" "BNSD32A" 
+# nuts "BNSD33A" "BNSD33B" "BNSD33C"
+# fish "BNSD34A" "BNSD34B" "BNSD35A" 
+# sugars and candies "BNSD41A" "BNSD41B" "BNSD41C" "BNSD41D" "BNSD42A" "BNSD42B" "BNSD43A" "BNSD43B" "BNSD43C" "BNSD44A" 
+# soda, alcohol, fruit drinks "BNSD45A" "BNSD46A"  "BNSD46B" "BNSD46C" "BNSD46D" "BNSD46E" "BNSD46F" "BNSD46G" "BNSD47A" "BNSD47B" "BNSD48A" "BNSD49A" "BNSD49B" 
+# sauces, gravies and soups "BNSD50A" "BNSD50B" "BNSD50C" "BNSD50D" "BNSD50E" "BNSD50F" 
+# coffee tea water "BNSD51A""BNSD51B" "BNSD51C"
+# baby food "BNSD52A" "BNSD52B"
+# spices and baking soda etc "BNSD53A" "BNSD53B"
+
+
+food_consum_raw <- read_csv("Data/Food/Consumption/cchs-82M0024-E-2015-nu-side_F1.csv")
+
+aov_food <- aov(BNSD05A ~ GEO_PRV, data = food_cons_raw)
+summary(aov_food)
 
 food_consum_kg <- food_consum_raw%>%
-  filter(`Supply and disposition`== "Domestic disappearance")%>%
-  mutate(quantity_kg = VALUE * 1000000)%>%
-  filter(REF_DATE %in% years)
+  select(GEO_PRV, BNSD01A:BNSD53B)%>%
+  pivot_longer(cols=(BNSD01A:BNSD53B), names_to = c("BNS_code"))%>%
+  left_join(CCHS_food_names)%>%
+  left_join(prov_code, by = c("GEO_PRV"="GEO_code"))%>%
+  drop_na()%>%
+  mutate(consumed_year_kg = value * 365 / 1000)%>%
+  group_by(GEO, food_group)%>%
+  summarise(eaten_kg_cap = mean(value))
+
+#One-way ANOVA (test is there a difference in consumption of food groups between provinces?)
+aov_food <- (aov(value ~ GEO, data = food_consum_kg)) 
+summary(aov_food)
+
+#Pr 0.000832 beef
+#1.28*10-11 dairy
+#2*10-16 fruit
+
 ```
 
+# Wastewater Treatment
+```{r, echo=FALSE, message = FALSE}
+
+
+```
+
+# Energy
+```{r, echo=FALSE, message = FALSE}
+
+
+```
 
 
 ```{r, echo=FALSE, message = FALSE}

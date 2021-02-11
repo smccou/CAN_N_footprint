@@ -722,32 +722,34 @@ VNF_meat <-  left_join(N_manure, VN_feed)%>%
 
 ```
 
-# Food Consumption
-Data from the CCHS
+# Food Consumption N
+Data from the CCHS (NCI as more updated as compared to SIDE), N content from Canadian nutrient file
 ```{r food_consumption, echo=FALSE, message = FALSE}
-CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-side_EDITED.xlsx")%>%
+
+#detailed food spending https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1110012501
+
+CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_EDITED.xlsx")%>%
   separate(`BNS name`, sep="# ", into=c("#", "name"))%>%
   separate(name, sep =":", into=c("BNS_code", "BNS_name"))%>%
   #removes some names, e.g. 1%, 2% for milks but is ok for coding
-  select(2:3)%>%
+  select(!1)%>%
   mutate(food_group = case_when(BNS_code %in% c("BNSD01A", "BNSD01B", "BNSD01C", "BNSD02A", "BNSD03A", "BNSD03B", "BNSD04A", "BNSD04B", "BNSD04C", "BNSD04D", "BNSD04E", "BNSD04F", "BNSD05A", "BNSD06A", "BNSD07A", "BNSD07B", "BNSD07C", "BNSD08A", "BNSD08B", "BNSD08C") ~ "cereals",
                                 BNS_code %in% c("BNSD09A", "BNSD09B", "BNSD09C", "BNSD10A", "BNSD10B", "BNSD10C", "BNSD10D", "BNSD10E", "BNSD10F", "BNSD10G", "BNSD10H", "BNSD10I", "BNSD10K", "BNSD13A", "BNSD13B", "BNSD13C", "BNSD13D", "BNSD14A", "BNSD14B", "BNSD14C", "BNSD14D", "BNSD15A", "BNSD15B", "BNSD17A") ~ "dairy",
-                                BNS_code %in% c("BNSD16A") ~ "eggs",
+                                BNS_code %in% c("BNSD16A", "BNSD16B") ~ "eggs",
+                                BNS_code %in% c("BNSD21B", "BNSD21C") ~ "lamb",
                                 BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "vegetable oils",
                                 BNS_code %in% c("BNSD22A", "BNSD22B", "BNSD22C", "BNSD23A", "BNSD23B") ~ "beef",
                                 BNS_code %in% c("BNSD25A", "BNSD25B", "BNSD25C", "BNSD25D", "BNSD25E") ~ "pork",
                                 BNS_code %in% c("BNSD27A", "BNSD27B") ~ "chicken",
+                                BNS_code %in% c("BNSD27C", "BNSD27D", "BNSD27E", "BNSD27F", "BNSD28A", "BNSD28B", "BNSD29A", "BNSD30A", "BNSD31A", "BNSD32A") ~ "other meat",
                                 BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36E", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36J", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "vegetables",
+                                BNS_code %in% c("BNSD33A", "BNSD33B", "BNSD33C") ~ "nuts",
                                 BNS_code %in% c("BNSD37A", "BNSD37B")~ "pulses",
                                 BNS_code %in% c("BNSD38A", "BNSD38B", "BNSD39A") ~ "roots",
                                 BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "fruit"
  ))
 # plant milks "BNSD10J"
-# egg alternative "BNSD16B"
 # animal fats "BNSD21B" "BNSD21C"
-# Lamb "BNSD24A" "BNSD24B"
-# other meat "BNSD27C" "BNSD27D" "BNSD27E" "BNSD27F" "BNSD28A" "BNSD28B" "BNSD29A" "BNSD30A" "BNSD31A" "BNSD32A" 
-# nuts "BNSD33A" "BNSD33B" "BNSD33C"
 # fish "BNSD34A" "BNSD34B" "BNSD35A" 
 # sugars and candies "BNSD41A" "BNSD41B" "BNSD41C" "BNSD41D" "BNSD42A" "BNSD42B" "BNSD43A" "BNSD43B" "BNSD43C" "BNSD44A" 
 # soda, alcohol, fruit drinks "BNSD45A" "BNSD46A"  "BNSD46B" "BNSD46C" "BNSD46D" "BNSD46E" "BNSD46F" "BNSD46G" "BNSD47A" "BNSD47B" "BNSD48A" "BNSD49A" "BNSD49B" 
@@ -756,23 +758,26 @@ CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-side
 # baby food "BNSD52A" "BNSD52B"
 # spices and baking soda etc "BNSD53A" "BNSD53B"
 
+food_consum_nci_raw <- read_csv("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_F1.csv")
 
-food_consum_raw <- read_csv("Data/Food/Consumption/cchs-82M0024-E-2015-nu-side_F1.csv")
+#cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein
+food_consum_kg_NCI <- food_consum_nci_raw%>%
+  select(GEO_PRV, FSDDWTG, FSDDPRO, BNSD01A:BNSD53B)%>%
+  pivot_longer(cols=(FSDDWTG:BNSD53B), names_to = c("BNS_code"))%>%
+  left_join(CCHS_food_names)%>%
+  left_join(prov_code, by = c("GEO_PRV"="GEO_code"))%>%
+  mutate(consumed_protein_g = value * `CNF protein (g)` / `CNF weight (g)`)%>%
+# removed 0 values because they were affecting average (just because someone didn't eat beef that day, doesn't mean they don't eat it)
+  filter(value != 0)%>%
+#cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein +/ - ~ 7%
+  group_by(BNS_name)%>%
+#cross referenced with food available in Canada on StatsCan https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401, pretty close!!
+  summarise(consumed_g_cap = mean(value)*365, consumed_N_g_cap = mean(consumed_protein_g)*365*0.16)
 
+#One-way ANOVA (test is there a difference in consumption of food groups between provinces?)
 aov_food <- aov(BNSD05A ~ GEO_PRV, data = food_cons_raw)
 summary(aov_food)
 
-food_consum_kg <- food_consum_raw%>%
-  select(GEO_PRV, BNSD01A:BNSD53B)%>%
-  pivot_longer(cols=(BNSD01A:BNSD53B), names_to = c("BNS_code"))%>%
-  left_join(CCHS_food_names)%>%
-  left_join(prov_code, by = c("GEO_PRV"="GEO_code"))%>%
-  drop_na()%>%
-  mutate(consumed_year_kg = value * 365 / 1000)%>%
-  group_by(GEO, food_group)%>%
-  summarise(eaten_kg_cap = mean(value))
-
-#One-way ANOVA (test is there a difference in consumption of food groups between provinces?)
 aov_food <- (aov(value ~ GEO, data = food_consum_kg)) 
 summary(aov_food)
 

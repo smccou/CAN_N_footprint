@@ -31,14 +31,11 @@ prov_code$GEO_code <- as.numeric(prov_code$GEO_code)
 pop_raw <- read_csv("Data/Population/17100009.csv")
 
 prov_pop <- as_tibble(pop_raw)%>%
-  separate(REF_DATE, sep="-", into=c("REF_DATE", "month"))%>%
+  separate(REF_DATE, sep="-", into=c("year", "month"))%>%
   filter(month == "01")%>%
-  select(REF_DATE, GEO, VALUE)
-
-prov_pop$REF_DATE <- as.integer(prov_pop$REF_DATE)
-
-prov_pop <- prov_pop%>%
-  filter(REF_DATE %in% years)%>%
+  select(year, GEO, VALUE)%>%
+  mutate(as.integer(year))%>%
+  filter(year %in% years)%>%
   group_by(GEO)%>%
   summarize(Population = mean(VALUE))
 ```
@@ -359,22 +356,26 @@ VNF_food_crop_prov <- N_crop_process%>%
   group_by(GEO, food_group)%>%
   summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))%>%
   drop_na()
-  #write_csv(VNF_crop_avg, file.path("Results_Images/VNF_food_group.csv"))
 
-VNF_food_crop_CAN <- VNF_food_crop_prov%>%
+VNF_food_crop_CAN <- N_crop_process%>%
+  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg,
+         #VNF
+         VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
+         VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
   group_by(food_group)%>%
-  summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))%>%
-  mutate(GEO = "Canada")
+  summarise(`VNF_kgN_kg` = weighted.mean(`VNF_kgN_kg`, yield_kg ), `VNF_kgN_kgN` = weighted.mean(`VNF_kgN_kgN`, yield_kg))%>%
+  mutate(GEO = "Canada")%>%
+  drop_na()
 
-VNF_food_crop <- bind_rows(VNF_food_crop_prov, VNF_food_crop_CAN)
-#write_csv(VNF_crop_avg, file.path("Results_Images/VNF_food_group.csv"))
+VNF_food_group <- bind_rows(VNF_food_crop_prov, VNF_food_crop_CAN)
+#write_csv(VNF_food_group, file.path("Results_Images/VNF_food_group.csv"))
 
 ##GRAPHS AND FUN STUFF##
 #variation in VNFs between food groups
 
-ggplot(VNF_food_crop, aes(fill = food_group, y = VNF_kgN_kg, x = food_group))+
+ggplot(VNF_food_group, aes(fill = food_group, y = VNF_kgN_kg, x = food_group))+
   geom_bar(position="stack", stat="identity") +
-  facet_wrap(vars(GEO), scales = "free")+
+  facet_wrap(~factor(GEO, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island")), scales = "free")+
   labs(caption = "Virtual nitrogen factors (kgN / kg) for food crops") +
   scale_fill_manual(values=wes_palette(n=6, name="IsleofDogs1"))+
   theme_classic()+
@@ -722,11 +723,9 @@ VNF_meat <-  left_join(N_manure, VN_feed)%>%
 
 ```
 
-# Food Consumption N
+# Food Consumption N & VN (kg/cap)
 Data from the CCHS (NCI as more updated as compared to SIDE), N content from Canadian nutrient file
 ```{r food_consumption, echo=FALSE, message = FALSE}
-
-#detailed food spending https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1110012501
 
 CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_EDITED.xlsx")%>%
   separate(`BNS name`, sep="# ", into=c("#", "name"))%>%
@@ -737,16 +736,16 @@ CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_
                                 BNS_code %in% c("BNSD09A", "BNSD09B", "BNSD09C", "BNSD10A", "BNSD10B", "BNSD10C", "BNSD10D", "BNSD10E", "BNSD10F", "BNSD10G", "BNSD10H", "BNSD10I", "BNSD10K", "BNSD13A", "BNSD13B", "BNSD13C", "BNSD13D", "BNSD14A", "BNSD14B", "BNSD14C", "BNSD14D", "BNSD15A", "BNSD15B", "BNSD17A") ~ "dairy",
                                 BNS_code %in% c("BNSD16A", "BNSD16B") ~ "eggs",
                                 BNS_code %in% c("BNSD21B", "BNSD21C") ~ "lamb",
-                                BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "vegetable oils",
+                                BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "oilseeds",
                                 BNS_code %in% c("BNSD22A", "BNSD22B", "BNSD22C", "BNSD23A", "BNSD23B") ~ "beef",
                                 BNS_code %in% c("BNSD25A", "BNSD25B", "BNSD25C", "BNSD25D", "BNSD25E") ~ "pork",
                                 BNS_code %in% c("BNSD27A", "BNSD27B") ~ "chicken",
                                 BNS_code %in% c("BNSD27C", "BNSD27D", "BNSD27E", "BNSD27F", "BNSD28A", "BNSD28B", "BNSD29A", "BNSD30A", "BNSD31A", "BNSD32A") ~ "other meat",
-                                BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36E", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36J", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "vegetables",
+                                BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "vegetables",
                                 BNS_code %in% c("BNSD33A", "BNSD33B", "BNSD33C") ~ "nuts",
                                 BNS_code %in% c("BNSD37A", "BNSD37B")~ "pulses",
-                                BNS_code %in% c("BNSD38A", "BNSD38B", "BNSD39A") ~ "roots",
-                                BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "fruit"
+                                BNS_code %in% c("BNSD36E", "BNSD36J", "BNSD38A", "BNSD38B", "BNSD39A") ~ "roots",
+                                BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "fruits"
  ))
 # plant milks "BNSD10J"
 # animal fats "BNSD21B" "BNSD21C"
@@ -761,7 +760,7 @@ CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_
 food_consum_nci_raw <- read_csv("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_F1.csv")
 
 #cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein
-food_consum_kg_NCI <- food_consum_nci_raw%>%
+food_consum_g <- food_consum_nci_raw%>%
   select(GEO_PRV, FSDDWTG, FSDDPRO, BNSD01A:BNSD53B)%>%
   pivot_longer(cols=(FSDDWTG:BNSD53B), names_to = c("BNS_code"))%>%
   left_join(CCHS_food_names)%>%
@@ -770,34 +769,140 @@ food_consum_kg_NCI <- food_consum_nci_raw%>%
 # removed 0 values because they were affecting average (just because someone didn't eat beef that day, doesn't mean they don't eat it)
   filter(value != 0)%>%
 #cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein +/ - ~ 7%
-  group_by(BNS_name)%>%
-#cross referenced with food available in Canada on StatsCan https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401, pretty close!!
-  summarise(consumed_g_cap = mean(value)*365, consumed_N_g_cap = mean(consumed_protein_g)*365*0.16)
+  drop_na()%>%
+  group_by(GEO, food_group)%>%
+  mutate(GEO = case_when(GEO == "Newfoundland Labrador" ~ "Newfoundland and Labrador",
+                   TRUE ~ GEO))%>%
+#cross referenced with food available in Canada on StatsCan https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401, pretty close for meat!!
+  summarise(`consumed g/cap/year` = mean(value)*365, `consumed N g/cap/year` = mean(consumed_protein_g)*365*0.16) 
 
 #One-way ANOVA (test is there a difference in consumption of food groups between provinces?)
-aov_food <- aov(BNSD05A ~ GEO_PRV, data = food_cons_raw)
+aov_food <- (aov(consumed_g_cap ~ GEO + food_group, data = food_consum_kg_NCI)) 
 summary(aov_food)
 
-aov_food <- (aov(value ~ GEO, data = food_consum_kg)) 
-summary(aov_food)
+VNF_food_group <- read.csv("Results_Images/VNF_food_group.csv")
 
-#Pr 0.000832 beef
-#1.28*10-11 dairy
-#2*10-16 fruit
+VN_food <- left_join(food_consum_g, VNF_food_group)
 
 ```
 
 # Wastewater Treatment
-```{r, echo=FALSE, message = FALSE}
+About 50 of biosolids recycled (CWWA, 2012) @karimiupdated2020
 
+N removed = EF* N effluent, N effluent = (Protein consumed * population * nitrogen in protein) - sludge (@National2019)
+
+initial assumption 50% of N is removed through tertiary sewage treatment, 25% of N through secondary sewage treatment and none during primary sewage treatment @shibataFirst2014. 
+
+Primary treatment (at least one of the following processes are applied): 1) Chemical flocculation, 2) Primary sedimentation/clarification, 3) Skimming
+Secondary treatment: (at least one of the following processes are applied with secondary treatment processes) Activated sludge system (with or without extended aeration), 2) Activated sludge system (with or without pure oxygen), 3) Lagoon systems (any one or combination of aerated, aerobic, anaerobic, facultative, non-aerated, non-aerated Filtered), 4) Oxidation ditch, 5) Rotating Biological Contactor, 6) Storage ponds (polishing ponds), 7) Sequencing Batch Reactor, 8) Trickling filter
+Tertiary treatment: (at least one of the following processes are applied with secondary treatment processes): 1) Biofiltration, 2) Biological Ammonia Removal – Nitrification Only, 3) Biological Nitrogen Removal – Nitrification and Denitrification, 4) Biological Nutrient Removal (Nitrogen and Phosphorus), 5) Biological Phosphorus Removal, 6) Filtration, 7) Peat Filter
+```{r wastewater, echo=FALSE, message = FALSE}
+#Population served by municipal wastewater systems by treatment category (Canada/Province)
+wastewater_raw <-  read.csv("Data/Food/Wastewater/38100125.csv")
+
+N_wastewater <- rename(wastewater_raw, "year" = "ï..REF_DATE")%>%
+  select(year, GEO, "Population.by.treatment.type", UOM, SCALAR_FACTOR, VALUE)%>%
+  filter(`Population.by.treatment.type` != 'All treatment types')%>%
+  group_by(year, GEO)%>% 
+  #what percent of the population is served by each treatment type
+  mutate(percent_pop=VALUE/sum(VALUE))%>% 
+  ungroup%>%
+  mutate(`%N_removal` = case_when(`Population.by.treatment.type` == "No treatment" ~ 0,
+                                  `Population.by.treatment.type` == "Primary treatment" ~ 0,
+                                  `Population.by.treatment.type` == "Secondary treatment" ~ 0.25,
+                                  `Population.by.treatment.type` == "Secondary treatment with additional phosphorus removal" ~ 0.25,
+                                  `Population.by.treatment.type` == "Tertiary treatment" ~ 0.50))%>%
+  filter(year %in% years)%>%
+  group_by(GEO, `Population.by.treatment.type`, `%N_removal`)%>%
+  summarise(percent_pop = mean(percent_pop))%>%
+  left_join(food_consum_g)%>%
+  mutate(`N wastewater loss g/cap/year` = (`consumed N g/cap/year` * (percent_pop) * (1-`%N_removal`)))%>%
+  drop_na()%>% #dropping Yukon and Canada
+  group_by(GEO)%>%
+  summarise(`N wastewater g/cap/year` = sum(`N wastewater loss g/cap/year`))
 
 ```
 
 # Energy
-```{r, echo=FALSE, message = FALSE}
+```{r Energy, echo=FALSE, message = FALSE}
+APEI_raw <- read_csv("Data/Energy_APEI_GHG/EN_APEI-Can-Prov_Terr.csv")
+
+APEI_energy <- as_tibble(APEI_raw)%>%
+  select(Year, Region, Source, Sector, `NOX (t)`, `NH3 (t)`)%>%
+  filter(is.na(Sector))%>%
+  #else double counts subsectors
+  mutate(Region = case_when(Region == "AB" ~ "Alberta",
+                            Region == "BC" ~ "British Columbia",
+                            Region == "CA" ~ "Canada",
+                            Region == "MB" ~ "Manitoba",
+                            Region == "NB" ~ "New Brunswick",
+                            Region == "NL" ~ "Newfoundland and Labrador",
+                            Region == "NS" ~ "Nova Scotia",
+                            Region == "ON" ~ "Ontario",
+                            Region == "PE" ~ "Prince Edward Island",
+                            Region == "QC" ~ "Quebec",
+                            Region == "SK" ~"Saskatchewan"))%>%
+  mutate(Source = case_when(Source == "Ore and Mineral Industries" ~ "Construction and other industry",
+                            Source == "Oil and Gas Industry" ~ "Oil and Gas Industry",
+                            Source == "Electric Power Generation (Utilities)" ~ "Electricity Generation",
+                            Source == "Manufacturing" ~ "Construction and other industry",
+                            Source == "Transportation and Mobile Equipment" ~ "Transport",
+                            Source == "Commercial / Residential / Institutional" ~ "Commercial/Residential/Institutional",
+                            Source == "Incineration and Waste" ~ "Incineration and Waste",
+                            Source == "Paints and Solvents" ~ "Other",
+                            Source == "Dust" ~ "Other",
+                            Source == "Fires" ~ "Other"))%>%
+  replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
+  mutate(N_g = ((`NOX (t)` * 1000000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000000 * 14.0067 / 17.031)))%>%
+  drop_na(Source, Region)%>%
+  filter(Year %in% years)%>%
+  group_by(Region, Source)%>%
+  summarise(N_g = mean(N_g))%>%
+  left_join(prov_pop, by = c("Region"="GEO"))%>%
+  mutate(N_g_cap = N_g / Population)%>%
+  select(Region, Source, N_g_cap)
+
+GHG_raw <- read_csv("Data/Energy_APEI_GHG/GHG_IPCC_Can_Prov_Terr.csv")
+
+GHG_energy <- as_tibble(GHG_raw)%>%
+  select(Year, Region, Category, Unit, N2O)%>%
+  #see executive summary file for exaplanation of categories
+  mutate(Source = case_when(Category == "Public Electricity and Heat Production" ~ "Electricity Generation",
+                            Category == "Petroleum Refining Industries" ~ "Oil and Gas Industry",
+                            Category == "Oil and Gas Extraction" ~ "Oil and Gas Industry",
+                            Category == "Mining" ~ "Construction and other industry",
+                            Category == "Manufacturing Industries" ~ "Construction and other industry",
+                            Category == "Construction" ~ "Construction and other industry",
+                            Category == "Commercial and Institutional" ~ "Commercial/Residential/Institutional",
+                            Category == "Residential" ~ "Commercial/Residential/Institutional",
+                            Category == "Transport" ~ "Transport",
+                            Category == "Fugitive Sources" ~ "Other",
+                            Category == "CO2 Transport and Storage" ~ "Other",
+                            Category == "INDUSTRIAL PROCESSES AND PRODUCT USE" ~ "Construction and other industry",
+                            Category == "WASTE" ~ "Incineration and Waste"))%>%
+  drop_na(Source)%>%
+  replace_na(list(N2O = 0))%>%
+  mutate(N_g = N2O *1000000000*14.0067/44.013)%>%
+  filter(Year %in% years)%>%
+  group_by(Region, Source)%>%
+  summarise(N_g = mean(N_g))%>%
+  left_join(prov_pop, by = c("Region"="GEO"))%>%
+  mutate(N_g_cap = N_g / Population)%>%
+  select(Region, Source, N_g_cap)
+
+N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
+  filter(Source %in% c("Commercial/Residential/Institutional", "Construction and Manufacturing", "Electricity Generation", "Oil and Gas Industry", "Transport"))%>%
+  group_by(Region, Source)%>%
+  summarise(N_g_cap = sum(N_g_cap))
+
+```
+
+
+```{r N footprint, echo=FALSE, message = FALSE}
 
 
 ```
+
 
 
 ```{r, echo=FALSE, message = FALSE}

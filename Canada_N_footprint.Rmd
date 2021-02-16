@@ -10,6 +10,8 @@ library(dplyr)
 library(tidyr)
 library(readxl)
 library(ggplot2)
+library(scales)
+library(forcats)
 library(wesanderson)
 ```
 
@@ -363,11 +365,12 @@ VNF_food_crop_CAN <- N_crop_process%>%
          VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
          VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
   group_by(food_group)%>%
-  summarise(`VNF_kgN_kg` = weighted.mean(`VNF_kgN_kg`, yield_kg ), `VNF_kgN_kgN` = weighted.mean(`VNF_kgN_kgN`, yield_kg))%>%
+  summarise(`VNF_kgN_kg` = weighted.mean(`VNF_kgN_kg`, yield_kg ))%>%
   mutate(GEO = "Canada")%>%
   drop_na()
+#write_csv(VNF_food_group, file.path("Results_Images/VNF_food_group_CAN.csv"))
 
-VNF_food_group <- bind_rows(VNF_food_crop_prov, VNF_food_crop_CAN)
+#VNF_food_group <- bind_rows(VNF_food_crop_prov, VNF_food_crop_CAN)
 #write_csv(VNF_food_group, file.path("Results_Images/VNF_food_group.csv"))
 
 ##GRAPHS AND FUN STUFF##
@@ -756,33 +759,48 @@ CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_
 # coffee tea water "BNSD51A""BNSD51B" "BNSD51C"
 # baby food "BNSD52A" "BNSD52B"
 # spices and baking soda etc "BNSD53A" "BNSD53B"
+#mexican recipes BNSD99A (none reported)
 
 food_consum_nci_raw <- read_csv("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_F1.csv")
 
-#cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein
+#cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein +/ - ~ 7%
 food_consum_g <- food_consum_nci_raw%>%
-  select(GEO_PRV, FSDDWTG, FSDDPRO, BNSD01A:BNSD53B)%>%
-  pivot_longer(cols=(FSDDWTG:BNSD53B), names_to = c("BNS_code"))%>%
+  select(GEO_PRV, BNSD01A:BNSD53B)%>%
+  pivot_longer(cols=(BNSD01A:BNSD53B), names_to = c("BNS_code"))%>%
   left_join(CCHS_food_names)%>%
   left_join(prov_code, by = c("GEO_PRV"="GEO_code"))%>%
   mutate(consumed_protein_g = value * `CNF protein (g)` / `CNF weight (g)`)%>%
-# removed 0 values because they were affecting average (just because someone didn't eat beef that day, doesn't mean they don't eat it)
-  filter(value != 0)%>%
-#cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein +/ - ~ 7%
-  drop_na()%>%
+  replace_na(list(consumed_protein_g = 0))%>% #for food with no protein content
+  filter(value != 0) #otherwise too low?
+#under-reporting doesn't capture restaurants etc
+
+food_consum_g_CAN <- food_consum_g%>%
+  group_by(food_group)%>%
+  summarise(`consumed g/cap/year` = mean(value)*365, `consumed N g/cap/year` = mean(consumed_protein_g)*365*0.16)%>%
+  mutate(GEO = "Canada")%>%
+  drop_na() #no associated food group (yet)
+#cross referenced with food available in Canada on StatsCan https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401, pretty close for meat!!
+
+food_consum_g <- food_consum_g%>%
   group_by(GEO, food_group)%>%
   mutate(GEO = case_when(GEO == "Newfoundland Labrador" ~ "Newfoundland and Labrador",
                    TRUE ~ GEO))%>%
-#cross referenced with food available in Canada on StatsCan https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401, pretty close for meat!!
-  summarise(`consumed g/cap/year` = mean(value)*365, `consumed N g/cap/year` = mean(consumed_protein_g)*365*0.16) 
+  summarise(`consumed g/cap/year` = mean(value)*365, `consumed N g/cap/year` = mean(consumed_protein_g)*365*0.16)%>%
+  bind_rows(food_consum_g_CAN)%>%
+  drop_na()
 
 #One-way ANOVA (test is there a difference in consumption of food groups between provinces?)
-aov_food <- (aov(consumed_g_cap ~ GEO + food_group, data = food_consum_kg_NCI)) 
+aov_food <- (aov(BNSD25D ~ GEO_PRV, data = food_consum_nci_raw)) 
 summary(aov_food)
 
-VNF_food_group <- read.csv("Results_Images/VNF_food_group.csv")
+VNF_food_group_CAN <- read.csv("Results_Images/VNF_food_group_CAN.csv")
 
-VN_food <- left_join(food_consum_g, VNF_food_group)
+VN_food <- left_join(food_consum_g, VNF_food_crop_CAN)%>%
+  mutate(`N kg/cap/year` = `consumed g/cap/year`/1000 * VNF_kgN_kg )%>%
+  select(GEO, food_group, `N kg/cap/year`)%>%
+  mutate(`N footprint sector` = "VN from food")%>%
+  rename(Subsector = food_group)%>%
+  drop_na()
 
 ```
 
@@ -805,7 +823,7 @@ N_wastewater <- rename(wastewater_raw, "year" = "ï..REF_DATE")%>%
   filter(`Population.by.treatment.type` != 'All treatment types')%>%
   group_by(year, GEO)%>% 
   #what percent of the population is served by each treatment type
-  mutate(percent_pop=VALUE/sum(VALUE))%>% 
+  mutate(percent_pop=VALUE/sum(VALUE))%>%
   ungroup%>%
   mutate(`%N_removal` = case_when(`Population.by.treatment.type` == "No treatment" ~ 0,
                                   `Population.by.treatment.type` == "Primary treatment" ~ 0,
@@ -816,24 +834,25 @@ N_wastewater <- rename(wastewater_raw, "year" = "ï..REF_DATE")%>%
   group_by(GEO, `Population.by.treatment.type`, `%N_removal`)%>%
   summarise(percent_pop = mean(percent_pop))%>%
   left_join(food_consum_g)%>%
-  mutate(`N wastewater loss g/cap/year` = (`consumed N g/cap/year` * (percent_pop) * (1-`%N_removal`)))%>%
-  drop_na()%>% #dropping Yukon and Canada
+  mutate(`N wastewater loss kg/cap/year` = (`consumed N g/cap/year`/ 1000 * (percent_pop) * (1-`%N_removal`)))%>%
   group_by(GEO)%>%
-  summarise(`N wastewater g/cap/year` = sum(`N wastewater loss g/cap/year`))
+  summarise(`N kg/cap/year` = sum(`N wastewater loss kg/cap/year`))%>%
+  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment")%>%
+  drop_na()#removes Yukon
+  
 
 ```
 
 # Energy
 ```{r Energy, echo=FALSE, message = FALSE}
 APEI_raw <- read_csv("Data/Energy_APEI_GHG/EN_APEI-Can-Prov_Terr.csv")
+#Canada has only Grand total
 
 APEI_energy <- as_tibble(APEI_raw)%>%
   select(Year, Region, Source, Sector, `NOX (t)`, `NH3 (t)`)%>%
-  filter(is.na(Sector))%>%
-  #else double counts subsectors
+  filter(is.na(Sector))%>% #removes double counts of sectors/sources
   mutate(Region = case_when(Region == "AB" ~ "Alberta",
                             Region == "BC" ~ "British Columbia",
-                            Region == "CA" ~ "Canada",
                             Region == "MB" ~ "Manitoba",
                             Region == "NB" ~ "New Brunswick",
                             Region == "NL" ~ "Newfoundland and Labrador",
@@ -853,14 +872,21 @@ APEI_energy <- as_tibble(APEI_raw)%>%
                             Source == "Dust" ~ "Other",
                             Source == "Fires" ~ "Other"))%>%
   replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
-  mutate(N_g = ((`NOX (t)` * 1000000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000000 * 14.0067 / 17.031)))%>%
+  mutate(N_kg = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>%
   drop_na(Source, Region)%>%
   filter(Year %in% years)%>%
   group_by(Region, Source)%>%
-  summarise(N_g = mean(N_g))%>%
+  summarise(N_kg = mean(N_kg))
+
+CAN_APEI <- APEI_energy%>%
+  group_by(Source)%>%
+  summarise(N_kg = sum(N_kg))%>%
+  mutate(Region = "Canada")
+
+APEI_energy <- bind_rows(APEI_energy, CAN_APEI)%>%
   left_join(prov_pop, by = c("Region"="GEO"))%>%
-  mutate(N_g_cap = N_g / Population)%>%
-  select(Region, Source, N_g_cap)
+  mutate(`N kg/cap/year` = N_kg / Population)%>%
+  select(Region, Source, `N kg/cap/year`)
 
 GHG_raw <- read_csv("Data/Energy_APEI_GHG/GHG_IPCC_Can_Prov_Terr.csv")
 
@@ -882,24 +908,45 @@ GHG_energy <- as_tibble(GHG_raw)%>%
                             Category == "WASTE" ~ "Incineration and Waste"))%>%
   drop_na(Source)%>%
   replace_na(list(N2O = 0))%>%
-  mutate(N_g = N2O *1000000000*14.0067/44.013)%>%
+  mutate(N_kg = N2O *1000000*14.0067/44.013)%>%
   filter(Year %in% years)%>%
   group_by(Region, Source)%>%
-  summarise(N_g = mean(N_g))%>%
+  summarise(N_kg = mean(N_kg))%>%
   left_join(prov_pop, by = c("Region"="GEO"))%>%
-  mutate(N_g_cap = N_g / Population)%>%
-  select(Region, Source, N_g_cap)
+  mutate(`N kg/cap/year` = N_kg / Population)%>%
+  select(Region, Source, `N kg/cap/year`)
 
 N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
-  filter(Source %in% c("Commercial/Residential/Institutional", "Construction and Manufacturing", "Electricity Generation", "Oil and Gas Industry", "Transport"))%>%
+  filter(Source %in% c("Commercial/Residential/Institutional", "Construction and Manufacturing", "Electricity Generation", "Oil and Gas Industry", "Transport"), Region %in% c("Canada", "Newfoundland and Labrador",	"Prince Edward Island",	"Nova Scotia", "New Brunswick", "Quebec", 	"Ontario",	"Manitoba", "Saskatchewan", "Alberta", "British Columbia"))%>%
   group_by(Region, Source)%>%
-  summarise(N_g_cap = sum(N_g_cap))
+  summarise(`N kg/cap/year` = sum(`N kg/cap/year`))%>%
+  mutate(`N footprint sector` = "Fossil Fuels")%>%
+  rename("GEO"="Region", "Subsector"="Source")
 
 ```
 
 
 ```{r N footprint, echo=FALSE, message = FALSE}
 
+N_footprint <- bind_rows(N_wastewater, N_energy)%>%
+  bind_rows(VN_food)%>%
+  mutate(GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island"), 
+         Subsector = fct_relevel(Subsector, "pulses", "oilseeds", "cereals", "fruits", "vegetables", "roots", "Wastewater Treatment", "Commercial/Residential/Institutional", "Electricity Generation", "Oil and Gas Industry", "Transport"),
+         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from food", "Wastewater Treatment", "Fossil Fuels"))
+
+ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = GEO))+
+  geom_bar(stat="identity") +
+  labs(caption = "Provincial Nitrogen footprints (N kg/cap/year)")+
+  scale_x_discrete(labels = wrap_format(10))+
+  theme_classic()+
+  theme(
+    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    plot.caption = element_text(hjust = 0))
+
+#ggsave("Results_Images/N_print_sectors.pdf")  
 
 ```
 

@@ -1,6 +1,62 @@
 ---
-title: "Canadian N Footprint"
-output: html_notebook
+title             : "Sub-national nitrogen footprints from nitrogen budgets provide emission driver context: a Canadian example"
+shorttitle        : "Canadian nitrogen footprint"
+
+author: 
+  - name          : "Sibeal McCourt"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    address       : "Postal address"
+    email         : "sibeal.mccourt@mail.mcgill.ca"
+    role:         
+      - Conceptualization
+      - Writing - Original Draft Preparation
+      - Writing - Review & Editing
+  - name          : ""
+    affiliation   : "1,2"
+    role:
+      - Writing - Review & Editing
+
+affiliation:
+  - id            : "1"
+    institution   : "Wilhelm-Wundt-University"
+  - id            : "2"
+    institution   : "Konstanz Business School"
+
+authornote: |
+  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
+
+  Enter author note here.
+
+abstract: |
+  >300 words 
+  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  One or two sentences to put the results into a more **general context**.
+  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
+  
+  <!-- https://tinyurl.com/ybremelq -->
+  
+keywords          : "Nitrogen, footprint, environmental accounting"
+wordcount         : "X"
+
+bibliography      : ["Ch_1.bib"]
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output            : html_notebook
+#papaja::apa6_pdf                    
 ---
 
 ```{r libraries, echo=FALSE, message = FALSE}
@@ -15,24 +71,32 @@ library(forcats)
 library(RColorBrewer)
 ```
 
-# SCOPE & DATA
+We only require a PDF file of the new article (and any suitable supplementary data files) on submission. Authors can format their papers in the way that they choose https://publishingsupport.iopscience.iop.org/questions/structure-and-format-of-your-journal-article/
+ERL operates a double-anonymous peer review process (acknowledgments added later)
+total >4000 words excluding titles, abstract, figures, tables, captions, and references
 
-## Temporal & Spatial
-```{r temporal_scope , echo=FALSE, message = FALSE}
-years = c(2016, 2017, 2018)
+# Introduction ~ 800 words
+@leachnitrogen2012
+@shindoTopdown2017
+@shibataNitrogen2017: more national case studies are needed.The VNFs are available for a few
+major exporting countries, however, there are few countries that have developed their own VNFs. The development of VNFs for major exporting countries is particularly important for accurately assessing the N footprint of countries that import food.
+
+Several key differences in our approach: adjusting recommended fertilizer application rates by N from fertilizer sales. Including manure 
+
+# Methodology
+
+We draw strongly on the work down for the  N-calculator model developed by @leachnitrogen2012. We divide our nitrogen footprint model into the following sectors and sub sectors 1) Nr release due to burning fossil fuels, further divided for energy production, transport, oil and gas industries and other sources and 2) Nr related to food, divided into crop-related food production, livestock production and wastewater treatment. Our initial estimate is for the year 2015, the most recent year were data sources could be found for all relevant categories. Calculations and data sources for each sector are described in the following sections. 
+```{r Scoping, echo=FALSE, message = FALSE}
+years = c(2014, 2015, 2016)
 
 prov_code <- matrix(c(1, "Canada", 10, "Newfoundland Labrador", 11,	"Prince Edward Island", 12,	"Nova Scotia", 13, "New Brunswick", 24, "Quebec", 35, 	"Ontario", 46,	"Manitoba", 47, "Saskatchewan", 48, "Alberta", 59, "British Columbia"), ncol=2, byrow = TRUE)
 colnames(prov_code) <- c("GEO_code", "GEO")
 prov_code <- as_tibble(prov_code)
 prov_code$GEO_code <- as.numeric(prov_code$GEO_code)
-```
 
-## Population 
-```{r population_data, echo=FALSE, message = FALSE}
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/17100009-eng.zip")
-pop_raw <- read_csv("Data/Population/17100009.csv")
-
-prov_pop <- as_tibble(pop_raw)%>%
+prov_pop <- read_csv("Data/Population/17100009.csv")%>%
+  as_tibble%>%
   separate(REF_DATE, sep="-", into=c("year", "month"))%>%
   filter(month == "01")%>%
   select(year, GEO, VALUE)%>%
@@ -42,57 +106,152 @@ prov_pop <- as_tibble(pop_raw)%>%
   summarize(Population = mean(VALUE))
 ```
 
-```{r crop_categories , echo=FALSE, message = FALSE}
-animal_list = c("Beef", "Pork", "Chicken", "Milk", "Eggs")
+## Energy
+To estimate energy-related Nr we use a top-down approach summing Nr emissions estimates from provincial greenhouse gas (to account for N2O) and air pollutant (to account for NOx) inventories.  
+```{r Energy, echo=FALSE, message = FALSE}
+APEI_raw <- read_csv("Data/Energy_APEI_GHG/EN_APEI-Can-Prov_Terr.csv")
+#Canada has only Grand total
 
-field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
-#removed subcategories/duplicates "Beans, dry white", "Beans, dry coloured", "Rye, all including fall rye remaining" "Rye, fall remaining" "Rye, spring" "Rye, fall seeded in previous fall" "Wheat, all including winter wheat remaining" "Wheat, durum" "Wheat, spring" "Wheat, Canada Western Extra Strong (CWES)" "Wheat, Canada Western Red Spring (CWRS)"  "Wheat, Canada Prairie Spring Red (CPSR) and Canada Prairie Spring White (CPSW)" "Wheat, Canada Western Soft White Spring (CWSWS)" "Wheat, other spring" "Wheat, winter remaining" "Wheat, winter seeded in fall" "Wheat, all excluding durum wheat""Wheat, Canada Western Special Purpose (CWSP)" "Wheat, Canada Western Hard White Spring (CWHWS)" "Wheat, Canada Northern Hard Red (CNHR)" "Wheat, Canada Eastern Red Spring (CERS)"
-#removed "Borage seed" "Caraway seed" "Coriander seed" "Mustard seed" "Safflower" "Hemp" (no recommended fert rates or no longer reported)                     
-fruit_list = c("apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps")
-# removed subcategories/duplicates  "highbush blueberries" "lowbush blueberries" "Labrusca grapes" "vinifera, fresh French hybrid grapes "                
-vegetable_list = c("cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
-#removed parsely, regular cabbage" "Chinese cabbage" watermelons
+APEI_energy <- as_tibble(APEI_raw)%>%
+  select(Year, Region, Source, Sector, `NOX (t)`, `NH3 (t)`)%>%
+  filter(is.na(Sector))%>% #removes double counts of sectors/sources
+  mutate(Region = case_when(Region == "AB" ~ "Alberta",
+                            Region == "BC" ~ "British Columbia",
+                            Region == "MB" ~ "Manitoba",
+                            Region == "NB" ~ "New Brunswick",
+                            Region == "NL" ~ "Newfoundland and Labrador",
+                            Region == "NS" ~ "Nova Scotia",
+                            Region == "ON" ~ "Ontario",
+                            Region == "PE" ~ "Prince Edward Island",
+                            Region == "QC" ~ "Quebec",
+                            Region == "SK" ~"Saskatchewan"))%>%
+  mutate(Source = case_when(Source == "Ore and Mineral Industries" ~ "Construction and other industry",
+                            Source == "Oil and Gas Industry" ~ "Oil and Gas Industry",
+                            Source == "Electric Power Generation (Utilities)" ~ "Electricity Generation",
+                            Source == "Manufacturing" ~ "Construction and other industry",
+                            Source == "Transportation and Mobile Equipment" ~ "Transport",
+                            Source == "Commercial / Residential / Institutional" ~ "Commercial/Residential/Institutional",
+                            Source == "Incineration and Waste" ~ "Incineration and Waste",
+                            Source == "Paints and Solvents" ~ "Other",
+                            Source == "Dust" ~ "Other",
+                            Source == "Fires" ~ "Other"))%>%
+  replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
+  mutate(N_kg = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>%
+  drop_na(Source, Region)%>%
+  filter(Year %in% years)%>%
+  group_by(Region, Source)%>%
+  summarise(`N kg/year` = mean(N_kg))
 
-grain_list = c("Barley", "Corn for grain", "Oats", "Wheat, all")
+CAN_APEI <- APEI_energy%>%
+  group_by(Source)%>%
+  summarise(`N kg/year` = sum(`N kg/year`))%>%
+  mutate(Region = "Canada")
 
-legume_list = c("Beans, all dry (white and coloured)", "Chick peas", "Faba beans", "Lentils", "Soybeans", "Peas, dry")
+APEI_energy <- bind_rows(APEI_energy, CAN_APEI)%>%
+  left_join(prov_pop, by = c("Region"="GEO"))%>%
+  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
+  select(Region, Source, `N kg/cap/year`,`N kg/year`)
 
-oilseed_list = c("Canola (rapeseed)")
+GHG_raw <- read_csv("Data/Energy_APEI_GHG/GHG_IPCC_Can_Prov_Terr.csv")
 
-root_list = c("Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes")
+GHG_energy <- as_tibble(GHG_raw)%>%
+  select(Year, Region, Category, Unit, N2O)%>%
+  #see executive summary file for exaplanation of categories
+  mutate(Source = case_when(Category == "Public Electricity and Heat Production" ~ "Electricity Generation",
+                            Category == "Petroleum Refining Industries" ~ "Oil and Gas Industry",
+                            Category == "Oil and Gas Extraction" ~ "Oil and Gas Industry",
+                            Category == "Mining" ~ "Construction and other industry",
+                            Category == "Manufacturing Industries" ~ "Construction and other industry",
+                            Category == "Construction" ~ "Construction and other industry",
+                            Category == "Commercial and Institutional" ~ "Commercial/Residential/Institutional",
+                            Category == "Residential" ~ "Commercial/Residential/Institutional",
+                            Category == "Transport" ~ "Transport",
+                            Category == "Fugitive Sources" ~ "Other",
+                            Category == "CO2 Transport and Storage" ~ "Other",
+                            Category == "INDUSTRIAL PROCESSES AND PRODUCT USE" ~ "Construction and other industry",
+                            Category == "WASTE" ~ "Incineration and Waste"))%>%
+  drop_na(Source)%>%
+  replace_na(list(N2O = 0))%>%
+  mutate(N_kg = N2O *1000000*14.0067/44.013)%>%
+  filter(Year %in% years)%>%
+  group_by(Region, Source)%>%
+  summarise(`N kg/year` = mean(N_kg))%>%
+  left_join(prov_pop, by = c("Region"="GEO"))%>%
+  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
+  select(Region, Source, `N kg/cap/year`, `N kg/year`)
 
-crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Oats", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all", "apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
+N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
+  filter(Source %in% c("Commercial/Residential/Institutional", "Construction and Manufacturing", "Electricity Generation", "Oil and Gas Industry", "Transport"), Region %in% c("Canada", "Newfoundland and Labrador",	"Prince Edward Island",	"Nova Scotia", "New Brunswick", "Quebec", 	"Ontario",	"Manitoba", "Saskatchewan", "Alberta", "British Columbia"))%>%
+  group_by(Region, Source)%>%
+  summarise(`N kg/cap/year` = sum(`N kg/cap/year`),
+            `N kg/year` = sum(`N kg/year`))%>%
+  mutate(`N footprint sector` = "Fossil Fuels")%>%
+  rename("GEO"="Region", "Subsector"="Source")
 
-#food_crop_list = c("Spring wheat", "Winter wheat", "Corn for grain", "Canola", "Soybeans", "Potatoes", "Apples", "Grapes", "Blueberries", "Strawberries", #"Peaches", "Cranberries", "Tomatoes", "Carrots", "Onions", "Cabbage", "Pumpkins")
-
-#feed_crop_list = c("Spring wheat", "Winter wheat", "Corn for silage", "Oats", "Soybeans", "Tame hay", "Barley")
 ```
 
-## Download and clean crop files
+## Food
+
+For food-related Nr we  have used a hybrid top-down and bottom-up approach to estimate provincial N-footprints. We use a top-down approach to estimate provincial VNF values (further explained below) and then multiply these values by per capita food consumption data. 
+
+```{r food_categorization, echo=FALSE, message = FALSE}
+#Names from StatsCan Crop Surveys, with doubles/subcategories removed
+field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Buckwheat", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
+#removed subcategories/duplicates "Beans, dry white", "Beans, dry coloured", "Rye, all including fall rye remaining" "Rye, fall remaining" "Rye, spring" "Rye, fall seeded in previous fall" "Wheat, all including winter wheat remaining" "Wheat, durum" "Wheat, spring" "Wheat, Canada Western Extra Strong (CWES)" "Wheat, Canada Western Red Spring (CWRS)"  "Wheat, Canada Prairie Spring Red (CPSR) and Canada Prairie Spring White (CPSW)" "Wheat, Canada Western Soft White Spring (CWSWS)" "Wheat, other spring" "Wheat, winter remaining" "Wheat, winter seeded in fall" "Wheat, all excluding durum wheat""Wheat, Canada Western Special Purpose (CWSP)" "Wheat, Canada Western Hard White Spring (CWHWS)" "Wheat, Canada Northern Hard Red (CNHR)" "Wheat, Canada Eastern Red Spring (CERS)"
+#removed "Borage seed" "Caraway seed" "Coriander seed" "Mustard seed" "Safflower" "Hemp" (no recommended fert rates or no longer reported)
+
+fruit_list = c("apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps")
+#removed subcategories/duplicates "highbush blueberries" "lowbush blueberries" "Labrusca grapes" "vinifera, fresh French hybrid grapes"
+
+vegetable_survey_list = c("cabbage", "rutabagas and turnips", "beets", "cauliflowers", "sweet corn", "lettuce", "parsnips", "green and wax beans", "carrots", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "dry onions", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "sweet potatoes")
+#removed parsely, regular cabbage" "Chinese cabbage" "watermelons"
+
+#Food grouping lists
+cereals_list = c("Buckwheat", "Corn for grain", "Rye, all", "Oats", "Triticale", "Wheat, all") #stuff that people eat crops with less than 60% livestock allocation based on Karimi et al 2020 (Table A4)
+
+feed_list = c("Barley", "Corn for silage", "Faba beans", "Sugar beets", "Tame hay") #stuff animal eat, crops with more than 60% livestock allocation based on Karimi et al 2020 (Table A4)
+
+legume_list = c("Beans, all dry (white and coloured)", "Chick peas", "Lentils", "Soybeans", "Peas, dry")
+
+oilseed_list = c("Canola (rapeseed)", "Sunflower seed")
+
+root_list = c("Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets")
+
+vegetable_List = c("cabbage", "cauliflowers", "sweet corn", "lettuce", "green and wax beans", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)")
+
+food_crop_list = c("Buckwheat", "Corn for grain", "Rye, all", "Oats", "Triticale", "Wheat, all", "Beans, all dry (white and coloured)", "Chick peas", "Lentils", "Soybeans", "Peas, dry", "Canola (rapeseed)", "Sunflower seed", "Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets", "cabbage", "cauliflowers", "sweet corn", "lettuce", "green and wax beans", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps")
+
+all_crop_list = c("Buckwheat", "Corn for grain", "Rye, all", "Oats", "Triticale", "Wheat, all", "Beans, all dry (white and coloured)", "Chick peas", "Lentils", "Soybeans", "Peas, dry", "Canola (rapeseed)", "Sunflower seed", "Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets", "cabbage", "cauliflowers", "sweet corn", "lettuce", "green and wax beans", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "Barley", "Corn for silage", "Faba beans", "Sugar beets", "Tame hay")
+
+#notes 
+# canary seed not included in feed or cereals, primarily used for pet food?
+# flax seed used for clothing/oil?
+
+animal_list = c("Beef", "Pork", "Chicken", "Milk", "Eggs")
+
+```
+
 ```{r crop_data, echo=FALSE, message = FALSE}
 
 #Field Crops
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100359-eng.zip")
 
-field_crop_raw <- read_csv("Data/Food/Production/Crop/32100359.csv")
-
-grain_legume <- as_tibble(field_crop_raw)%>% 
+field_crop_survey <- read_csv("Data/Food/Production/Crop/32100359.csv")%>%
+  as_tibble()%>% 
   rename(StatCan_name = "Type of crop")%>%
   filter(REF_DATE %in% (years))
 
 #Potatoes
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100358-eng.zip")
-potatoes_raw <- read_csv("Data/Food/Production/Crop/32100358.csv")
-
-potato <- as_tibble(potatoes_raw)%>%
+potato_survey <- read_csv("Data/Food/Production/Crop/32100358.csv")%>%
+  as_tibble()%>%
   mutate("StatCan_name" = "Potatoes")%>%
   filter(REF_DATE %in% (years))
 
 #Fruits
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100364-eng.zip")
-fruits_raw <- read_csv("Data/Food/Production/Crop/32100364.csv")
-
-fruit <- as_tibble(fruits_raw)%>%
+fruits_survey <- read_csv("Data/Food/Production/Crop/32100364.csv")%>%
+  as_tibble()%>%
   separate(Commodity, sep=' \\[', into=c("name", "number"))%>%
   separate(name, sep='Fresh ', into=c("prefix", "StatCan_name"))%>%
   #NAs "total fresh fruit" and "other fresh fruit nes"
@@ -101,9 +260,8 @@ fruit <- as_tibble(fruits_raw)%>%
 
 #Vegetables
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100365-eng.zip",)
-vegetables_raw <- read_csv("Data/Food/Production/Crop/32100365.csv") 
-
-vegetable <- as_tibble(vegetables_raw)%>%
+vegetables_survey <- read_csv("Data/Food/Production/Crop/32100365.csv")%>%
+  as_tibble()%>%
   separate(Commodity, sep=' \\[', into=c("name", "number"))%>%
   separate(name, sep='Fresh ', into=c("prefix", "StatCan_name"))%>%
   #NAs are from , "total fresh veg", "other fresh veg" etc with no number
@@ -111,14 +269,14 @@ vegetable <- as_tibble(vegetables_raw)%>%
   filter(REF_DATE %in% (years))
 
 ## get crop areas in ha, average over 3 years, and bind together ##
-grain_legume_area <- grain_legume%>% 
+field_crop_area <- field_crop_survey%>% 
   filter(`Harvest disposition` == "Harvested area (hectares)")%>%
   rename("area_ha" = VALUE)%>%
   replace_na(list(area_ha = 0))%>%
   group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
-potato_area <- potato%>%
+potato_area <- potato_survey%>%
   filter(`Area, production and farm value of potatoes` == "Harvested area, potatoes")%>%
   #convert acres to hectares
   mutate(area_ha = VALUE/2.471)%>%
@@ -126,7 +284,7 @@ potato_area <- potato%>%
   group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
-fruit_area <- fruit%>%
+fruit_area <- fruits_survey%>%
   filter(Estimates == "Bearing area", UOM == "Hectares")%>%
   rename("area_ha" = VALUE)%>%
   replace_na(list(area_ha = 0))%>%
@@ -134,7 +292,7 @@ fruit_area <- fruit%>%
   group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
-vegetable_area <- vegetable%>%
+vegetable_area <- vegetables_survey%>%
   filter(Estimates == "Area harvested (hectares)")%>%
   rename("area_ha" = VALUE)%>%
   replace_na(list(area_ha = 0))%>%
@@ -142,13 +300,13 @@ vegetable_area <- vegetable%>%
   group_by(GEO, StatCan_name)%>%
   summarise(area_ha = mean(area_ha))
 
-crop_area <- bind_rows(grain_legume_area, potato_area, fruit_area, vegetable_area)%>%
-  filter(StatCan_name %in% crop_list,
+crop_area <- bind_rows(field_crop_area, potato_area, fruit_area, vegetable_area)%>%
+  filter(StatCan_name %in% all_crop_list,
          GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))%>%
   filter(area_ha > 100)
 
 ## get crop production in kg, average over 3 years, and bind together ##
-grain_legume_prod <- as_tibble(grain_legume)%>% 
+field_crop_prod <- field_crop_survey %>% 
   filter(`Harvest disposition` == "Production (metric tonnes)")%>%
   mutate(yield_kg = VALUE*1000)%>%
   replace_na(list(yield_kg = 0))%>%
@@ -156,7 +314,7 @@ grain_legume_prod <- as_tibble(grain_legume)%>%
   group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
-potato_prod <- as_tibble(potato)%>%
+potato_prod <- potato_survey%>%
   filter(`Area, production and farm value of potatoes` == "Production, potatoes")%>%
   #convert hundredweight * 1000 to kg
   mutate(yield_kg = VALUE*50.8*1000)%>%
@@ -165,7 +323,7 @@ potato_prod <- as_tibble(potato)%>%
   group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
-fruit_prod <- as_tibble(fruit)%>%
+fruit_prod <- fruits_survey%>%
   filter(Estimates == "Marketed production", UOM == "Metric tonnes")%>%
   mutate(yield_kg = VALUE*1000)%>%
   replace_na(list(yield_kg = 0))%>%
@@ -173,7 +331,7 @@ fruit_prod <- as_tibble(fruit)%>%
   group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
-vegetable_prod <- as_tibble(vegetable)%>%
+vegetable_prod <- vegetables_survey%>%
   filter(Estimates == "Marketed production (metric tonnes)")%>%
   mutate(yield_kg = VALUE*1000)%>%
   replace_na(list(yield_kg = 0))%>%
@@ -181,27 +339,25 @@ vegetable_prod <- as_tibble(vegetable)%>%
   group_by(GEO, StatCan_name)%>%
   summarise(yield_kg = mean(yield_kg))
 
-crop_prod <- bind_rows(grain_legume_prod, potato_prod, fruit_prod, vegetable_prod)%>%
-  filter(StatCan_name %in% crop_list,
+crop_prod <- bind_rows(field_crop_prod, potato_prod, fruit_prod, vegetable_prod)%>%
+  filter(StatCan_name %in% all_crop_list,
          GEO %in% c("Alberta", "British Columbia", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "Prince Edward Island", "Nova Scotia", "Newfoundland and Labrador", "New Brunswick"))%>%
   filter(yield_kg > 1000)
 ```
 
-# Crop VNF 
+## Crop VNFs 
 VNF = kg N loss/ kg food OR kg N loss/ kg N food
 N lost between N inputs and crop harvest (field N), harvest and edible N (procesessing), and household waste
 
-## N inputs 
+### N inputs 
 N inputs = N from fertilizer + N from BNF (not manure since it's recycled)
 
-### Fertilizer N
-based on fertilizer sales adjusted by crop recommended rate
+To estimate fertilizer N inputs we used provincial statistics on N fertilizer sales @governmentofcanadaFertilizer2020, and dissagregated the data based on crop area in each province, and the provincial recommended N application rate for that crop. 
 ```{r N_fertilizer, echo=FALSE, message = FALSE}
 #Fertilizer Sales N
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100039-eng.zip", "Data/Food/Fertilizer/32100039-eng.zip")
-fert_sales_raw <- read_csv("Data/Food/Fertilizer/32100039.csv")
-
-N_fert_sales <- as_tibble(fert_sales_raw)%>%
+N_fert_sales <- read_csv("Data/Food/Fertilizer/32100039.csv")%>%
+  as_tibble()%>%
   separate(`REF_DATE`, sep="/", into=c("REF_DATE", "month"))%>%
   filter(`Fertilizer nutrient content` == "Nitrogen",
          Period == "July to June",
@@ -258,7 +414,6 @@ N_adjusted_fert <- left_join(N_rec_fert_crop, N_rec_fert_prov)%>%
   mutate(Diff_sales_rec = N_applied_crop_kg - N_rec_crop_kg)
 ```
 
-### BNF N 
 Nitrogen from BNF = total crop N (root, residue and product N) * % fixed from atmosphere used vaules from @karimiupdated2020
 include alfalfa?
 ```{r N_BNF, echo=FALSE, message = FALSE}
@@ -284,14 +439,13 @@ N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% c("apples", "peache
   replace_na(list(N_BNF_kg=0))
 ```
 
-### TOTAL N INPUTS
 ```{r N_total_input, echo=FALSE, message = FALSE}
 N_input <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_name"="StatCan_name"))%>%
   mutate(total_new_N_kg = N_applied_crop_kg + N_BNF_kg)%>%
   select(-c(key_prov_fert, "Fertilizer nutrient content", UOM, SCALAR_FACTOR, quantity))
 ```
 
-## Crop yield N and field N losses
+### Processing and waste
 Field N loss = N fertilizer + N BNF + N loss crop residue - crop N export - residue N export (feed?) - denitrification
 assumed that remaining residue and decomposing root material are recycled and reabsorbed by the growing crop, also very minor flow @karimiupdated2020
 they assume 10% of remaining organic N in soil is denitrified (sensitivity analysis?), 1:1 N20 to N2 @yang2007
@@ -317,22 +471,23 @@ N_field_loss <- left_join(N_input, residue_allocation, by = c("key" = "Crop"))%>
 #there are some negative values. Soil N mining? 
 ```
 
-## Edible N and processing losses
+Edible N and processing losses
 ```{r N_processing_loss, echo=FALSE, message = FALSE}
-#Processing, packaging and distribution waste values were taken from Leach 2012/FAO (Used same N conc values @karimi2020 for consistency (Lassaletta's slightly different).
+#Processing, packaging and distribution waste values were taken from USDA (Used same N conc values @karimi2020 for consistency (Lassaletta's slightly different).
 
-#leach 2020/FAO 
-food_processing_waste <- read_excel("Data/Food/Food_waste/food_waste_FAO.xlsx")
+#USDA https://www.ers.usda.gov/data-products/food-availability-per-capita-data-system/ 
+food_processing_waste <- read_excel("Data/Food/Food_waste/food_loss_USDA.xlsx", range = "A1:D11")
+  
 
 #Processing loss
-N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in% grain_list ~ "cereals",
-                                                 StatCan_name %in% oilseed_list ~ "oilseeds",
-                                                 StatCan_name %in% legume_list ~ "pulses",
-                                                 StatCan_name %in% root_list ~ "roots",
-                                                 StatCan_name %in% fruit_list ~ "fruits",
-                                                 StatCan_name %in% vegetable_list ~ "vegetables",
+N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in% grain_list ~ "Grains",
+                                                 StatCan_name %in% oilseed_list ~ "Fats",
+                                                 StatCan_name %in% legume_list ~ "Legumes",
+                                                 StatCan_name %in% root_list ~ "Vegetables",
+                                                 StatCan_name %in% fruit_list ~ "Fruit",
+                                                 StatCan_name %in% vegetable_list ~ "Vegetables",
                                                  TRUE ~ StatCan_name))%>%
-  left_join(food_processing_waste, by = c("key_process" = "Percent N lost"))%>%
+  left_join(food_processing_waste, by = c("key_process" = "Food Item"))%>%
   #processing N loss
   mutate(retail_N_kg = yield_N_kg * (1-`Processing and packaging`),
          retail_kg = yield_kg * (1-`Processing and packaging`),
@@ -342,13 +497,12 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in%
          edible_kg = retail_kg * (1-`Distribution: Supermarket Retail`),
          N_loss_retail_waste_kg = retail_N_kg - edible_N_kg,
          #household N loss & N consumed
-         consumed_N_kg = edible_N_kg * (1-`Household Waste`),
+         consumed_N_kg = yeild_N_kg * (1-(`Total loss all levels`/100)),
          consumed_kg = edible_kg * (1-`Household Waste`),
          N_loss_household_waste_kg = edible_N_kg - consumed_N_kg)%>%
   rename("food_group"= "key_process")
 ```
 
-## VNF Food Crop
 ```{r VNF_food_crop, echo=FALSE, message = FALSE}
 VNF_food_crop_prov <- N_crop_process%>%
   mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg,
@@ -393,12 +547,11 @@ ggplot(VNF_food_group, aes(fill = food_group, y = VNF_kgN_kg, x = food_group))+
 #ggsave("Results_Images/VNF_crop_CAN.pdf")
 ```
 
-# Meat & animal product VNF
+## Meat & animal product VNFs
 Same as crop VNF with the addition of N lost during the raising of livestock from manure and feed. Based on the population of animals in each province * average manure production and N emissions, average feed amounts and ratios of feed types, N VNF associated with feed, N loss meat processing.
 Most of dairy emission including all cows, calves and heifers attributed to milk, about 3% attributed to meat. Most layer emissions attributed to eggs, about 7% attributed to meat (@Sheppard2015). Leach does not separate emissions? Therefore will attribute meat emissions to beef cattle, and milk emission to dairy cattle etc. 
 
-## Animal populations
-```{r animal_data, echo=FALSE, message = FALSE}
+```{r animal_pop_data, echo=FALSE, message = FALSE}
 #note on chicken numbers: there's no info on what percent of slaughter is layers vs broiler chickens. Have # of layers, and total number slaughtered. Therefore we have taken the number of total chickens slaughtered, and subtracted the total number of layers present for that year (since layers have ~1 year lifespan), to estimate number of broilers. 
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100121-eng.zip")
@@ -450,11 +603,32 @@ animal_pop <- bind_rows(beef_pop, pork_pop, broiler_pop, layer_pop)%>%
 
 ```
 
-## Manure N
-Manure excretion emissions and storage losses were based on data published by @huffmanEstimation2008, which are based on provincial feed and manure storage practices. Need to think about manure recycling. Do I bother including it since it's recycled and therefore not new N?
+### Manure N
+
+1) manure N production/year: 
+feed N - animal N
+
+feed N = feed rates/types/animal (@Sheppard2015)  * Nconc (@karimiupdated2020)
+
+animal N = animal population * slaughtered Fraction of population (based on census) slaughtered annually (@Sheppard2015)  * animal weight at slaughter (@Sheppard2015)  * total Nconc:(@karimiupdated2020) (CROSS CHECK WITH NATIONAL STATS)
+
+2) manure storage loss: @huffmanEstimation2008
+
+3) Denitrification: 
+
+check HOLOS for provinces/ecoregions 
+
+FAO 006  Guidelines,  Vol 4,  Table  11.3  p.11.24 https://www.ipcc-nggip.iges.or.jp/public/2006gl/pdf/4_Volume4/V4_11_Ch11_N2O&CO2.pdf 
+fraction values: 0.05 - 0.5 NH3–N + NOx–N
+
+
+5) Leaching: RSN values % for provinces: @deYong2009
+
+4) Remaining is 'potential recycled manure N"
 
 ```{r N_manure, echo=FALSE, message = FALSE}
 
+#Huffman 2008 manure rate & % on pasture
 N_manure_rate_raw <- read_excel("Data/Food/Production/Animal/manure.xlsx")
 
 N_manure_rate <- N_manure_rate_raw%>% 
@@ -493,7 +667,7 @@ N_manure <- animal_pop%>%
                               StatCan_name == "Beef cows" ~ "Cattle",
                               StatCan_name == "Boars, 6 months and over"~ "Pigs",
                               StatCan_name == "Bulls, 1 year and over" ~ "Cattle",
-                              StatCan_name == "Calves, under 1 year"~ "Cattle",
+                            StatCan_name == "Calves, under 1 year"~ "Cattle",
                               StatCan_name == "Dairy cows"  ~ "Cattle",
                               StatCan_name == "Heifers for dairy replacement"~ "Cattle",
                               StatCan_name == "Sows and gilts, 6 months and over"~ "Pigs",
@@ -518,11 +692,16 @@ N_manure <- animal_pop%>%
   left_join(N_manure_rate, by = c("key_manure" = "Animal", "GEO" = "Province"))%>%
   left_join(storage_loss, by = c("key_storage" = "Animal", "GEO" = "Province"))%>%
   mutate(N_loss_manure_kg = ((VALUE - (`% on pasture`/100)) * 1000 * `Kg N / head / yr` * (`N% after storage`/100))) 
-#not sure what to do about pasture check Hoffman
+
 ```
 
-## Feed VNF
+
+### VN from feed
+Feed diet fractions were based on farm survey data published by @sheppardLinkage2015. 
+
 ```{r VNF_feed, echo=FALSE, message = FALSE}
+#Sheppard 2014
+
 VNF_feed <- left_join(N_field_loss, N_crop_process)%>%
   filter(StatCan_name %in% feed_crop_list)%>%
   mutate(edible_kg = case_when(StatCan_name == "Tame hay" ~ yield_kg,
@@ -557,8 +736,6 @@ ggplot(VNF_feed, aes(y = VNF_kgN_kg, x = StatCan_name, fill = StatCan_name)) +
 #ggsave("Results_Images/VNF_feed_avg.pdf")
 ```
 
-## VN from feed
-Feed diet fractions were based on farm survey data published by @sheppardLinkage2015. 
 ```{r N_feed, echo=FALSE, message = FALSE}
 feed_ratio <- read_excel("Data/Food/Production/Animal/Feed_ratios.xlsx")
   
@@ -602,7 +779,7 @@ VN_feed <- animal_pop%>%
 
 ```
 
-## N loss meat processing and edible meat ##
+### Meat and animal products processing and waste
 N losses during meat processing were estimated difference between N content of animals slaughtered (from @Leach2012) and N content of meat (N contents of meat from @FAO/Lassaletta).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal), 
 Used Canadian meat conversion factors published by @sheppardLinkage2015 * provincial livestock populations to estimate animal slaughtered
 How close were they to national values?
@@ -658,7 +835,6 @@ N_meat_process <- animal_pop%>%
          N_domestic_consumed_kg = meat_edible_kg - N_loss_household_kg)
 ```
 
-## N loss processing and edible animal products 
 ```{r, N_process_animal_product, echo=FALSE, message = FALSE}
 
 N_eggs <- eggs_raw%>%
@@ -713,8 +889,7 @@ N_milk <- milk_raw%>%
          N_loss_household_N_kg = edible_N_kg - consumed_N_kg)
 ```
 
-## VNF Meat and animal products
-```{r, echo=FALSE, message = FALSE}
+```{r VNF_animal, echo=FALSE, message = FALSE}
 VNF_meat <-  left_join(N_manure, VN_feed)%>%
   left_join(N_meat_process)%>%
   filter(food_group %in% c("Beef", "Pork", "Chicken"))%>%
@@ -726,10 +901,10 @@ VNF_meat <-  left_join(N_manure, VN_feed)%>%
 
 ```
 
-# Food Consumption N & VN (kg/cap)
+
+## Food Consumption
 Data from the CCHS (NCI as more updated as compared to SIDE), N content from Canadian nutrient file
 ```{r food_consumption, echo=FALSE, message = FALSE}
-
 CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_EDITED.xlsx")%>%
   separate(`BNS name`, sep="# ", into=c("#", "name"))%>%
   separate(name, sep =":", into=c("BNS_code", "BNS_name"))%>%
@@ -814,7 +989,7 @@ VN_food <- left_join(food_consum_g, VNF_food_group_CAN, by =c("food_group"="food
 
 ```
 
-# Wastewater Treatment
+## Wastewater Treatment
 About 50 of biosolids recycled (CWWA, 2012) @karimiupdated2020
 
 N removed = EF* N effluent, N effluent = (Protein consumed * population * nitrogen in protein) - sludge (@National2019)
@@ -853,89 +1028,8 @@ N_wastewater <- rename(wastewater_raw, "year" = "ï..REF_DATE")%>%
   
 ```
 
-# Energy
-```{r Energy, echo=FALSE, message = FALSE}
-APEI_raw <- read_csv("Data/Energy_APEI_GHG/EN_APEI-Can-Prov_Terr.csv")
-#Canada has only Grand total
 
-APEI_energy <- as_tibble(APEI_raw)%>%
-  select(Year, Region, Source, Sector, `NOX (t)`, `NH3 (t)`)%>%
-  filter(is.na(Sector))%>% #removes double counts of sectors/sources
-  mutate(Region = case_when(Region == "AB" ~ "Alberta",
-                            Region == "BC" ~ "British Columbia",
-                            Region == "MB" ~ "Manitoba",
-                            Region == "NB" ~ "New Brunswick",
-                            Region == "NL" ~ "Newfoundland and Labrador",
-                            Region == "NS" ~ "Nova Scotia",
-                            Region == "ON" ~ "Ontario",
-                            Region == "PE" ~ "Prince Edward Island",
-                            Region == "QC" ~ "Quebec",
-                            Region == "SK" ~"Saskatchewan"))%>%
-  mutate(Source = case_when(Source == "Ore and Mineral Industries" ~ "Construction and other industry",
-                            Source == "Oil and Gas Industry" ~ "Oil and Gas Industry",
-                            Source == "Electric Power Generation (Utilities)" ~ "Electricity Generation",
-                            Source == "Manufacturing" ~ "Construction and other industry",
-                            Source == "Transportation and Mobile Equipment" ~ "Transport",
-                            Source == "Commercial / Residential / Institutional" ~ "Commercial/Residential/Institutional",
-                            Source == "Incineration and Waste" ~ "Incineration and Waste",
-                            Source == "Paints and Solvents" ~ "Other",
-                            Source == "Dust" ~ "Other",
-                            Source == "Fires" ~ "Other"))%>%
-  replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
-  mutate(N_kg = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>%
-  drop_na(Source, Region)%>%
-  filter(Year %in% years)%>%
-  group_by(Region, Source)%>%
-  summarise(`N kg/year` = mean(N_kg))
-
-CAN_APEI <- APEI_energy%>%
-  group_by(Source)%>%
-  summarise(`N kg/year` = sum(`N kg/year`))%>%
-  mutate(Region = "Canada")
-
-APEI_energy <- bind_rows(APEI_energy, CAN_APEI)%>%
-  left_join(prov_pop, by = c("Region"="GEO"))%>%
-  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
-  select(Region, Source, `N kg/cap/year`,`N kg/year`)
-
-GHG_raw <- read_csv("Data/Energy_APEI_GHG/GHG_IPCC_Can_Prov_Terr.csv")
-
-GHG_energy <- as_tibble(GHG_raw)%>%
-  select(Year, Region, Category, Unit, N2O)%>%
-  #see executive summary file for exaplanation of categories
-  mutate(Source = case_when(Category == "Public Electricity and Heat Production" ~ "Electricity Generation",
-                            Category == "Petroleum Refining Industries" ~ "Oil and Gas Industry",
-                            Category == "Oil and Gas Extraction" ~ "Oil and Gas Industry",
-                            Category == "Mining" ~ "Construction and other industry",
-                            Category == "Manufacturing Industries" ~ "Construction and other industry",
-                            Category == "Construction" ~ "Construction and other industry",
-                            Category == "Commercial and Institutional" ~ "Commercial/Residential/Institutional",
-                            Category == "Residential" ~ "Commercial/Residential/Institutional",
-                            Category == "Transport" ~ "Transport",
-                            Category == "Fugitive Sources" ~ "Other",
-                            Category == "CO2 Transport and Storage" ~ "Other",
-                            Category == "INDUSTRIAL PROCESSES AND PRODUCT USE" ~ "Construction and other industry",
-                            Category == "WASTE" ~ "Incineration and Waste"))%>%
-  drop_na(Source)%>%
-  replace_na(list(N2O = 0))%>%
-  mutate(N_kg = N2O *1000000*14.0067/44.013)%>%
-  filter(Year %in% years)%>%
-  group_by(Region, Source)%>%
-  summarise(`N kg/year` = mean(N_kg))%>%
-  left_join(prov_pop, by = c("Region"="GEO"))%>%
-  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
-  select(Region, Source, `N kg/cap/year`, `N kg/year`)
-
-N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
-  filter(Source %in% c("Commercial/Residential/Institutional", "Construction and Manufacturing", "Electricity Generation", "Oil and Gas Industry", "Transport"), Region %in% c("Canada", "Newfoundland and Labrador",	"Prince Edward Island",	"Nova Scotia", "New Brunswick", "Quebec", 	"Ontario",	"Manitoba", "Saskatchewan", "Alberta", "British Columbia"))%>%
-  group_by(Region, Source)%>%
-  summarise(`N kg/cap/year` = sum(`N kg/cap/year`),
-            `N kg/year` = sum(`N kg/year`))%>%
-  mutate(`N footprint sector` = "Fossil Fuels")%>%
-  rename("GEO"="Region", "Subsector"="Source")
-
-```
-
+# Results and Discussion
 
 ```{r N footprint, echo=FALSE, message = FALSE}
 
@@ -1006,7 +1100,9 @@ ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edwar
 ggsave("Results_Images/N_print_sectors_total.pdf") 
 
 ```
+compare to Canada result from @oitaSubstantial2016
 
+# Conclusion
 
 
 ```{r, echo=FALSE, message = FALSE}

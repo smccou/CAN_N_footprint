@@ -1,66 +1,65 @@
 ---
-title             : "Sub-national nitrogen footprints from nitrogen budgets provide emission driver context: a Canadian example"
-shorttitle        : "Canadian nitrogen footprint"
+title: "Sub-national nitrogen footprints from nitrogen budgets provide emission driver context: a Canadian example"
+shorttitle: Canadian nitrogen footprint
 
-author: 
-  - name          : "Sibeal McCourt"
-    affiliation   : "1"
-    corresponding : yes    # Define only one corresponding author
-    address       : "Postal address"
-    email         : "sibeal.mccourt@mail.mcgill.ca"
-    role:         
-      - Conceptualization
-      - Writing - Original Draft Preparation
-      - Writing - Review & Editing
-  - name          : ""
-    affiliation   : "1,2"
-    role:
-      - Writing - Review & Editing
-
+author:
+- name: Sibeal McCourt
+  affiliation: '1'
+  corresponding: yes
+  address: Postal address
+  email: sibeal.mccourt@mail.mcgill.ca
+  role:
+  - Conceptualization
+  - Writing - Original Draft Preparation
+  - Writing - Review & Editing
+- name: ''
+  affiliation: '1,2'
+  role: Writing - Review & Editing
+  
 affiliation:
-  - id            : "1"
-    institution   : "Wilhelm-Wundt-University"
-  - id            : "2"
-    institution   : "Konstanz Business School"
+- id: '1'
+  institution: 
+- id: '2'
+  institution: 
 
 authornote: |
   Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
-
   Enter author note here.
 
 abstract: |
-  >300 words 
-  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
-  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
-  One sentence clearly stating the **general problem** being addressed by  this particular study.
-  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
-  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
-  One or two sentences to put the results into a more **general context**.
-  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
-  
-  <!-- https://tinyurl.com/ybremelq -->
-  
-keywords          : "Nitrogen, footprint, environmental accounting"
-wordcount         : "X"
+  >300 words \nOne or two sentences providing a **basic introduction** to
+  the field,  comprehensible to a scientist in any discipline.\nTwo to three sentences
+  of **more detailed background**, comprehensible  to scientists in related disciplines.\nOne
+  sentence clearly stating the **general problem** being addressed by  this particular
+  study.\nOne sentence summarizing the main result (with the words \"**here we show**\"
+  or their equivalent).\nTwo or three sentences explaining what the **main result**
+  reveals in direct comparison to what was thought to be the case previously, or how
+  the  main result adds to previous knowledge.\nOne or two sentences to put the results
+  into a more **general context**.\nTwo or three sentences to provide a **broader
+  perspective**, readily comprehensible to a scientist in any discipline.\n\n<!--
+  https://tinyurl.com/ybremelq -->\n
 
-bibliography      : ["Ch_1.bib"]
+keywords: Nitrogen, footprint, environmental accounting
+wordcount: X
 
-floatsintext      : no
-figurelist        : no
-tablelist         : no
-footnotelist      : no
-linenumbers       : yes
-mask              : no
-draft             : no
+bibliography: [Ch_1.bib]
 
-documentclass     : "apa6"
-classoption       : "man"
-output            : html_notebook
-#papaja::apa6_pdf                    
+draft: no
+figurelist: no
+floatsintext: no
+footnotelist: no
+tablelist: no
+linenumbers: yes
+mask: no
+
+documentclass: apa6
+classoption: man
+
+output: html_notebook
+#bookdown::pdf_document2: default
 ---
 
 ```{r libraries, echo=FALSE, message = FALSE}
-library(markdown)
 library(readr)
 library(dplyr)
 library(tidyr)
@@ -69,6 +68,8 @@ library(ggplot2)
 library(scales)
 library(forcats)
 library(RColorBrewer)
+library(bookdown)
+library(papaja)
 ```
 
 We only require a PDF file of the new article (and any suitable supplementary data files) on submission. Authors can format their papers in the way that they choose https://publishingsupport.iopscience.iop.org/questions/structure-and-format-of-your-journal-article/
@@ -76,10 +77,9 @@ ERL operates a double-anonymous peer review process (acknowledgments added later
 total >4000 words excluding titles, abstract, figures, tables, captions, and references
 
 # Introduction ~ 800 words
-@leachnitrogen2012
-@shindoTopdown2017
-@shibataNitrogen2017: more national case studies are needed.The VNFs are available for a few
-major exporting countries, however, there are few countries that have developed their own VNFs. The development of VNFs for major exporting countries is particularly important for accurately assessing the N footprint of countries that import food.
+@leachnitrogen2012: 
+@shindoTopdown2017: 
+@shibataNitrogen2017: more national case studies are needed.The VNFs are available for a few major exporting countries, however, there are few countries that have developed their own VNFs. The development of VNFs for major exporting countries is particularly important for accurately assessing the N footprint of countries that import food.
 
 Several key differences in our approach: adjusting recommended fertilizer application rates by N from fertilizer sales. Including manure 
 
@@ -107,12 +107,12 @@ prov_pop <- read_csv("Data/Population/17100009.csv")%>%
 ```
 
 ## Energy
-To estimate energy-related Nr we use a top-down approach summing Nr emissions estimates from provincial greenhouse gas (to account for N2O) and air pollutant (to account for NOx) inventories.  
+To estimate energy-related Nr we use a top-down approach summing Nr emissions estimates from provincial greenhouse gas and air pollutant inventories, to account for N~2~O and NO~x~, respectively.  
 ```{r Energy, echo=FALSE, message = FALSE}
-APEI_raw <- read_csv("Data/Energy_APEI_GHG/EN_APEI-Can-Prov_Terr.csv")
-#Canada has only Grand total
 
-APEI_energy <- as_tibble(APEI_raw)%>%
+#download.file("http://data.ec.gc.ca/data/substances/monitor/canada-s-air-pollutant-emissions-inventory/EN_APEI-Can-Prov_Terr.csv"
+APEI_energy <- read_csv("Data/Energy_APEI_GHG/EN_APEI-Can-Prov_Terr.csv")%>%
+  as_tibble()%>%
   select(Year, Region, Source, Sector, `NOX (t)`, `NH3 (t)`)%>%
   filter(is.na(Sector))%>% #removes double counts of sectors/sources
   mutate(Region = case_when(Region == "AB" ~ "Alberta",
@@ -136,12 +136,13 @@ APEI_energy <- as_tibble(APEI_raw)%>%
                             Source == "Dust" ~ "Other",
                             Source == "Fires" ~ "Other"))%>%
   replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
-  mutate(N_kg = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>%
+  mutate(N_kg = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>% #convert NOx weights to N, NOx reported as NO2 equivalent 
   drop_na(Source, Region)%>%
   filter(Year %in% years)%>%
   group_by(Region, Source)%>%
   summarise(`N kg/year` = mean(N_kg))
 
+#Canada has only Grand total emissions, so calculated sub categories seperatly
 CAN_APEI <- APEI_energy%>%
   group_by(Source)%>%
   summarise(`N kg/year` = sum(`N kg/year`))%>%
@@ -152,9 +153,9 @@ APEI_energy <- bind_rows(APEI_energy, CAN_APEI)%>%
   mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
   select(Region, Source, `N kg/cap/year`,`N kg/year`)
 
-GHG_raw <- read_csv("Data/Energy_APEI_GHG/GHG_IPCC_Can_Prov_Terr.csv")
-
-GHG_energy <- as_tibble(GHG_raw)%>%
+#download.file("http://donnees.ec.gc.ca/data/substances/monitor/canada-s-official-greenhouse-gas-inventory/GHG_IPCC_Can_Prov_Terr.csv"
+GHG_energy <- read_csv("Data/Energy_APEI_GHG/GHG_IPCC_Can_Prov_Terr.csv")%>%
+  as_tibble()%>%
   select(Year, Region, Category, Unit, N2O)%>%
   #see executive summary file for exaplanation of categories
   mutate(Source = case_when(Category == "Public Electricity and Heat Production" ~ "Electricity Generation",
@@ -172,7 +173,7 @@ GHG_energy <- as_tibble(GHG_raw)%>%
                             Category == "WASTE" ~ "Incineration and Waste"))%>%
   drop_na(Source)%>%
   replace_na(list(N2O = 0))%>%
-  mutate(N_kg = N2O *1000000*14.0067/44.013)%>%
+  mutate(N_kg = N2O *1000000*14.0067/44.013)%>% #convert N20 to N
   filter(Year %in% years)%>%
   group_by(Region, Source)%>%
   summarise(`N kg/year` = mean(N_kg))%>%
@@ -191,7 +192,6 @@ N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
 ```
 
 ## Food
-
 For food-related Nr we  have used a hybrid top-down and bottom-up approach to estimate provincial N-footprints. We use a top-down approach to estimate provincial VNF values (further explained below) and then multiply these values by per capita food consumption data. 
 
 ```{r food_categorization, echo=FALSE, message = FALSE}
@@ -217,7 +217,7 @@ oilseed_list = c("Canola (rapeseed)", "Sunflower seed")
 
 root_list = c("Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets")
 
-vegetable_List = c("cabbage", "cauliflowers", "sweet corn", "lettuce", "green and wax beans", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)")
+vegetable_list = c("cabbage", "cauliflowers", "sweet corn", "lettuce", "green and wax beans", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)")
 
 food_crop_list = c("Buckwheat", "Corn for grain", "Rye, all", "Oats", "Triticale", "Wheat, all", "Beans, all dry (white and coloured)", "Chick peas", "Lentils", "Soybeans", "Peas, dry", "Canola (rapeseed)", "Sunflower seed", "Potaoes", "carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets", "cabbage", "cauliflowers", "sweet corn", "lettuce", "green and wax beans", "cucumbers and fresh gherkins (all varieties)", "tomatoes", "green peas", "asparagus", "celery", "spinach", "peppers", "radishes ", "garlic", "rhubarb", "broccoli", "Brussels sprouts", "leeks", "pumpkins", "French shallots and green onions", "squash and zucchini", "Asian radishes", "kale", "eggplants (except Chinese eggplants)", "radishes (except Asian radishes)", "apples", "blueberries", "grapes", "peaches", "pears", "plums and prune plums", "raspberries", "strawberries", "nectarines", "apricots", "sour cherries", "sweet cherries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps")
 
@@ -235,7 +235,6 @@ animal_list = c("Beef", "Pork", "Chicken", "Milk", "Eggs")
 
 #Field Crops
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100359-eng.zip")
-
 field_crop_survey <- read_csv("Data/Food/Production/Crop/32100359.csv")%>%
   as_tibble()%>% 
   rename(StatCan_name = "Type of crop")%>%
@@ -346,13 +345,32 @@ crop_prod <- bind_rows(field_crop_prod, potato_prod, fruit_prod, vegetable_prod)
 ```
 
 ## Crop VNFs 
-VNF = kg N loss/ kg food OR kg N loss/ kg N food
-N lost between N inputs and crop harvest (field N), harvest and edible N (procesessing), and household waste
+Virtual nitrogen factors estimate the N~r~ lost during the production of a food item, per total weight of food item or weight of N in the food item, see \@ref(eq:VN kg) and \@ref(eq:VN kgN). 
 
-### N inputs 
-N inputs = N from fertilizer + N from BNF (not manure since it's recycled)
+\begin{equation}
+VNF = kg N_{loss}/ kg_{food} (\#eq:VN kg)
+\end{equation}
 
-To estimate fertilizer N inputs we used provincial statistics on N fertilizer sales @governmentofcanadaFertilizer2020, and dissagregated the data based on crop area in each province, and the provincial recommended N application rate for that crop. 
+\begin{equation}
+VNF = kg N_{loss}/ kg N_{food} (\#eq:VN kgN)
+\end{equation}
+
+N~r~ losses to the environment include the N~r~ loss on the field, procesessing and retail losses, and household waste (note that N~r~ loss during wastewater treatment is inlcuded in a seperate section of the N footprint), see \@ref(eq:N losses) 
+
+\begin{equation}
+N_{total loss} = N_{field loss} + N_{process loss} + N_{house loss} (\#eq:N losses)
+\end{equation}
+
+At each of these steps we estimated the difference between N inputs and N outputs as well as N~2~ denitrification. We include N~2~ denitrification because it is not a form of N~r~ and therefore is not included in our N footprint.
+
+### Nitrogen loss at the field
+To estimate N~r~ release that occurs at the field level we calculated the difference between N inputs of fertilizer and biological nitrogen fixation (BNF), N~2~ losses, and the output N contained in crop harvests \@ref(eq:N field loss). Manure is not included in this step as it is 'recycled' and not new N~r~. Manure N and related losses are dealt with in the animal VNF calculations.
+
+\begin{equation}
+N_{field loss} = N_{fert} + N_{BNF} +N_{residue recycling} - N_{denitrification}  (\#eq:N field loss)
+\end{equation}
+
+To estimate fertilizer N inputs we used provincial statistics on N fertilizer sales @governmentofcanadaFertilizer2020, and dissagregated the data based on crop areas in each province (based on various crop production surveys, see Appendix ...), and the provincial recommended N application rate for that crop @yangDevelopment2007. Because we cannot account for all crops grown in all provinces, the amount of N applied to each crop is likely an overestimation.  
 ```{r N_fertilizer, echo=FALSE, message = FALSE}
 #Fertilizer Sales N
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100039-eng.zip", "Data/Food/Fertilizer/32100039-eng.zip")
@@ -372,16 +390,15 @@ N_fert_sales <- read_csv("Data/Food/Fertilizer/32100039.csv")%>%
 #Recommended N Application Rates
 #from @yangDevelopment2007
 #added wheat as average of spring and winter (almost the same)
-#added atlantic province recommendations seperately
-recommended_rates <- read_excel("Data/Food/Fertilizer/recommended_fertilizer.xlsx")%>%
+N_recommended_rates <- read_excel("Data/Food/Fertilizer/recommended_fertilizer.xlsx")%>%
   mutate("Canada" = (rowSums(.[2:7])/7))%>%
   gather(GEO, Rate_kg_ha, `British Columbia`:`Canada`)
 
 #Fertilizer N Application adjusted
-#actual N applied on each crop estimated by adjusting the recommended rate for each crop type by the ratio of total N sold provincially(kg) to the total N if recommended rates were used
-#@huffmanEstimation2008, @yangDevelopment2007
-#Due to a lack of data for some recommended fertilizer rates and sales data, PEI, NB NFLD and NS were grouped together as the Atlantic Provinces, the avg fertilizer rate was applied to each province 
+#actual N applied on each crop estimated by adjusting the recommended rate for each crop type by the ratio of total N sold provincially (kg) to the total N if recommended rates were used @yangDevelopment2007
+#Note for fertilizer rates and sales data, PEI, NB NFLD and NS were grouped together as the Atlantic Provinces, so the apllication rate for these provinces was adjusted by this region 
 N_rec_fert_crop <- mutate(crop_area, key_rec_fert = case_when(StatCan_name %in% vegetable_list ~ "Vegetables",
+                                                              StatCan_name %in% c("carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets") ~ "Vegetables",
                                                           StatCan_name %in% c("blueberries", "raspberries", "strawberries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps") ~ "Berries",
                                                           StatCan_name %in% c("apples", "peaches", "pears", "plums and prune plums", "nectarines", "apricots", "sour cherries", "sweet cherries") ~ "Tree fruits",
                                                           StatCan_name %in% c("Barley", "Canary seed", "Rye, all", "Triticale") ~ "Other field",
@@ -394,7 +411,7 @@ N_rec_fert_crop <- mutate(crop_area, key_rec_fert = case_when(StatCan_name %in% 
                                                           StatCan_name == "grapes" ~ "Grapes",
                                                           TRUE ~ StatCan_name))%>%
   #StatCan crop names were matched to crop categories for recommended fertilization rates
-  left_join(recommended_rates, by  = c("key_rec_fert" = "Crop", "GEO"="GEO"))%>%
+  left_join(N_recommended_rates, by  = c("key_rec_fert" = "Crop", "GEO"="GEO"))%>%
   #total *recommended* fertilizer use for a given crop in a province
   mutate(N_rec_crop_kg = area_ha*Rate_kg_ha)%>%
   mutate(key_prov_fert = case_when(GEO %in% c("Prince Edward Island", "New Brunswick", "Nova Scotia", "Newfoundland and Labrador") ~ "Atlantic provinces",
@@ -414,20 +431,18 @@ N_adjusted_fert <- left_join(N_rec_fert_crop, N_rec_fert_prov)%>%
   mutate(Diff_sales_rec = N_applied_crop_kg - N_rec_crop_kg)
 ```
 
-Nitrogen from BNF = total crop N (root, residue and product N) * % fixed from atmosphere used vaules from @karimiupdated2020
-include alfalfa?
+N~r~ fixed from the atmosphere from BNF was calculated by multiplying total leguminous crop N (root, residue and product N) by the percentage of that N that is fixed from atmosphere (BNFA). Crop N was estimated using crop yields from @governmentofcanada, crop N concentrations, harvest index (HI) and BNFA values published in @karimiupdated2020. 
 ```{r N_BNF, echo=FALSE, message = FALSE}
 #BNF rates, HI and residues from @karimi2020
-HI_Nconc_BNF_raw <- read_excel("Data/Food/Production/Crop/HI_Nconc_BNF.xlsx")
-
-HI_Nconc_BNF <- as_tibble(HI_Nconc_BNF_raw)
+HI_Nconc_BNF <- read_excel("Data/Food/Production/Crop/HI_Nconc_BNF.xlsx")%>%
+  as_tibble()
 
 #BNF fixation
-N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% c("apples", "peaches", "pears", "plums and prune plums", "nectarines", "apricots", "sour cherries", "sweet cherries") ~ "Tree fruit",
-                                           StatCan_name %in% c("blueberries", "raspberries", "strawberries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "grapes") ~ "Berries and grapes",
-                                           StatCan_name %in% vegetable_list ~"Vegetables",
-                                           StatCan_name %in% c("Buckwheat") ~ "Other field crops",
-                                           TRUE ~ StatCan_name))%>%
+N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% vegetable_list ~ "Vegetables",
+                                                              StatCan_name %in% c("carrots", "dry onions", "parsnips", "sweet potatoes", "rutabagas and turnips", "beets") ~ "Vegetables",
+                                                          StatCan_name %in% c("blueberries", "raspberries", "strawberries", "cranberries", "saskatoon berries", "blackberries", "currants", "haskaps", "grapes") ~ "Berries and grapes",
+                                                          StatCan_name %in% c("apples", "peaches", "pears", "plums and prune plums", "nectarines", "apricots", "sour cherries", "sweet cherries") ~ "Tree fruit",
+                                                          TRUE ~ StatCan_name))%>%
   left_join(HI_Nconc_BNF, by = c("key" = "Crop"))%>%
   mutate(yield_DM_kg = yield_kg * ((1-(`H20 content (%w/w)`/100))),
          yield_N_kg = yield_DM_kg * (`N conc res (%DM)`/100),
@@ -439,48 +454,36 @@ N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% c("apples", "peache
   replace_na(list(N_BNF_kg=0))
 ```
 
-```{r N_total_input, echo=FALSE, message = FALSE}
-N_input <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_name"="StatCan_name"))%>%
-  mutate(total_new_N_kg = N_applied_crop_kg + N_BNF_kg)%>%
-  select(-c(key_prov_fert, "Fertilizer nutrient content", UOM, SCALAR_FACTOR, quantity))
-```
-
-### Processing and waste
-Field N loss = N fertilizer + N BNF + N loss crop residue - crop N export - residue N export (feed?) - denitrification
-assumed that remaining residue and decomposing root material are recycled and reabsorbed by the growing crop, also very minor flow @karimiupdated2020
-they assume 10% of remaining organic N in soil is denitrified (sensitivity analysis?), 1:1 N20 to N2 @yang2007
+Denitrification losses from agricultural soils consist mainly of N2, but also include N2O and NOx (NO and NO2). Estimates remain uncertain due to methodological constraints and high spatiotemporal variability For overall denitrification loss in 2016 we used the approach of Janzen et al. (2003), assuming that 10 % of the soluble N contained in fertilizer was lost through denitrification and 10% of remaining organic N in soil is denitrified @karimiupdated2020. Assume 1:1 N20 to N2 @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? We also included residue recycling based on allocations of residues by @karimiupdated2020 
 
 ```{r N_field_loss, echo=FALSE, message = FALSE}
 
 #Yield N concentrations and allocations of products and aboveground residues taken from @karimiupdated2020
 residue_allocation <- read_excel("Data/Food/Production/Crop/residue_allocation.xlsx")
 
-#crop StatCan names matched to N concentration names
-N_field_loss <- left_join(N_input, residue_allocation, by = c("key" = "Crop"))%>%
-  mutate(residue_N_export_kg = case_when(key == "Tree fruit" ~ 0,
-                                     key == "Berries and grapes" ~ 0,
-                                     TRUE ~ residue_N_kg * `Residue: Export %`),
-         product_N_export_kg = yield_N_kg * (`Product: Livestock %` + `Product: Export %`),
-         denitrification_N_kg = residue_N_kg * `Residue: Soil %` * 0.10,
-         N_loss_field_kg = total_new_N_kg - product_N_export_kg - residue_N_export_kg - denitrification_N_kg
+N_field_loss <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_name"="StatCan_name"))%>%
+  mutate(total_new_N_kg = N_applied_crop_kg + N_BNF_kg)%>%
+  select(-c(key_prov_fert, "Fertilizer nutrient content", UOM, SCALAR_FACTOR, quantity))%>%
+  left_join(residue_allocation, by = c("key" = "Crop"))%>%
+  mutate(residue_recycled_N_kg = residue_N_kg * `Residue: Soil %`,
+         denitrification_N_kg = ((residue_N_kg * `Residue: Soil %` * 0.05) + (N_applied_crop_kg * 0.05)),
+         N_loss_field_kg = total_new_N_kg - yield_N_kg + residue_recycled_N_kg - denitrification_N_kg
   )%>%
   #to get rid of oddness in surveys, e.g. some crops in some provinces have an area but no harvest or vice versa
   filter(area_ha > 0,
          yield_kg > 0)%>%
   select(-c(4:8, key, "Source.x", "Source.y"))
-#there are some negative values. Soil N mining? 
+#there area couple negative values. Soil N mining? 
 ```
 
-Edible N and processing losses
-```{r N_processing_loss, echo=FALSE, message = FALSE}
-#Processing, packaging and distribution waste values were taken from USDA (Used same N conc values @karimi2020 for consistency (Lassaletta's slightly different).
-
+### Processing and waste
+As provincial data for food processing and waste losses is currently unavaible in Canada, fractions lost in each food group were taken from the USDA loss adjusted food availability tables.  
+```{r N_crop_processing_loss, echo=FALSE, message = FALSE}
 #USDA https://www.ers.usda.gov/data-products/food-availability-per-capita-data-system/ 
 food_processing_waste <- read_excel("Data/Food/Food_waste/food_loss_USDA.xlsx", range = "A1:D11")
   
-
 #Processing loss
-N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in% grain_list ~ "Grains",
+N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in% cereals_list ~ "Grains",
                                                  StatCan_name %in% oilseed_list ~ "Fats",
                                                  StatCan_name %in% legume_list ~ "Legumes",
                                                  StatCan_name %in% root_list ~ "Vegetables",
@@ -488,53 +491,49 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in%
                                                  StatCan_name %in% vegetable_list ~ "Vegetables",
                                                  TRUE ~ StatCan_name))%>%
   left_join(food_processing_waste, by = c("key_process" = "Food Item"))%>%
-  #processing N loss
-  mutate(retail_N_kg = yield_N_kg * (1-`Processing and packaging`),
-         retail_kg = yield_kg * (1-`Processing and packaging`),
-         N_loss_processing_waste_kg = yield_N_kg - retail_N_kg,
-         #retail N loss
-         edible_N_kg = retail_N_kg * (1-`Distribution: Supermarket Retail`),
-         edible_kg = retail_kg * (1-`Distribution: Supermarket Retail`),
-         N_loss_retail_waste_kg = retail_N_kg - edible_N_kg,
-         #household N loss & N consumed
-         consumed_N_kg = yeild_N_kg * (1-(`Total loss all levels`/100)),
-         consumed_kg = edible_kg * (1-`Household Waste`),
-         N_loss_household_waste_kg = edible_N_kg - consumed_N_kg)%>%
-  rename("food_group"= "key_process")
+  mutate(consumed_N_kg = yield_N_kg * `Total loss all levels`/100,
+         consumed_kg = yield_kg * `Total loss all levels`/100,
+         N_loss_processing_waste_kg = yield_N_kg - consumed_N_kg)%>%
+  mutate(`Food group` = case_when(StatCan_name %in% cereals_list ~ "Grains",
+                                                 StatCan_name %in% oilseed_list ~ "Oilseeds",
+                                                 StatCan_name %in% legume_list ~ "Legumes",
+                                                 StatCan_name %in% root_list ~ "Roots",
+                                                 StatCan_name %in% fruit_list ~ "Fruit",
+                                                 StatCan_name %in% vegetable_list ~ "Vegetables"))
 ```
 
 ```{r VNF_food_crop, echo=FALSE, message = FALSE}
-VNF_food_crop_prov <- N_crop_process%>%
-  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg,
-         #VNF
-         VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
-         VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
-  group_by(GEO, food_group)%>%
-  summarise(`VNF_kgN_kg` = mean(`VNF_kgN_kg`), `VNF_kgN_kgN` = mean(`VNF_kgN_kgN`))%>%
+VNF_food_group_prov <- N_crop_process%>%
+  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg,
+         `VNF kgN/kg` = (Total_N_loss_kg / consumed_kg),
+         `VNF kgN/kgN` = (Total_N_loss_kg / consumed_N_kg))%>%
+  group_by(GEO, `Food group`)%>%
+  summarise(`VNF kgN/kg` = mean(`VNF kgN/kg`), `VNF kgN/kgN` = mean(`VNF kgN/kgN`))%>%
   drop_na()
 
+#Canadian VNFs by yield weighted average (i.e. avg VNFs are most similar to whichever province grows the most of that food)
 VNF_food_group_CAN <- N_crop_process%>%
-  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg + N_loss_retail_waste_kg + N_loss_household_waste_kg,
-         #VNF
-         VNF_kgN_kg = (Total_N_loss_kg / edible_kg),
-         VNF_kgN_kgN = (Total_N_loss_kg / edible_N_kg))%>%
-  group_by(food_group)%>%
-  summarise(`VNF_kgN_kg` = weighted.mean(`VNF_kgN_kg`, yield_kg ))%>%
+  mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg,
+         `VNF kgN/kg` = (Total_N_loss_kg / consumed_kg),
+         `VNF kgN/kgN` = (Total_N_loss_kg / consumed_N_kg))%>%
+  group_by(`Food group`)%>%
+  summarise(`VNF kgN/kg` = weighted.mean(`VNF kgN/kg`, yield_kg),
+            `VNF kgN/kgN` = weighted.mean(`VNF kgN/kgN`, yield_kg))%>%
   mutate(GEO = "Canada")%>%
   drop_na()
 #write_csv(VNF_food_group_CAN, file.path("Results_Images/VNF_food_group_CAN.csv"))
 
-#VNF_food_group <- bind_rows(VNF_food_crop_prov, VNF_food_crop_CAN)
+VNF_food_group <- bind_rows(VNF_food_group_prov, VNF_food_group_CAN)
 #write_csv(VNF_food_group, file.path("Results_Images/VNF_food_group.csv"))
 
 ##GRAPHS AND FUN STUFF##
 #variation in VNFs between food groups
 
-ggplot(VNF_food_group, aes(fill = food_group, y = VNF_kgN_kg, x = food_group))+
+ggplot(VNF_food_group, aes(fill = `Food group`, y = `VNF kgN/kg`, x = `Food group`))+
   geom_bar(position="stack", stat="identity") +
   facet_wrap(~factor(GEO, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island")), scales = "free")+
   labs(caption = "Virtual nitrogen factors (kgN / kg) for food crops") +
-  scale_fill_manual(values=wes_palette(n=6, name="IsleofDogs1"))+
+  scale_fill_brewer(palette="Paired")+
   theme_classic()+
   theme(axis.title.y = element_blank(), 
         axis.title.x = element_blank(),
@@ -608,9 +607,9 @@ animal_pop <- bind_rows(beef_pop, pork_pop, broiler_pop, layer_pop)%>%
 1) manure N production/year: 
 feed N - animal N
 
-feed N = feed rates/types/animal (@Sheppard2015)  * Nconc (@karimiupdated2020)
+feed N = feed rates/types/animal (@sheppardLinkage2015)  * Nconc (@karimiupdated2020)
 
-animal N = animal population * slaughtered Fraction of population (based on census) slaughtered annually (@Sheppard2015)  * animal weight at slaughter (@Sheppard2015)  * total Nconc:(@karimiupdated2020) (CROSS CHECK WITH NATIONAL STATS)
+animal N = animal population * slaughtered Fraction of population (based on census) slaughtered annually (@sheppardLinkage2015)  * animal weight at slaughter (@sheppardLinkage2015)  * total Nconc:(@karimiupdated2020) (CROSS CHECK WITH NATIONAL STATS)
 
 2) manure storage loss: @huffmanEstimation2008
 
@@ -780,10 +779,10 @@ VN_feed <- animal_pop%>%
 ```
 
 ### Meat and animal products processing and waste
-N losses during meat processing were estimated difference between N content of animals slaughtered (from @Leach2012) and N content of meat (N contents of meat from @FAO/Lassaletta).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal), 
+N losses during meat processing were estimated difference between N content of animals slaughtered (from @leachnitrogen2012) and N content of meat (N contents of meat from @FAO/Lassaletta).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal), 
 Used Canadian meat conversion factors published by @sheppardLinkage2015 * provincial livestock populations to estimate animal slaughtered
 How close were they to national values?
-N losses during meat processing were estimated using N content of live animals from @Leach2012, average processing losses from @sheppardLinkage2015, and N contents of meat from @FAO/Lassaletta.
+N losses during meat processing were estimated using N content of live animals from @leachnitrogen2012, average processing losses from @sheppardLinkage2015, and N contents of meat from @FAO/Lassaletta.
 
 ```{r N_process_meat, echo=FALSE, message = FALSE}
 
@@ -910,20 +909,20 @@ CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_
   separate(name, sep =":", into=c("BNS_code", "BNS_name"))%>%
   #removes some names, e.g. 1%, 2% for milks but is ok for coding
   select(!1)%>%
-  mutate(food_group = case_when(BNS_code %in% c("BNSD01A", "BNSD01B", "BNSD01C", "BNSD02A", "BNSD03A", "BNSD03B", "BNSD04A", "BNSD04B", "BNSD04C", "BNSD04D", "BNSD04E", "BNSD04F", "BNSD05A", "BNSD06A", "BNSD07A", "BNSD07B", "BNSD07C", "BNSD08A", "BNSD08B", "BNSD08C") ~ "cereals",
-                                BNS_code %in% c("BNSD09A", "BNSD09B", "BNSD09C", "BNSD10A", "BNSD10B", "BNSD10C", "BNSD10D", "BNSD10E", "BNSD10F", "BNSD10G", "BNSD10H", "BNSD10I", "BNSD10K", "BNSD13A", "BNSD13B", "BNSD13C", "BNSD13D", "BNSD14A", "BNSD14B", "BNSD14C", "BNSD14D", "BNSD15A", "BNSD15B", "BNSD17A") ~ "dairy",
-                                BNS_code %in% c("BNSD16A", "BNSD16B") ~ "eggs",
-                                BNS_code %in% c("BNSD21B", "BNSD21C") ~ "lamb",
-                                BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "oilseeds",
-                                BNS_code %in% c("BNSD22A", "BNSD22B", "BNSD22C", "BNSD23A", "BNSD23B") ~ "beef",
-                                BNS_code %in% c("BNSD25A", "BNSD25B", "BNSD25C", "BNSD25D", "BNSD25E") ~ "pork",
+  mutate(food_group = case_when(BNS_code %in% c("BNSD01A", "BNSD01B", "BNSD01C", "BNSD02A", "BNSD03A", "BNSD03B", "BNSD04A", "BNSD04B", "BNSD04C", "BNSD04D", "BNSD04E", "BNSD04F", "BNSD05A", "BNSD06A", "BNSD07A", "BNSD07B", "BNSD07C", "BNSD08A", "BNSD08B", "BNSD08C") ~ "Grains",
+                                BNS_code %in% c("BNSD09A", "BNSD09B", "BNSD09C", "BNSD10A", "BNSD10B", "BNSD10C", "BNSD10D", "BNSD10E", "BNSD10F", "BNSD10G", "BNSD10H", "BNSD10I", "BNSD10K", "BNSD13A", "BNSD13B", "BNSD13C", "BNSD13D", "BNSD14A", "BNSD14B", "BNSD14C", "BNSD14D", "BNSD15A", "BNSD15B", "BNSD17A") ~ "Dairy",
+                                BNS_code %in% c("BNSD16A", "BNSD16B") ~ "Eggs",
+                                BNS_code %in% c("BNSD21B", "BNSD21C") ~ "Lamb",
+                                BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "Oilseeds",
+                                BNS_code %in% c("BNSD22A", "BNSD22B", "BNSD22C", "BNSD23A", "BNSD23B") ~ "Beef",
+                                BNS_code %in% c("BNSD25A", "BNSD25B", "BNSD25C", "BNSD25D", "BNSD25E") ~ "Pork",
                                 BNS_code %in% c("BNSD27A", "BNSD27B") ~ "chicken",
                                 BNS_code %in% c("BNSD27C", "BNSD27D", "BNSD27E", "BNSD27F", "BNSD28A", "BNSD28B", "BNSD29A", "BNSD30A", "BNSD31A", "BNSD32A") ~ "other meat",
-                                BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "vegetables",
-                                BNS_code %in% c("BNSD33A", "BNSD33B", "BNSD33C") ~ "nuts",
-                                BNS_code %in% c("BNSD37A", "BNSD37B")~ "pulses",
-                                BNS_code %in% c("BNSD36E", "BNSD36J", "BNSD38A", "BNSD38B", "BNSD39A") ~ "roots",
-                                BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "fruits"
+                                BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "Vegetables",
+                                BNS_code %in% c("BNSD33A", "BNSD33B", "BNSD33C") ~ "Nuts",
+                                BNS_code %in% c("BNSD37A", "BNSD37B")~ "Legumes",
+                                BNS_code %in% c("BNSD36E", "BNSD36J", "BNSD38A", "BNSD38B", "BNSD39A") ~ "Roots",
+                                BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "Fruits"
  ))
 # plant milks "BNSD10J"
 # animal fats "BNSD21B" "BNSD21C"
@@ -976,12 +975,12 @@ TukeyHSD(aov_food)
 #non-parametric kruskal-Wallis
 #http://www.sthda.com/english/wiki/one-way-anova-test-in-r#multiple-pairwise-comparison-between-the-means-of-groups
 
-VNF_food_group_CAN <- read.csv("Results_Images/VNF_food_group_CAN.csv")
+VNF_food_group_CAN <- read_csv("Results_Images/VNF_food_group_CAN.csv")
 
-VN_food <- left_join(food_consum_g, VNF_food_group_CAN, by =c("food_group"="food_group"))%>%
+VN_food <- left_join(food_consum_g, VNF_food_group_CAN, by =c("food_group"="Food group"))%>%
   rename("GEO"="GEO.x")%>%
-  mutate(`N kg/cap/year` = `consumed g/cap/year`/1000 * VNF_kgN_kg,
-         `N kg/year` = `consumed g/year`/1000 * VNF_kgN_kg)%>%
+  mutate(`N kg/cap/year` = `consumed g/cap/year`/1000 * `VNF kgN/kg`,
+         `N kg/year` = `consumed g/year`/1000 * `VNF kgN/kg`)%>%
   select(GEO, food_group, `N kg/cap/year`, `N kg/year`)%>%
   mutate(`N footprint sector` = "VN from food")%>%
   rename(Subsector = food_group)%>%
@@ -1051,8 +1050,7 @@ ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = GEO))+
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
-
-ggsave("Results_Images/N_print_subsectors_cap.pdf")  
+#ggsave("Results_Images/N_print_subsectors_cap.pdf")  
 
 ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = GEO))+
   geom_bar(stat="identity") +
@@ -1066,8 +1064,7 @@ ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = GE
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
-
-ggsave("Results_Images/N_print_sectors_cap.pdf")
+#ggsave("Results_Images/N_print_sectors_cap.pdf")
 
 ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Quebec", "Ontario", "Manitoba", "Saskatchewan", "Alberta", "British Columbia")), aes(fill = `Subsector`, y = `N kg/year`, x = GEO))+
   geom_bar(stat="identity") +
@@ -1081,8 +1078,7 @@ ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edwar
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
-
-ggsave("Results_Images/N_print_subsectors_total.pdf")  
+#ggsave("Results_Images/N_print_subsectors_total.pdf")  
 
 ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Quebec", "Ontario", "Manitoba", "Saskatchewan", "Alberta", "British Columbia")), aes(fill = `N footprint sector`, y = `N kg/year`, x = GEO))+
   geom_bar(stat="identity") +
@@ -1096,8 +1092,7 @@ ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edwar
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
-
-ggsave("Results_Images/N_print_sectors_total.pdf") 
+#ggsave("Results_Images/N_print_sectors_total.pdf") 
 
 ```
 compare to Canada result from @oitaSubstantial2016

@@ -43,6 +43,7 @@ keywords: Nitrogen, footprint, environmental accounting
 wordcount: X
 
 bibliography: [Ch_1.bib]
+link-citations: yes
 
 draft: no
 figurelist: no
@@ -51,9 +52,6 @@ footnotelist: no
 tablelist: no
 linenumbers: yes
 mask: no
-
-documentclass: apa6
-classoption: man
 
 output: html_notebook
 #bookdown::pdf_document2: default
@@ -64,28 +62,43 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(readxl)
+
+library(bookdown)
+#library(papaja)
+
 library(ggplot2)
 library(scales)
 library(forcats)
 library(RColorBrewer)
-library(bookdown)
-library(papaja)
+
 ```
 
 We only require a PDF file of the new article (and any suitable supplementary data files) on submission. Authors can format their papers in the way that they choose https://publishingsupport.iopscience.iop.org/questions/structure-and-format-of-your-journal-article/
 ERL operates a double-anonymous peer review process (acknowledgments added later)
-total >4000 words excluding titles, abstract, figures, tables, captions, and references
+total ~4000 words excluding titles, abstract, figures, tables, captions, and references
 
 # Introduction ~ 800 words
+
+## Nitrogen and nitrogen footprints
 @leachnitrogen2012: 
 @shindoTopdown2017: 
-@shibataNitrogen2017: more national case studies are needed.The VNFs are available for a few major exporting countries, however, there are few countries that have developed their own VNFs. The development of VNFs for major exporting countries is particularly important for accurately assessing the N footprint of countries that import food.
+@shibataNitrogen2017: more national case studies are needed. The VNFs are available for a few major exporting countries, however, there are few countries that have developed their own VNFs. The development of VNFs for major exporting countries is particularly important for accurately assessing the N footprint of countries that import food.
+
+## Why Canada is good as a case study
+
+## Goal of this paper
+*Domestic nitrogen footprint for Canada* focusing on subnational variability
 
 Several key differences in our approach: adjusting recommended fertilizer application rates by N from fertilizer sales. Including manure 
 
-# Methodology
+subnational drivers
 
-We draw strongly on the work down for the  N-calculator model developed by @leachnitrogen2012. We divide our nitrogen footprint model into the following sectors and sub sectors 1) Nr release due to burning fossil fuels, further divided for energy production, transport, oil and gas industries and other sources and 2) Nr related to food, divided into crop-related food production, livestock production and wastewater treatment. Our initial estimate is for the year 2015, the most recent year were data sources could be found for all relevant categories. Calculations and data sources for each sector are described in the following sections. 
+make sure to address trade, even if it's not explicitly included (it's outside the scope of this paper)
+
+*Geographic drivers of why/how footprints are different*
+
+# Methodology ~1500 words
+We drew strongly on the framework of the N-calculator model developed by [@leachnitrogen2012]. We divide our nitrogen footprint model into the following sectors and sub sectors 1) N~r~ release due to burning fossil fuels, further divided into energy production, transport, oil and gas industries and other sources and 2) N~r~ related to food, divided into crop production, livestock production and waste water treatment. We calculated the total and per capita N footprint for each province for the year 2015, the most recent year where data sources could be found for all relevant categories. To estimate energy-related N~r~ we use a top-down approach, summing reports of N~r~ emissions from provincial greenhouse gas and air pollutant inventories [@National2020 @Canada2020], to account for N~2~O and NO~x~ emissions, respectively. We report both total emissions and 
 ```{r Scoping, echo=FALSE, message = FALSE}
 years = c(2014, 2015, 2016)
 
@@ -106,8 +119,6 @@ prov_pop <- read_csv("Data/Population/17100009.csv")%>%
   summarize(Population = mean(VALUE))
 ```
 
-## Energy
-To estimate energy-related Nr we use a top-down approach summing Nr emissions estimates from provincial greenhouse gas and air pollutant inventories, to account for N~2~O and NO~x~, respectively.  
 ```{r Energy, echo=FALSE, message = FALSE}
 
 #download.file("http://data.ec.gc.ca/data/substances/monitor/canada-s-air-pollutant-emissions-inventory/EN_APEI-Can-Prov_Terr.csv"
@@ -192,7 +203,7 @@ N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
 ```
 
 ## Food
-For food-related Nr we  have used a hybrid top-down and bottom-up approach to estimate provincial N-footprints. We use a top-down approach to estimate provincial VNF values (further explained below) and then multiply these values by per capita food consumption data. 
+We used a hybrid top-down and bottom-up approach to estimate the food-related portion of provincial N-footprints. We use a top-down approach to estimate provincial virtual nitrogen factor (VNF) values (further explained below) and then multiply these values by per capita food consumption data. We estimated crop 
 
 ```{r food_categorization, echo=FALSE, message = FALSE}
 #Names from StatsCan Crop Surveys, with doubles/subcategories removed
@@ -209,7 +220,7 @@ vegetable_survey_list = c("cabbage", "rutabagas and turnips", "beets", "cauliflo
 #Food grouping lists
 cereals_list = c("Buckwheat", "Corn for grain", "Rye, all", "Oats", "Triticale", "Wheat, all") #stuff that people eat crops with less than 60% livestock allocation based on Karimi et al 2020 (Table A4)
 
-feed_list = c("Barley", "Corn for silage", "Faba beans", "Sugar beets", "Tame hay") #stuff animal eat, crops with more than 60% livestock allocation based on Karimi et al 2020 (Table A4)
+feed_list = c("Barley", "Corn for silage", "Wheat, all", "Soybeans", "Tame hay") #based on Sheppard
 
 legume_list = c("Beans, all dry (white and coloured)", "Chick peas", "Lentils", "Soybeans", "Peas, dry")
 
@@ -360,13 +371,13 @@ N_{losstotalcrop} = N_{field loss} + N_{process loss} + N_{house loss} (\#eq: cr
 At each of these steps we estimated the difference between N inputs and N outputs as well as N~2~ denitrification. We include N~2~ denitrification because it is not a form of N~r~ and therefore is not included in our N footprint.
 
 ### Nitrogen loss at the field
-To estimate N~r~ release that occurs at the field level we calculated the difference between N inputs of fertilizer and biological nitrogen fixation (BNF), N~2~ losses, and the output N contained in crop harvests \@ref(eq:N field loss). Manure is not included in this step as it is 'recycled' and not new N~r~. Manure N and related losses are dealt with in the animal VNF calculations.
+To estimate N~r~ release that occurs at the field level we calculated the difference between N inputs of fertilizer and biological nitrogen fixation (BNF), N~2~ losses, and the output N contained in crop harvests \@ref(eq:N field loss). Manure is not included in this step as it is recycled N and not new N~r~. Manure N and related losses are dealt with in the animal VNF calculations.
 
 \begin{equation}
 N_{field loss} = N_{fert} + N_{BNF} +N_{residue recycling} - N_{denitrification}  (\#eq:N field loss)
 \end{equation}
 
-To estimate fertilizer N inputs we used provincial statistics on N fertilizer sales @governmentofcanadaFertilizer2020, and dissagregated the data based on crop areas in each province (based on various crop production surveys, see Appendix ...), and the provincial recommended N application rate for that crop @yangDevelopment2007. Because we cannot account for all crops grown in all provinces, the amount of N applied to each crop is likely an overestimation.  
+To estimate fertilizer N inputs we used provincial statistics on N fertilizer sales @governmentqofcanadaFertilizer2020, and dissagregated the data based on crop areas in each province (based on various crop production surveys, see Appendix ...), and the provincial recommended N application rate for that crop (@yangDevelopment2007). Because we cannot account for all crops grown in all provinces, the amount of N applied to each crop is likely an overestimation.  
 ```{r N_fertilizer, echo=FALSE, message = FALSE}
 #Fertilizer Sales N
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100039-eng.zip", "Data/Food/Fertilizer/32100039-eng.zip")
@@ -450,7 +461,7 @@ N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% vegetable_list ~ "V
   replace_na(list(N_BNF_kg=0))
 ```
 
-Denitrification losses from agricultural soils consist mainly of N2, but also include N2O and NOx (NO and NO2). Estimates remain uncertain due to methodological constraints and high spatiotemporal variability For overall denitrification loss in 2016 we used the approach of Janzen et al. (2003), assuming that 10 % of the soluble N contained in fertilizer was lost through denitrification and 10% of remaining organic N in soil is denitrified @karimiupdated2020. Assume 1:1 N20 to N2 @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? We also included residue recycling based on allocations of residues by @karimiupdated2020 
+Estimates of denitrification remain uncertain due to methodological constraints and high spatiotemporal variability. For overall denitrification losses we used the approach of @karimiupdated2020, and assumed that 10 % of the soluble N contained in fertilizer was lost through denitrification and 10% of organic N remainig in soil from crop residues is denitrified (@karimiupdated2020). We assume that there is a 1:1 ratio of N20 to N2 @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? Crop residue recycling is based on allocations of residues by @karimiupdated2020. 
 
 ```{r N_field_loss, echo=FALSE, message = FALSE}
 
@@ -487,8 +498,8 @@ N_crop_process <- mutate(N_field_loss, key_process = case_when(StatCan_name %in%
                                                  StatCan_name %in% vegetable_list ~ "Vegetables",
                                                  TRUE ~ StatCan_name))%>%
   left_join(food_processing_waste, by = c("key_process" = "Food Item"))%>%
-  mutate(consumed_N_kg = yield_N_kg * `Total loss all levels`/100,
-         consumed_kg = yield_kg * `Total loss all levels`/100,
+  mutate(consumed_kg = yield_kg * `Total loss all levels`/100,
+         consumed_N_kg = consumed_kg * (1-(`H20 content (%w/w)`/100)) * (`N conc prod (%DM)`/100),
          N_loss_processing_waste_kg = yield_N_kg - consumed_N_kg)%>%
   mutate(`Food group` = case_when(StatCan_name %in% cereals_list ~ "Grains",
                                                  StatCan_name %in% oilseed_list ~ "Oilseeds",
@@ -540,34 +551,35 @@ ggplot(VNF_food_group, aes(fill = `Food group`, y = `VNF kgN/kg`, x = `Food grou
 ```
 
 ## Meat & animal product VNFs
-VNFs for meat and animal products(dairy and eggs) are calculated the same way as for crops (the total N~r~ lost during the production of a food item divided by weight of food item see \@ref(eq:VN kg)). However, total N~r~ released during the production of animal products includes animal feed , processing and waste losses, as well as the N~r~ released from manure \@ref(eq:animal N losses). We recognize that there is a slight overlap in how we might attribute emissions to animal products and meat. For example layer poultry produce both eggs and meat. However, in a previous study examining ammonia emissions in Canadian livestock (@sheppardLinkage2015), they found that only 3% of dairy emissions and 7% of layer emissions were attributed to meat production. Therefore we will estimate beef VNFs using only beef cattle, dairy emission from dairy cattle, chicken meat from broiler chickens, and eggs from layers.  
+VNFs for meat and animal products (dairy and eggs) are also calculated by estimating the total N~r~ lost during the production of a food item divided by weight of food item see \@ref(eq:VN kg)). Total N~r~ released during the production of animal products includes virtual nitrogen associated with animal feed, the N~r~ released from manure \@ref(eq:animal N losses), as well as processing and household waste losses. We recognize that there is a slight overlap in how we might attribute emissions to animal products and meat. For example layer poultry produce both eggs and meat. However, in a previous study examining ammonia emissions in Canadian livestock (@sheppardLinkage2015), they found that 97% of dairy cow emissions could be attributed to milk production, and 93% of layer emissions could be attributed to egg production. Therefore we will estimate beef VNFs using only beef cattle, dairy emission from dairy cattle, chicken meat from broiler chickens, and eggs from layer chickens.  
 
 \begin{equation}
-N_{losstotalanimal} = N_{feed} + N_{manure} + N_{process} (\#eq:animal N losses)
+N_{losstotalanimal} = VN_{feed} + N_{manure} + N_{process} (\#eq:animal N losses)
 \end{equation}
 
-### N from feed
+### Virtual nitrogen from feed
 VNF factors for feed crops were estimated the same way as for food crops except we assumed minimal processing losses between harvest and animal consumption. 
 
 ```{r VNF_feed, echo=FALSE, message = FALSE}
-VNF_feed <- left_join(N_field_loss, N_crop_process)%>%
+VNF_feed_prov <- N_crop_process%>%
   filter(StatCan_name %in% feed_list)%>%
   mutate(`VNF kgN/kg` = (N_loss_field_kg / yield_kg),
          `VNF kgN/kgN` = (N_loss_field_kg / yield_N_kg))
 #write_csv(VNF_feed, file.path("Data/Results/VNF_feed.csv"))
 
 #Canadian VNFs by yield weighted average (i.e. avg VNFs are most similar to whichever province grows the most of that food)
-VNF_feed_CAN <- VNF_feed%>%
+VNF_feed_CAN <- VNF_feed_prov%>%
   group_by(`StatCan_name`)%>%
   summarise(`VNF kgN/kg` = weighted.mean(`VNF kgN/kg`, yield_kg),
             `VNF kgN/kgN` = weighted.mean(`VNF kgN/kgN`, yield_kg))%>%
-  drop_na()
+  drop_na()%>%
+  filter(StatCan_name!= "Sugar beets")
 
 ## Graphing ##
-ggplot(VNF_feed, aes(y = VNF_kgN_kg, x = StatCan_name, fill = StatCan_name)) +
+ggplot(VNF_feed_CAN, aes(y = `VNF kgN/kg`, x = StatCan_name, fill = StatCan_name)) +
   geom_bar(position="stack", stat="identity") +
   labs(caption = "Virtual nitrogen factors (kgN / kg) for feed crops") +
-  scale_fill_manual(values=wes_palette(n=6, name="IsleofDogs1"))+
+  scale_fill_brewer(palette="Paired")+
   theme_classic()+
   theme(axis.title.y = element_blank(), 
         axis.title.x = element_blank(),
@@ -583,74 +595,113 @@ ggplot(VNF_feed, aes(y = VNF_kgN_kg, x = StatCan_name, fill = StatCan_name)) +
 We estimated total N~r~ released due the production of animal feed by multiplying the weight of feed consumed per animal by the relevant VNF. Feed diet fractions and amounts were based on data from a Canadian farm survey published by @sheppardLinkage2015. Provincial animal populations were taken from various livestock surveys (please see appendix ...)
 
 ```{r animal_pop_data, echo=FALSE, message = FALSE}
-#note on chicken numbers: there's no info # of broiler chickens. Have # of layers, and total number slaughtered. Therefore we have taken the number of total chickens slaughtered, and subtracted the total number of layers present for that year (since layers have ~1 year lifespan), to estimate number of broilers. 
+#note on chicken numbers: there's no info # of broiler chickens. Have # of layers, and total number slaughtered. To estimate standing broiler population we have taken the number of total chickens slaughtered in a year and divided by 6.2 (Huffman), which assumes the average age to maturity ~60 days to estimate the number of broilers (matches closely with 114 million number from SPCA). 
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100121-eng.zip")
 layer_prod <- read_csv("Data/Food/Production/Animal/32100119.csv")%>%
   as_tibble()%>%
-  filter(`Production and disposition` %in% c("Disposition of eggs in shell sold for consumption [116111111]", "Average number of layers"))
+  filter(`Production and disposition` %in% c("Disposition of eggs in shell sold for consumption [116111111]", "Disposition of eggs in shell, leakers and rejects [116111311]", "Average number of layers"))
 
 layer_pop <- layer_prod%>%
   mutate(StatCan_name = case_when(`Production and disposition` == "Average number of layers" ~ "Layers"))%>%
-  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)%>%
-  drop_na()
+  filter(REF_DATE %in% years,
+         StatCan_name == "Layers")%>%
+  replace_na(list(VALUE=0))%>%
+  group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
+  summarise(VALUE = mean(VALUE))
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100117-eng.zip")
 poultry_prod <- read_csv("Data/Food/Production/Animal/32100117.csv")%>%
   as_tibble()%>%
   filter(`Commodity`== "Chicken (including stewing hen)", `Production and disposition`=="Production, total", Estimates == "Birds")%>%
-  mutate("StatCan_name" = "Chickens")%>%
-  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
+  mutate("StatCan_name" = "Broiler")%>%
+  filter(REF_DATE %in% years)%>%
+  replace_na(list(VALUE=0))%>%
+  group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
+  summarise(VALUE = mean(VALUE))
 
-broiler_pop <- left_join(poultry_prod,layer_pop, by = c("REF_DATE" = "REF_DATE","GEO" = "GEO", "SCALAR_FACTOR" = "SCALAR_FACTOR"))%>%
-  filter(StatCan_name.y != "Eggs")%>%
-  mutate(VALUE = `VALUE.x`-`VALUE.y`)%>%
-  mutate(StatCan_name = "Broilers")%>%
-  mutate(UOM = "Birds")%>%
-  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
+#adjusted atlantic provinces by number of broiler farms 2016 census
+broiler_pop <- poultry_prod%>%
+  mutate(VALUE = case_when(GEO == "New Brunswick" ~ 53134 * 12/117 /6.2,
+                           GEO == "Prince Edward Island" ~ 53134 * 12/117 /6.2, 
+                           GEO == "Nova Scotia" ~ 53134 * 87/117 / 6.2 ,
+                           GEO == "Newfoundland and Labrador" ~ 53134  * 6/117 /6.2,
+                           TRUE ~ VALUE/6.2))%>%
+  select(GEO, StatCan_name, UOM, SCALAR_FACTOR, VALUE)
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100130-eng.zip")
 beef_pop <- read_csv("Data/Food/Production/Animal/32100130.csv")%>%
   as_tibble()%>%
   rename("StatCan_name" = "Livestock")%>%
-  filter(`Survey date` == "At January 1", `Farm type` %in% c("On dairy operations", "On beef operations"), !(StatCan_name %in% c("Total cattle", "Total heifers", "Heifers for beef replacement", "Heifers for slaughter")))%>%
-  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
+  filter(`Survey date` == "At January 1",
+         `Farm type` %in% c("On dairy operations", "On beef operations"),
+         (StatCan_name %in% c("Bulls, 1 year and over", "Dairy cows", "Beef cows", "Heifers for dairy replacement", "Total beef heifers", "Steers, 1 year and over", "Calves, under 1 year")),
+         REF_DATE %in% years)%>%
+  group_by(REF_DATE, GEO, StatCan_name, UOM, SCALAR_FACTOR)%>% #sum animals on beef and dairy operations
+  summarise(VALUE = sum(VALUE))%>%
+  group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
+  summarise(VALUE = mean(VALUE)) #average pop over 3 years
 
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100160-eng.zip")
 pork_pop <- read_csv("Data/Food/Production/Animal/32100160.csv")%>%
   as_tibble()%>% 
   rename("StatCan_name" = "Livestock")%>%
-  filter(`Survey date` == "At January 1", StatCan_name %in% c("Boars, 6 months and over", "Sows and gilts, 6 months and over", 	"All other hogs"))%>%
-  select(REF_DATE, StatCan_name, GEO, UOM, SCALAR_FACTOR, VALUE)
-
-animal_pop <- bind_rows(beef_pop, pork_pop, broiler_pop, layer_pop)%>%
-  filter(REF_DATE %in% years)%>%
-  drop_na(VALUE)%>%
+  filter(`Survey date` == "At January 1", StatCan_name %in% c("Boars, 6 months and over", "Sows and gilts, 6 months and over", "Over 81 kilograms"))%>% #didn't include under 23kg because piglets/grower feed hard to measure (also not sure how much of the popultion is slaughtered)
   group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
-  summarise(VALUE = mean(VALUE))
+  summarise(VALUE = mean(VALUE))%>%
+  replace_na(list(VALUE = 0))
+
+animal_pop <- bind_rows(beef_pop, pork_pop, broiler_pop, layer_pop)
 
 ```
 
-```{r N_feed, echo=FALSE, message = FALSE}
-#Sheppard 2015, Table 3
-#adjust StatCan feedcrops to match sheppards categories (not quite the same)
-#calf values are averaged between dairy and beef calves
-feed_ratio <- read_excel("Data/Food/Production/Animal/Feed_ratios.xlsx")%>%
+```{r VN and N per kg feed, echo=FALSE, message = FALSE}
+VNF_feed <- VNF_feed_CAN%>%
+  select(StatCan_name, "VNF kgN/kgN")%>%
+  pivot_wider(names_from = StatCan_name, values_from = "VNF kgN/kgN")%>%
+  mutate(feed_VN = "feed VN kgN/kgN")
+
+N_cont_feed <- HI_Nconc_BNF%>%   #from @Karimi2020
+  select(Crop, `N conc prod (%DM)`)%>%
+  pivot_wider(names_from = Crop, values_from = `N conc prod (%DM)`)%>%
+  mutate(feed_N = "feed N conc DMI")
+  
+VN_N_feed <- read_excel("Data/Food/Production/Animal/Feed_ratios.xlsx")%>%  #feed ratios from #Sheppard 2015, Table 3, calf values are avg
   as_tibble()%>%
   pivot_longer(cols=3:10, names_to = "Region", values_to = "Fraction")%>%
-  mutate(feed_group = case_when(Region == "%Grain east" ~ "Barley",
-                                Region == "%Grain west" ~ "Barley",
-                                Region == "%Whole corn east" ~ "Corn for silage",
-                                Region == "%Whole corn west" ~ "Corn for silage",
-                                Region == "%Straw/Hay east" ~ "Tame hay",
-                                Region == "%Straw/Hay west" ~ "Tame hay",
-                                Region == "%Forage east" ~ "Pasture (nat)",
-                                Region == "%Forage west" ~ "Pasture (nat)"))%>%
-  left_join(HI_Nconc_BNF, by = c("feed_group" = "Crop")) #from @Karimi2020
+  mutate(feed_VN = "feed VN kgN/kgN", feed_N = "feed N conc DMI")%>%
+  left_join(VNF_feed)%>%
+  #adjust StatCan feedcrops to match Sheppards categories (not quite the same)
+  mutate(feed_group_VNF_kgN_kgN = case_when(Region == "%Grain east" ~ (`Barley` + `Corn for silage` + `Soybeans`)/3,
+                                    Region == "%Grain west" ~ `Barley`,
+                                    Region == "%Whole corn east" ~ `Corn for silage`,
+                                    Region == "%Whole corn west" ~ `Corn for silage`,
+                                    Region == "%Straw/Hay east" ~ (`Wheat, all` + `Barley`)/2,
+                                    Region == "%Straw/Hay west" ~ `Barley`,
+                                    Region == "%Forage east" ~ `Tame hay`/2, #assume natural pasture has no VNF
+                                    Region == "%Forage west" ~ `Tame hay`/2,
+                                    TRUE ~ 0))%>%
+  select(1:4, 6, 12)%>%
+  left_join(N_cont_feed)%>%
+  mutate(feed_group_N_conc_DMI = case_when(Region == "%Grain east" ~ (`Barley` + `Corn for silage` + `Soybeans`)/3,
+                                   Region == "%Grain west" ~ `Barley`,
+                                   Region == "%Whole corn east" ~ `Corn for silage`,
+                                   Region == "%Whole corn west" ~ `Corn for silage`,
+                                   Region == "%Straw/Hay east" ~ (`Wheat, all` + `Barley`)/2,
+                                   Region == "%Straw/Hay west" ~ `Barley`,
+                                   Region == "%Forage east" ~ (`Tame hay`+ `Pasture (nat)`)/2,
+                                   Region == "%Forage west" ~ (`Tame hay`+ `Pasture (nat)`)/2,
+                                   TRUE ~ `Pasture (nat)`))%>%
+  select(1:4, 6, 38)
+```
 
-VN_feed <- animal_pop%>%
+### Manure N
+We assumed that amount of N~r~ released in manure was equal to the difference between N consumed through feed and the N contained in animals removed for slaughter. Feed N was calculated using the feed rates above (@sheppardLinkage2015) and N concentrations from @karimiupdated2020. Since animal slaughter rates are only available at the national level, we used estimates on the fraction of each population that is slaughtered each year (@sheppardLinkage2015). We multiplied this by average animal weights at slaughter (@sheppardLinkage2015) and N concentrations of various animal components (@karimiupdated2020) (CROSS CHECK WITH NATIONAL STATS).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal).
+
+```{r N_feed, echo=FALSE, message = FALSE}
+N_feed <- animal_pop%>%
   #match StatCanName to Sheppard's feed groups
-  mutate(key_feed = case_when(StatCan_name == "All other hogs" ~ "Grower",
+  mutate(key_feed = case_when(StatCan_name == "Over 81 kilograms" ~ "Grower",
                               StatCan_name == "Beef cows" ~ "Beef cow",
                               StatCan_name == "Boars, 6 months and over"~ "Boar",
                               StatCan_name == "Bulls, 1 year and over" ~ "Beef bull",
@@ -663,68 +714,80 @@ VN_feed <- animal_pop%>%
                               StatCan_name == "Layers"~ "Layer",
                               StatCan_name == "Broilers"~ "Broiler",
                               TRUE ~ StatCan_name))%>%
-  left_join(feed_ratio, by = c("key_feed"="Animal"))%>%
-  #kg feed
-  mutate(feed_kg = case_when((GEO %in% c('British Columbia', 'Alberta', 'Saskatchewan', 'Manitoba')) & (Region %in% c("%Grain west", "%Whole corn west", "%Straw/Hay west", "%Forage west")) ~ (VALUE * 1000 * `Feed DMI kg/animal/year` / (1 - (`H20 content (%w/w)` / 100)) * Fraction),
-                               (GEO %in% c("Ontario", "Quebec", "Nova Scotia", "Prince Edward Island", "New Brunswick", "Newfoundland and Labrador")) & (Region %in% c("%Grain east", "%Whole corn east", "%Straw/Hay east", "%Forage east")) ~ (VALUE * 1000 * `Feed DMI kg/animal/year` / (1 - (`H20 content (%w/w)` / 100)) * Fraction)))%>%
-  left_join(VNF_feed_CAN, by = c("feed_group" = "StatCan_name"))%>%
-  #VN from feed by feed type from avg_VNF_feed above
-  mutate(VN_feed_kg = (feed_kg * `VNF kgN/kg`))%>%
-  replace_na(list(VN_feed_kg=0))%>%
-  group_by(GEO, key_feed)%>%
-  summarise(VN_feed_kg = sum(VN_feed_kg))%>%
+  left_join(VN_N_feed, by = c("key_feed"="Animal"))%>%
+  mutate(VN_feed_kg = case_when((GEO %in% c('British Columbia', 'Alberta', 'Saskatchewan', 'Manitoba')) & (Region %in% c("%Grain west", "%Whole corn west", "%Straw/Hay west", "%Forage west")) ~ VALUE * 1000 * `Feed DMI kg/animal/year` * Fraction * `feed_group_VNF_kgN_kgN` * feed_group_N_conc_DMI / 100,
+                                (GEO %in% c("Ontario", "Quebec", "Nova Scotia", "Prince Edward Island", "New Brunswick", "Newfoundland and Labrador")) & (Region %in% c("%Grain east", "%Whole corn east", "%Straw/Hay east", "%Forage east")) ~ VALUE * 1000 * `Feed DMI kg/animal/year` * Fraction * `feed_group_VNF_kgN_kgN` * feed_group_N_conc_DMI / 100))%>%
+  mutate(N_feed_kg = case_when((GEO %in% c('British Columbia', 'Alberta', 'Saskatchewan', 'Manitoba')) & (Region %in% c("%Grain west", "%Whole corn west", "%Straw/Hay west", "%Forage west")) ~ VALUE * 1000 * `Feed DMI kg/animal/year` * Fraction * feed_group_N_conc_DMI / 100,
+                                (GEO %in% c("Ontario", "Quebec", "Nova Scotia", "Prince Edward Island", "New Brunswick", "Newfoundland and Labrador")) & (Region %in% c("%Grain east", "%Whole corn east", "%Straw/Hay east", "%Forage east")) ~ VALUE * 1000 * `Feed DMI kg/animal/year` * Fraction * feed_group_N_conc_DMI / 100))%>% 
+  replace_na(list(VN_feed_kg=0, N_feed_kg=0))%>%
+  group_by(GEO, StatCan_name, VALUE, UOM, SCALAR_FACTOR, key_feed)%>%
+  summarise(VN_feed_kg = sum(VN_feed_kg),
+            N_feed_kg = sum(N_feed_kg))%>%
   filter(GEO %in% c('British Columbia', 'Alberta', 'Saskatchewan', 'Manitoba', "Ontario", "Quebec", "Nova Scotia", "Prince Edward Island", "New Brunswick", "Newfoundland and Labrador"))
 
 ```
 
-### Manure N
+```{r N_manure_production, echo=FALSE, message = FALSE}
 
-1) manure N production/year: 
-feed N - animal N
+slaughter_processing <- read_excel("Data/Food/Production/Animal/animal_processing_conversion.xlsx")%>% #Sheppard2015 Table 4 & 5 
+  select(Animal, `Fraction Population slaughtered`, `Weight at slaughter (kg/animal)`)
+  
+animal_N <- read_excel("Data/Food/Production/Animal/animal_N.xlsx") #Karimi 2020, Table A2
 
-feed N = feed rates/types/animal (@sheppardLinkage2015)  * Nconc (@karimiupdated2020)
+N_manure_prod <- N_feed%>%
+  #match StatCanName to Karimi animal N
+  mutate(key_animal = case_when(StatCan_name == "Over 81 kilograms" ~ "Hog",
+                              StatCan_name == "Beef cows" ~ "Cattle",
+                              StatCan_name == "Boars, 6 months and over"~ "Hog",
+                              StatCan_name == "Bulls, 1 year and over" ~ "Cattle",
+                              StatCan_name == "Calves, under 1 year"~ "Calves",
+                              StatCan_name == "Dairy cows"  ~ "Cattle",
+                              StatCan_name == "Heifers for dairy replacement"~ "Cattle",
+                              StatCan_name == "Sows and gilts, 6 months and over"~ "Hog",
+                              StatCan_name == "Steers, 1 year and over" ~ "Cattle",
+                              StatCan_name == "Total beef heifers"~ "Cattle",
+                              StatCan_name == "Layers"~ "Chicken",
+                              StatCan_name == "Broiler"~ "Chicken"))%>%
+  left_join(animal_N, by = c("key_animal"="Livestock Type"))%>%
+  left_join(slaughter_processing, by = c("key_feed" = "Animal"))%>%
+  mutate(animals_slaughtered = VALUE * 1000 * `Fraction Population slaughtered`,
+         N_animal_content_kg = animals_slaughtered * `Weight at slaughter (kg/animal)` * `%N of liveweight`/100,
+         N_manure_prod_kg = N_feed_kg - N_animal_content_kg)%>%
+  replace_na(list(N_manure_prod_kg = 0, VALUE = 0))
 
-animal N = animal population * slaughtered Fraction of population (based on census) slaughtered annually (@sheppardLinkage2015)  * animal weight at slaughter (@sheppardLinkage2015)  * total Nconc:(@karimiupdated2020) (CROSS CHECK WITH NATIONAL STATS)
+  #group_by(GEO, key_animal)%>%
+  #summarize(Population = sum(VALUE), N_manure_prod_kg = sum(N_manure_prod_kg))%>%
+  #mutate(`manure/head`= N_manure_prod_kg/Population/1000)%>%
+  #group_by(key_animal)%>%
+  #summarise(`manure/head` = weighted.mean(`manure/head`, Population))
 
-2) manure storage loss: @huffmanEstimation2008
+#*manure sanity check* compare to Huffman(mine): manure production per head chicken 0.4 (0.5), beef cattle 67.55(64), calves 25 (21), hogs 9.9 (17)
 
-3) Denitrification: 
+```
 
-check HOLOS for provinces/ecoregions 
+To further refine our estimate the amount of manure N~r~ released to the enivronment, We then account for N lost during storage. To estimate this value we subtract the manure deposited on pastureland and multiply the remaining manure by coefficients produced by @huffmanEstimation2008 for percentages of manure N~r~ remaining after storage (based and provincial distributions of manure management practices)(@huffmanEstimation2008). (Is part of this N2?)
 
-FAO 006  Guidelines,  Vol 4,  Table  11.3  p.11.24 https://www.ipcc-nggip.iges.or.jp/public/2006gl/pdf/4_Volume4/V4_11_Ch11_N2O&CO2.pdf 
-fraction values: 0.05 - 0.5 NH3–N + NOx–N
+Finally when estimating N~r~ loss related to manure, we must also account for it's recycling potential. On pastureland manure fertilizes forage or, after storage, it is assumed manure will be applied as fertilizer to crops. However there is no data available on manure application rates across Canada, nor are there estimates for what percentage of N~r~ is taken up by crops is sourced from manure vs synthetic N~r~.  
 
-5) Leaching: RSN values % for provinces: @deYong2009
+We therefore estimate N~r~ losses from denitrification and leaching after manure is applied to soil, and designate remaining N~r~ as "potentially recycled N~r~" that is available for crop uptake. While this value is certainly higher than the amount of manure N~r~ that is actually recycled, it provides a useful first estimate for animal VNFs. Average provincial leaching values were taken from the Agri-food and Agriculture Canada's Indicator of Water Contamination - Nitrogen (IOWC_N) @deYong2009. Denitrification values are the same as we used for crop VNF's: we assume that 10% of remaining N in manure is denitrified @karimiupdated2020, and that it is a 1:1 N20 to N2 ratio @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? I think HOLOS is 50% N20 (after leaching?).
 
-4) Remaining is 'potential recycled manure N"
+```{r, N manure recycling and loss, echo=FALSE, message = FALSE}
 
-```{r N_manure, echo=FALSE, message = FALSE}
-
-#Huffman 2008 manure rate & % on pasture
-N_manure_rate_raw <- read_excel("Data/Food/Production/Animal/manure.xlsx")
-
-N_manure_rate <- N_manure_rate_raw%>% 
+manure_pasture <- read_excel("Data/Food/Production/Animal/manure_pasture.xlsx")%>% #Huffman 2008, Table 2
   as_tibble()%>%
-  mutate("Canada" = (rowSums(.[2:12])/10))%>%
-  gather(Province, `% on pasture`, `British Columbia`:`Canada`, factor_key = TRUE)
+  pivot_longer(`British Columbia`:`Newfoundland and Labrador`, names_to = "Province", values_to = "% on pasture")%>%
+  select(!(`Kg N / head / yr`))
 
-#Huffman 2008
-storage_loss_raw <- read_excel("Data/Food/Production/Animal/manure_storage.xlsx")
-
-storage_loss <- storage_loss_raw%>%
+storage_loss <- read_excel("Data/Food/Production/Animal/manure_storage.xlsx")%>%  #Huffman 2008, Table 3 
   as_tibble()%>%
-  gather(Animal, `N% after storage`, `Poultry`:`Others`, factor_key = TRUE)
- 
-stor_can_avg <- storage_loss%>%
-  group_by(Animal)%>%
-  summarise(Canada = mean(`N% after storage`))%>%
-  gather(Province, `N% after storage`, -1, factor_key = TRUE)
+  pivot_longer(`Poultry`:`Others`, names_to = "Animal", values_to = "N% after storage")
 
-storage_loss <- bind_rows(storage_loss, stor_can_avg)
+leaching <- read_excel("Data/Food/Leaching.xlsx", range = "A2:V13")%>% #DeYong2009 Table
+  select(`...1`, `mean...22`)%>%
+  rename("GEO" = `...1`, "leaching loss %N" = `mean...22`)
 
-N_manure <- animal_pop%>%
-  mutate(key_manure = case_when(StatCan_name == "All other hogs" ~ "Hogs",
+N_manure_loss <- N_manure_prod%>%
+  mutate(key_pasture = case_when(StatCan_name == "Over 81 kilograms" ~ "Hogs",
                               StatCan_name == "Beef cows" ~ "Beef cattle",
                               StatCan_name == "Boars, 6 months and over"~ "Boars",
                               StatCan_name == "Bulls, 1 year and over" ~ "Bulls",
@@ -740,7 +803,7 @@ N_manure <- animal_pop%>%
                               StatCan_name == "Beef cows" ~ "Cattle",
                               StatCan_name == "Boars, 6 months and over"~ "Pigs",
                               StatCan_name == "Bulls, 1 year and over" ~ "Cattle",
-                            StatCan_name == "Calves, under 1 year"~ "Cattle",
+                              StatCan_name == "Calves, under 1 year"~ "Cattle",
                               StatCan_name == "Dairy cows"  ~ "Cattle",
                               StatCan_name == "Heifers for dairy replacement"~ "Cattle",
                               StatCan_name == "Sows and gilts, 6 months and over"~ "Pigs",
@@ -748,145 +811,93 @@ N_manure <- animal_pop%>%
                               StatCan_name == "Total beef heifers"~ "Cattle",
                               StatCan_name == "Layers"~ "Poultry",
                               StatCan_name == "Broilers"~ "Poultry",
-                         TRUE ~ StatCan_name),
-         food_group = case_when(StatCan_name == "All other hogs" ~ "Pork",
-                              StatCan_name == "Beef cows" ~ "Beef",
-                              StatCan_name == "Boars, 6 months and over"~ "Pork",
-                              StatCan_name == "Bulls, 1 year and over" ~ "Beef",
-                              StatCan_name == "Calves, under 1 year"~ "Beef",
-                              StatCan_name == "Dairy cows"  ~ "Milk",
-                              StatCan_name == "Heifers for dairy replacement"~ "Milk",
-                              StatCan_name == "Sows and gilts, 6 months and over"~ "Pork",
-                              StatCan_name == "Steers, 1 year and over" ~ "Beef",
-                              StatCan_name == "Total beef heifers"~ "Beef",
-                              StatCan_name == "Layers"~ "Eggs",
-                              StatCan_name == "Broilers"~ "Chicken",
                          TRUE ~ StatCan_name))%>%
-  left_join(N_manure_rate, by = c("key_manure" = "Animal", "GEO" = "Province"))%>%
+  left_join(manure_pasture, by = c("key_pasture" = "Animal", "GEO" = "Province"))%>%
   left_join(storage_loss, by = c("key_storage" = "Animal", "GEO" = "Province"))%>%
-  mutate(N_loss_manure_kg = ((VALUE - (`% on pasture`/100)) * 1000 * `Kg N / head / yr` * (`N% after storage`/100))) 
-
+  left_join(leaching)%>%
+  mutate(N_manure_to_soil_kg = ((N_manure_prod_kg*(`% on pasture`/100)) + (N_manure_prod_kg*(1-(`% on pasture`/100))*(`N% after storage`/100))),
+         N_manure_loss_storage_kg = N_manure_prod_kg - N_manure_to_soil_kg,
+         N_manure_leaching_kg = N_manure_to_soil_kg * `leaching loss %N`,
+         N_manure_remaining_kg = N_manure_to_soil_kg - N_manure_leaching_kg, 
+         N_manure_N20_kg = N_manure_remaining_kg * 0.05,
+         N_manure_N2_kg = N_manure_remaining_kg * 0.05,
+         N_manure_recycled_kg = N_manure_to_soil_kg - N_manure_leaching_kg - N_manure_N20_kg - N_manure_N2_kg)
 ```
 
 ### Meat and animal products processing and waste
-N losses during meat processing were estimated difference between N content of animals slaughtered (from @leachnitrogen2012) and N content of meat (N contents of meat from @FAO/Lassaletta).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal), 
-Used Canadian meat conversion factors published by @sheppardLinkage2015 * provincial livestock populations to estimate animal slaughtered
-How close were they to national values?
-N losses during meat processing were estimated using N content of live animals from @leachnitrogen2012, average processing losses from @sheppardLinkage2015, and N contents of meat from @FAO/Lassaletta.
+
+recycling of animal products? (e.g. pet food?) meat N content? Karimi vs CNF vs lasaletta
 
 ```{r N_process_meat, echo=FALSE, message = FALSE}
 
-#@sheppardLinkage2015
-meat_process_conv <- read_excel("Data/Food/Production/Animal/animal_processing_conversion.xlsx")
-
-N_Cont_food <- read_excel("Data/Food/10533_2013_9923_MOESM1_ESM.xlsx", skip=1)
-
-N_meat_process <- animal_pop%>%
-  left_join(meat_process_conv, by = c("StatCan_name" = "StatCan_description"))%>%
-  drop_na(Conversion_factor)%>%
-  #this is to check against national stats
-  mutate(animals_slaughtered = VALUE * 1000 * `Fraction Population slaughtered`)%>%
-  mutate(meat_type = case_when(StatCan_name == "All other hogs"  ~ "Pork",
-                               StatCan_name == "Beef cows" ~ "Beef meat",
-                               StatCan_name == "Boars, 6 months and over" ~ "Pork",
-                               StatCan_name == "Broilers" ~ "Chicken meat",
-                               StatCan_name == "Bulls, 1 year and over"  ~ "Beef meat",
-                               StatCan_name == "Calves, under 1 year" ~ "Beef meat",
-                               StatCan_name == "Dairy cows" ~ "Beef meat",
-                               StatCan_name == "Layers" ~ "Chicken meat",
-                               StatCan_name == "Sows and gilts, 6 months and over" ~ "Pork",
-                               StatCan_name == "Steers, 1 year and over" ~ "Beef meat",
-                               StatCan_name == "Total beef heifers" ~ "Beef meat",
-                               TRUE ~ StatCan_name))%>%
-  #animal N content from @Leach2020
-  mutate(animal_N_cont = case_when(meat_type == "Beef meat" ~ 0.02,
-                                   meat_type == "Pork" ~  0.02,
-                                   meat_type == "Chicken meat" ~ 0.023))%>%
-  #meat production N loss
-  mutate(animal_N_kg = animals_slaughtered*`Weight at slaughter (kg/animal)` * animal_N_cont)%>%
-  mutate(meat_yield_kg = case_when(UOM == "Birds" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `Carcass/Live (kg/kg)`,
-                                    UOM == "Head" ~ animals_slaughtered * `Weight at slaughter (kg/animal)`* `Carcass/Live (kg/kg)`))%>%
-  mutate(meat_edible_kg = case_when(UOM == "Birds" ~ meat_yield_kg * `Retail/Carcass (kg/kg)`,
-                                  UOM == "Head" ~ meat_yield_kg * `Retail/Carcass (kg/kg)`,
-                                  UOM == "Layers" ~ meat_yield_kg * `Retail/Carcass (kg/kg)`))%>%
-  mutate(meat_name = case_when(meat_type == "Beef meat" ~ "Meat-CattleBoneless(Beef&Veal)",
-                               TRUE ~ meat_type))%>%
-  left_join(N_Cont_meat, by = c("meat_name" = "ITEM"))%>%
-  mutate(meat_edible_N_kg = meat_edible_kg * `%N content`/100)%>%
-  mutate(meat_yield_N_kg = meat_yield_kg * `%N content`/100)%>%
-  mutate(N_loss_processing_kg = animal_N_kg - meat_edible_N_kg)%>%
-  #household N loss from Leach/FAO
-  mutate(meat_consumed_kg = meat_edible_kg * (1-0.11),
-         meat_consumed_N_kg = meat_edible_N_kg * (1-0.11),
-         N_loss_household_N_kg = meat_edible_N_kg - meat_consumed_N_kg,
-         N_loss_household_kg = meat_edible_kg - meat_consumed_kg,
-         N_domestic_consumed_N_kg = meat_edible_N_kg - N_loss_household_N_kg,
-         N_domestic_consumed_kg = meat_edible_kg - N_loss_household_kg)
-```
-
-```{r, N_process_animal_product, echo=FALSE, message = FALSE}
-
-N_eggs <- eggs_raw%>%
-  as_tibble()%>%
+egg_prod <- layer_prod%>%
   filter(`Production and disposition` %in% c("Disposition of eggs in shell sold for consumption [116111111]",
                                              "Disposition of eggs in shell, leakers and rejects [116111311]"),
          REF_DATE %in% years)%>%
+  group_by(GEO, `Production and disposition`, UOM, SCALAR_FACTOR)%>%
+  summarise(VALUE = mean(VALUE))%>%
   mutate(quantity_kg = VALUE * 12 * 1000 * 0.056)%>% #avg large egg weight
-  select(REF_DATE, GEO, `Production and disposition`, quantity_kg)%>%
   pivot_wider(names_from = `Production and disposition`, values_from = quantity_kg)%>%
-  mutate(yield_N_kg = `Disposition of eggs in shell sold for consumption [116111111]` * 0.0172, #from Lasaletta 
-         N_loss_processing_kg = `Disposition of eggs in shell, leakers and rejects [116111311]` * 0.0172,
-         edible_N_kg = yield_N_kg - N_loss_processing_kg,
-         edible_kg = `Disposition of eggs in shell sold for consumption [116111111]` - `Disposition of eggs in shell, leakers and rejects [116111311]`,
-         consumed_kg = edible_kg,
-         consumed_N_kg = edible_N_kg,
-         food_group = "Eggs")%>%
-  left_join(N_manure)
-         VNF_kgN_kg = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_kg,
-         VNF_meat_kgN_kgN = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_N_kg))%>%
-  filter(Province == "Canada")%>%
-  group_by(food_group)%>%
-  summarise(VNF_meat_kgN_kg = mean(VNF_meat_kgN_kg), VNF_meat_kgN_kgN = mean(VNF_meat_kgN_kgN))
+  mutate(yield_N_kg = (`Disposition of eggs in shell sold for consumption [116111111]` + `Disposition of eggs in shell, leakers and rejects [116111311]`)  * 0.0172, #from Lasaletta hen egg in shell
+         N_loss_processing_kg = `Disposition of eggs in shell, leakers and rejects [116111311]` * 0.0172)
 
-  
+
 # included Milk sold for industrial purposes (for cheese yogurt, icecream etc)?
-milk_raw <- read_csv("Data/Food/Production/Animal/32100113.csv")%>%
+milk <- read_csv("Data/Food/Production/Animal/32100113.csv")%>%
   as_tibble()%>%
   separate(`REF_DATE`, sep="-", into=c("year", "month"))
 
-milk_raw$month = as.double(milk_raw$month)
-milk_raw$year = as.double(milk_raw$year)
+milk$month = as.double(milk$month)
+milk$year = as.double(milk$year)
 
-N_milk <- milk_raw%>%
+milk_prod <- milk%>%
   filter(month == 1,
          year %in% years,
          `Dairy distribution` == "Milk sold off farms, total")%>%
-  mutate(food_group = "milk")%>%
-  left_join(food_processing_waste, by = c (food_group = "Percent N lost"))%>%
+  group_by(GEO, `Dairy distribution`, UOM, SCALAR_FACTOR)%>%
+  summarise(VALUE = mean(VALUE))%>%
   mutate(yield_kg = VALUE * 1000,
-         yield_N_kg = VALUE * 1000 * 0.00528, #from Lasaletta cow milk whole fresh
-         retail_N_kg = yield_N_kg * (1-`Processing and packaging`),
-         retail_kg = yield_kg * (1-`Processing and packaging`),
-         N_loss_processing_N_kg = yield_N_kg - retail_N_kg,
-         #retail N loss
-         edible_N_kg = retail_N_kg * (1-`Distribution: Supermarket Retail`),
-         edible_kg = retail_kg * (1-`Distribution: Supermarket Retail`),
-         N_loss_retail_N_kg = retail_N_kg - edible_N_kg,
-         #household N loss & N consumed
-         consumed_N_kg = edible_N_kg * (1-`Household Waste`),
-         consumed_kg = edible_kg * (1-`Household Waste`),
-         N_loss_household_N_kg = edible_N_kg - consumed_N_kg)
+         yield_N_kg = VALUE * 1000 * 0.00528) #from Lasaletta cow milk whole fresh
+
+N_meat_process <- N_manure_loss%>%
+  mutate(animals_slaughtered = VALUE * 1000 * `Fraction Population slaughtered`)%>%
+  #group_by(key_storage)%>%
+  #summarise(animals_slaughtered = sum(animals_slaughtered))  #cross ref with National Stats
+  mutate(meat_type = case_when(StatCan_name == "All other hogs"  ~ "Pork",
+                               StatCan_name == "Beef cows" ~ "Beef",
+                               StatCan_name == "Boars, 6 months and over" ~ "Pork",
+                               StatCan_name == "Broilers" ~ "Chicken",
+                               StatCan_name == "Bulls, 1 year and over"  ~ "Beef",
+                               StatCan_name == "Calves, under 1 year" ~ "Beef",
+                               StatCan_name == "Heifers for dairy replacement" ~ "Dairy",
+                               StatCan_name == "Dairy cows" ~ "Dairy",
+                               StatCan_name == "Layers" ~ "Eggs",
+                               StatCan_name == "Sows and gilts, 6 months and over" ~ "Pork",
+                               StatCan_name == "Steers, 1 year and over" ~ "Beef",
+                               StatCan_name == "Total beef heifers" ~ "Beef",
+                               TRUE ~ StatCan_name))%>%
+  mutate(meat_yield_N_kg = case_when(meat_type == "Beef" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `% dressed/live` * `%carcass meat` * `protein content meat` * `% N meat protein`,
+                                   meat_type == "Pork" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `% dressed/live` * `%carcass meat` * `protein content meat` * `% N meat protein`,
+                                   meat_type == "Chicken" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `% dressed/live` * `%carcass meat` * `protein content meat` * `% N meat protein`),
+         meat_yield_kg = case_when(meat_type == "Beef" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `% dressed/live` * `%carcass meat`,
+                                   meat_type == "Pork" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `% dressed/live` * `%carcass meat`,
+                                   meat_type == "Chicken" ~ animals_slaughtered * `Weight at slaughter (kg/animal)` * `% dressed/live` * `%carcass meat`),
+         N_loss_processing_kg = N_animal_content_kg - meat_yield_N_kg,
+         meat_retail_kg = meat_yield_kg * (1-(Retail/100)),
+         meat_consumed_kg = meat_retail_kg * (1-(Consumer/100)),
+         meat_waste_N_kg = meat_yield_N_kg - meat_consumed_N_kg)%>%
+  rename("Subsector" = "meat_type")
+ 
 ```
 
 ```{r VNF_animal, echo=FALSE, message = FALSE}
-VNF_meat <-  left_join(N_manure, VN_feed)%>%
-  left_join(N_meat_process)%>%
-  filter(food_group %in% c("Beef", "Pork", "Chicken"))%>%
-  mutate(VNF_meat_kgN_kg = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_kg,
-         VNF_meat_kgN_kgN = (N_loss_manure_kg + VN_feed_kg + N_loss_processing_kg + N_loss_household_kg) / N_domestic_consumed_N_kg)%>%
-  filter(Province == "Canada")%>%
-  group_by(food_group)%>%
-  summarise(VNF_meat_kgN_kg = mean(VNF_meat_kgN_kg), VNF_meat_kgN_kgN = mean(VNF_meat_kgN_kgN))
+VNF_meat <-  N_meat_process%>%
+  filter(Subsector %in% c("Beef", "Pork", "Chicken"))%>%
+  mutate(`VNF kgN/kg` = (VN_feed_kg + N_manure_loss_storage_kg + N_manure_leaching_kg + N_manure_N20_kg + N_loss_processing_kg + meat_waste_N_kg) / meat_consumed_kg,
+         `VNF kgN/kgN` = (VN_feed_kg + N_manure_loss_storage_kg + N_manure_leaching_kg + N_manure_N20_kg + N_loss_processing_kg + meat_waste_N_kg) / meat_consumed_N_kg)%>%
+  group_by(GEO, Subsector)%>%
+  summarise(`VNF kgN/kg` = sum(`VNF kgN/kg`), `VNF kgN/kgN` = sum(`VNF kgN/kgN`)))%>%
+  mutate(`N footprint sector` = "VN from meat")
 
 ```
 
@@ -1018,9 +1029,7 @@ N_wastewater <- rename(wastewater_raw, "year" = "ï..REF_DATE")%>%
 ```
 
 
-# Results and Discussion
-
-
+# Results and Discussion ~1500
 
 
 ```{r N footprint}
@@ -1089,7 +1098,7 @@ ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edwar
 ```
 compare to Canada result from @oitaSubstantial2016
 
-# Conclusion
+# Conclusion ~ 200
 
 
 ```{r, echo=FALSE, message = FALSE}

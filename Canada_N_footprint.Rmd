@@ -63,6 +63,7 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(readxl)
+library(stringr)
 
 library(bookdown)
 #library(papaja)
@@ -545,24 +546,36 @@ VNF_crop_group <- bind_rows(VNF_crop_group_prov, VNF_crop_group_CAN)%>%
   mutate(`N footprint sector` = "VN from crops",
          GEO = case_when(GEO == "Prince Edward Island" ~ "P.E.I",
                          TRUE ~ GEO))
-#write_csv(VNF_food_group, file.path("Results_Images/VNF_food_group.csv"))
 
-ggplot(VNF_crop_group, aes(fill = `Food group`, y = `VNF kgN/kg`*1000, x = `Food group`))+
+VNF_crop_group$GEO <- factor(VNF_crop_group$GEO,levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "P.E.I"))
+
+#write_csv(VNF_crop_group, file.path("Results_Images/VNF_crop_group.csv"))
+```
+
+```{r VNF food crop graph, echo=FALSE, message = FALSE}
+
+ggplot(VNF_crop_group, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
   geom_bar(position="stack", stat="identity") +
-  facet_wrap(~factor(GEO, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "P.E.I", "Newfoundland and Labrador")), scales = "free")+
+  facet_wrap(~factor(`Food group`))+
+  scale_y_sqrt(breaks = c(10,40,80,120))+
+  coord_flip()+
   labs(caption = "Virtual nitrogen factors (g N / kg) for food crops") +
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
   theme(axis.title.y = element_blank(), 
         axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
         axis.ticks = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.25),
         panel.grid = element_blank(),
         panel.border = element_blank(),
         plot.caption = element_text(hjust = 0))
-  
+
 #ggsave("Results_Images/VNF_crop_CAN.pdf")
+
 ```
+
+
 *Notes on VNF results/cross check with Leach 2020
 Veg and root VNFs are similar. Grains and fruit about 3 times as high. This seems plausible due to climate, also because of different fruit choices. e.g. apples are about twice, blueberries (a significant crop), are much higher. Legumes are significantly higher, this is because I include more than soybeans (which alone are comparable to Leach). Other legumes have fertilizer recommendations as well, which will increase the VNF dramatically. Also using actual sales, which are almost all higher than recommended rate
 
@@ -845,7 +858,6 @@ Finally when estimating N~r~ loss related to manure, we must also account for it
 We therefore estimate N~r~ losses from denitrification and leaching after manure is applied to soil, and designate remaining N~r~ as "potentially recycled N~r~" that is available for crop uptake. While this value is certainly higher than the amount of manure N~r~ that is actually recycled, it provides a useful first estimate for animal VNFs. Average provincial leaching values were taken from the Agri-food and Agriculture Canada's Indicator of Water Contamination - Nitrogen (IOWC_N) @deYong2009. Denitrification values are the same as we used for crop VNF's: we assume that 10% of remaining N in manure is denitrified @karimiupdated2020, and that it is a 1:1 N20 to N2 ratio @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? I think HOLOS is 50% N20 (after leaching?).
 
 ```{r, N manure recycling and loss, echo=FALSE, message = FALSE}
-
 manure_pasture <- read_excel("Data/Food/Production/Animal/manure_pasture.xlsx")%>% #Huffman 2008, Table 2
   as_tibble()%>%
   pivot_longer(`British Columbia`:`Newfoundland and Labrador`, names_to = "Province", values_to = "% on pasture")%>%
@@ -947,19 +959,17 @@ VNF_meat <- bind_rows(VNF_meat_prov, VNF_meat_CAN)%>%
                    TRUE ~ GEO))
 #note dairy VF typically significantly higher than milk
 
+VNF_meat$GEO <- factor(VNF_meat$GEO,levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"))
+
 ```
 
 ```{r Meat VNF graph, echo=FALSE, message = FALSE}
 
-VNF_meat$GEO <- factor(VNF_meat$GEO,levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"))
-
 ggplot(VNF_meat, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
   geom_bar(position="stack", stat="identity") +
-  facet_wrap(~factor(`Food group`, levels=c("Beef", "Milk", "Pork", "Chicken", "Eggs")))+
+  facet_wrap(~factor(`Food group`, levels=c("Beef", "Pork", "Milk", "Chicken", "Eggs")), scales = "free_x")+
   labs(caption = "Virtual nitrogen factors (g N / kg) for animal products") +
   scale_fill_brewer(palette="Paired")+
-  #scale_y_continuous(trans='log2')+
-  #coord_trans(y="log10")+
   coord_flip()+
   theme_classic()+
   theme(axis.title.y = element_blank(), 
@@ -979,49 +989,89 @@ ggplot(VNF_meat, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
 ```
 
 ### Food Consumption and waste water treatment
-Data from the CCHS (NCI as more updated as compared to SIDE), N content from Canadian nutrient file
+Data from the CCHS (NCI as more updated as compared to SIDE), N content from Canadian nutrient file #use national availability stats and adjust them by CCHS data
 ```{r food_consumption, echo=FALSE, message = FALSE}
+#CCHS Data
+#download
+
 CCHS_food_names <- read_excel("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_EDITED.xlsx")%>%
-  separate(`BNS name`, sep="# ", into=c("#", "name"))%>%
-  separate(name, sep =":", into=c("BNS_code", "BNS_name"))%>% #removes some names, e.g. 1%, 2% for milks but is ok for coding
-  select(!1)%>%
-  mutate(food_group = case_when(BNS_code %in% c("BNSD01A", "BNSD01B", "BNSD01C", "BNSD02A", "BNSD03A", "BNSD03B", "BNSD04A", "BNSD04B", "BNSD04C", "BNSD04D", "BNSD04E", "BNSD04F", "BNSD05A", "BNSD06A", "BNSD07A", "BNSD07B", "BNSD07C", "BNSD08A", "BNSD08B", "BNSD08C") ~ "Grains",
-                                BNS_code %in% c("BNSD09A", "BNSD09B", "BNSD09C", "BNSD13A", "BNSD13B", "BNSD13C", "BNSD13D", "BNSD14A", "BNSD14B", "BNSD14C", "BNSD14D", "BNSD15A", "BNSD15B", "BNSD17A") ~ "Other Dairy",
-                                BNS_code %in% c("BNSD10A", "BNSD10B", "BNSD10C", "BNSD10D", "BNSD10E", "BNSD10F", "BNSD10G", "BNSD10H", "BNSD10I", "BNSD10K") ~ "Dairy",
-                                BNS_code %in% c("BNSD16A", "BNSD16B") ~ "Eggs",
-                                BNS_code %in% c("BNSD21B", "BNSD21C") ~ "Lamb",
-                                BNS_code %in% c("BNSD18A", "BNSD18B", "BNSD20A", "BNSD21A") ~ "Oilseeds",
-                                BNS_code %in% c("BNSD22A", "BNSD22B", "BNSD22C", "BNSD23A", "BNSD23B") ~ "Beef",
-                                BNS_code %in% c("BNSD25A", "BNSD25B", "BNSD25C", "BNSD25D", "BNSD25E") ~ "Pork",
-                                BNS_code %in% c("BNSD27A", "BNSD27B") ~ "Chicken",
-                                BNS_code %in% c("BNSD27C", "BNSD27D", "BNSD27E", "BNSD27F", "BNSD28A", "BNSD28B", "BNSD29A", "BNSD30A", "BNSD31A", "BNSD32A") ~ "other meat",
-                                BNS_code %in% c("BNSD36A", "BNSD36B", "BNSD36C", "BNSD36D", "BNSD36F", "BNSD36G", "BNSD36H", "BNSD36I", "BNSD36K", "BNSD36L", "BNSD36M", "BNSD36N", "BNSD36O", "BNSD36P") ~ "Vegetables",
-                                BNS_code %in% c("BNSD33A", "BNSD33B", "BNSD33C") ~ "Nuts",
-                                BNS_code %in% c("BNSD37A", "BNSD37B")~ "Legumes",
-                                BNS_code %in% c("BNSD36E", "BNSD36J", "BNSD38A", "BNSD38B", "BNSD39A") ~ "Roots",
-                                BNS_code %in% c("BNSD40A", "BNSD40B", "BNSD40C", "BNSD40D", "BNSD40E", "BNSD40F", "BNSD40G", "BNSD40H", "BNSD40I", "BNSD40J", "BNSD40K", "BNSD40L") ~ "Fruits"
- ))
-# plant milks "BNSD10J"
-# animal fats "BNSD21B" "BNSD21C"
-# fish "BNSD34A" "BNSD34B" "BNSD35A" 
-# sugars and candies "BNSD41A" "BNSD41B" "BNSD41C" "BNSD41D" "BNSD42A" "BNSD42B" "BNSD43A" "BNSD43B" "BNSD43C" "BNSD44A" 
-# soda, alcohol, fruit drinks "BNSD45A" "BNSD46A"  "BNSD46B" "BNSD46C" "BNSD46D" "BNSD46E" "BNSD46F" "BNSD46G" "BNSD47A" "BNSD47B" "BNSD48A" "BNSD49A" "BNSD49B" 
-# sauces, gravies and soups "BNSD50A" "BNSD50B" "BNSD50C" "BNSD50D" "BNSD50E" "BNSD50F" 
-# coffee tea water "BNSD51A""BNSD51B" "BNSD51C"
-# baby food "BNSD52A" "BNSD52B"
-# spices and baking soda etc "BNSD53A" "BNSD53B"
-#mexican recipes BNSD99A (none reported)
+  separate(`BNS name`, sep = "- ", into=c("gram", "BNS_name"))%>%
+  separate(`gram`, sep="# ", into=c("#", "BNS_code"))%>%
+  separate(BNS_code, sep =":", into=c("BNS_code", "other"))%>% #removes some names, e.g. 1%, 2% for milks but is ok for coding
+  select(!c(1,3))
 
 food_consum_g <- read_csv("Data/Food/Consumption/cchs-82M0024-E-2015-nu-nci_F1.csv")%>%
   select(GEO_PRV, BNSD01A:BNSD53B)%>%
   pivot_longer(cols=(BNSD01A:BNSD53B), names_to = c("BNS_code"))%>%
   left_join(CCHS_food_names)%>%
+  mutate(food_group = case_when(BNS_name %in% c("Whole Grain/Oats/High Fibre Breakfast Cereals", "Rice", "Corn", "Pasta", "White Breads", "Whole Wheat Breads", "Other Whole Grain Breads", "Breakfast Cereal (Other)", "Cereal/Grains/Flours", "Pancakes/Waffles", "Dry Mixes (Cakes/Muffins/Pancakes)") ~ "Grains",
+                                BNS_name %in% c("Milk : Whole",  "Milk : 2%", "Milk : 1%", "Milk : Skim" ) ~ "Dairy", #milk
+                                BNS_name %in% c("Cheese: 10% B.F. to 25% B.F.", "Cheese: More than 25% B.F.", "Cheese : Less than 10% B.F.") ~ "Other Dairy",
+                                BNS_name %in% c("Egg" ) ~ "Eggs",
+                                BNS_name %in% c("Regular Margarine", "Block Margarine", "Vegetable oils") ~ "Oilseeds",
+                                BNS_name %in% c("Veal : Lean + Fat/Ground", "Beef : Ground", "Beef : Lean + Fat", "Veal : Lean Only", "Beef : Lean Only") ~ "Beef",
+                                BNS_name %in% c("Sausage", "Ham : Cured ", "Bacon", "Pork : Fresh ") ~ "Pork",
+                                BNS_name %in% c("Chicken : Meat + Skin", "Chicken : Meat Only" ) ~ "Chicken",
+                                BNS_name %in% c("Onion/Green Onions/Leeks/Garlic", "Celery", "Tomatoes", "Peppers : Red/Green", "Cabbage / Kale", "Lettuce/Leafy Greens (Spinach/Mustard Greens)", "Other Veg. (Cucumber/Beet/Turnip)", "Broccoli", "Squashes", "Mushrooms", "Cauliflower") ~ "Vegetables",
+                                BNS_name %in% c("Peas/Snow Peas", "Beans", "Foods made with Vegetable Proteins (Tofu)", "Legume")~ "Legumes",
+                                BNS_name %in% c("Carrots", "Potato", "Fried/Roasted Potatoes", "Potato Chips") ~ "Roots",
+                                BNS_name %in% c("Apple", "Pears", "Citrus Fruit (Oranges/Lemons/Grapefruits)", "Banana", "Grapes/Raisins", "Peaches/Nectarines", "Melons (Canteloup/Honeydew/Watermelon)", "Strawberries", "Other Fruits (Blueberrie/Date/Kiwi/Fruit Salad)", "Cherries", "Pineapple", "Plums/Prunes") ~ "Fruits"))%>%
   left_join(prov_code, by = c("GEO_PRV"="GEO_code"))%>%
-  mutate(consumed_protein_g = value * `CNF protein (g)` / `CNF weight (g)`)%>%
   replace_na(list(consumed_protein_g = 0))#for food with no protein content
-#under-reporting doesn't capture restaurants etc
+
+# have not included plant milks, # animal fats,  fish yogurts nuts sugars and candies soda, alcohol, fruit drinks coffee tea water lamb baby food spices and baking soda etc 
 #cross referenced total protein intake (FSDDPRO) with my estimated sum of food protein +/ - ~ 7%
 
+
+#Food Availability Stats
+# download https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401&pickMembers%5B0%5D=1.1&pickMembers%5B1%5D=3.370&cubeTimeFrame.startYear=2015&cubeTimeFrame.endYear=2019&referencePeriods=20150101%2C20190101
+
+food_availability <- read_csv("Data/Food/Consumption/32100054.csv")%>%
+  filter(`Food categories` == "Food available adjusted for losses",
+         REF_DATE %in% years)%>%
+  group_by(`Commodity`)%>%
+  summarise(STATSCAN_consumed_kg = mean(VALUE))%>%
+  mutate(food_group = case_when(Commodity %in% c("Apple sauce", "Apples canned", "Apples fresh", "Apples frozen", "Apricots canned", "Apricots fresh", "Artichokes fresh", "Asparagus canned", "Asparagus fresh", "Avocados fresh", "Baked and canned beans", "Bananas fresh", "Blueberries canned", "Blueberries fresh", "Blueberries frozen", "Cherries fresh", "Cherries frozen", "Cranberries fresh", "Grapefruits fresh", "Grapes fresh", "Lemons fresh", "Limes fresh", "Mandarins fresh" , "Melons total fresh", "Nectarines fresh", "Oranges fresh", "Peaches canned", "Peaches fresh", "Pears canned", "Pears fresh", "Pineapples canned", "Pineapples fresh", "Plums total fresh", "Raspberries frozen", "Strawberries canned", "Strawberries fresh",  "Strawberries frozen", "Fruits not specified canned", "Fruits not specified fresh", "Fruits not specified frozen") ~ "Fruits",
+                                Commodity %in% c("Broccoli fresh", "Broccoli frozen", "Brussels sprouts fresh", "Brussels sprouts frozen", "Cabbage fresh", "Cauliflower fresh", "Cauliflower frozen", "Celery fresh", "Chinese cabbage fresh", "Cucumbers fresh","Eggplants fresh", "Garlic fresh", "Lettuce fresh", "Mushrooms canned", "Mushrooms fresh", "Peppers fresh", "Pumpkins and squash fresh", "Spinach fresh", "Spinach frozen", "Tomatoes canned", "Tomatoes fresh", "Tomatoes, pulp, paste and puree", "Vegetables not specified canned",  "Vegetables not specified frozen" ) ~ "Vegetables",
+                                Commodity %in% c("Beets canned", "Beets fresh", "Carrots canned", "Carrots fresh", "Carrots frozen", "Parsnips fresh", "Leeks fresh", "Onions and shallots fresh", "Potatoes white fresh and processed", "Rutabagas and turnips fresh") ~ "Roots",
+                                Commodity %in% c("Corn canned", "Corn flour and meal", "Corn fresh", "Corn frozen", "Oatmeal and rolled oats", "Wheat flour", "Rye flour") ~ "Grains",
+                                Commodity %in% c("Beans green and wax canned", "Beans green and wax fresh", "Beans green and wax frozen", "Peas canned", "Peas fresh", "Peas frozen") ~ "Legumes",
+                                Commodity %in% c("Beef and veal total, boneless weight") ~ "Beef",
+                                Commodity %in% c("Chicken and stewing hen total, boneless weight") ~ "Chicken",
+                                Commodity %in% c("Pork, boneless weight") ~ "Pork",
+                                Commodity %in% c("Eggs") ~ "Eggs",
+                                Commodity %in% c("Other whole milk products", "Partly skimmed milk 1%", "Partly skimmed milk 2%", "Skim milk", "Standard milk 3.25%") ~ "Dairy",
+                                Commodity %in% c("Margarine", "Salad oils") ~ "Oilseeds"))%>%
+  group_by(food_group)%>%
+  summarise(STATSCAN_consumed_kg = sum(STATSCAN_consumed_kg))%>%
+  drop_na()
+ #note have not included juices, various milk products, fish
+
+#adjusting CCHS by national food availabilty data
+food_consum_prov <- food_consum_g%>%
+  mutate(consumed_protein = value * `% N`)%>%
+  group_by(GEO, food_group)%>%
+  summarise(`CCHS consumed kg/cap/year` = mean(value)*365/1000, `mean % N` = mean(`% N`))%>%
+  drop_na()
+
+food_consum_CAN <- food_consum_prov%>%
+  group_by(food_group)%>%
+  summarise(`CAN total consumed kg` = sum(`CCHS consumed kg/cap/year`))%>%
+  drop_na()
+
+food_consum <- left_join(food_consum_prov, food_consum_CAN)%>%
+  left_join(food_availability)%>%
+  mutate(`consumed kg/cap` = `CCHS consumed kg/cap/year` * STATSCAN_consumed_kg * 10 / `CAN total consumed kg`,
+         `consumed N kg/cap` = `consumed kg/cap` * `mean % N`,
+         GEO = case_when(GEO == "Newfoundland Labrador" ~ "Newfoundland and Labrador",
+                   TRUE ~ GEO))%>%
+  drop_na()%>%
+  left_join(prov_pop)%>%
+  mutate(`consumed N kg` = `consumed N kg/cap` * Population, `consumed kg` = `consumed kg/cap`*Population)
+
+```
+
+```{r Food consumption stats analysis, echo=FALSE, message = FALSE}
 #ggqqplot(beef_cons_fix$value)
 
 beef_cons <- food_consum_g%>%
@@ -1063,51 +1113,17 @@ ggboxplot(beef_cons, x = "GEO", y = "value", color = "GEO", legend = "none")+
   labs(caption = "Beef consumption across provinces (g/cap)") 
 
 ggsave("Results_Images/Dairy_consumption.pdf")
+
 ```
 
 ```{r VN_food, echo=FALSE, message = FALSE}
 
-food_consum_g_CAN_noO <- food_consum_g%>%
-  group_by(food_group)%>%
-  filter(value > 0)%>%
-  summarise(`consumed g/cap/year` = mean(value)*365, `consumed N g/cap/year` = mean(consumed_protein_g)*365*0.16)%>%
-  mutate(GEO = "Canada")%>%
-  drop_na() #no associated food group (yet)
-
-food_consum_g_CAN <- food_consum_g%>%
-  group_by(food_group)%>%
-  summarise(`consumed g/cap/year` = mean(value)*365, `consumed N g/cap/year` = mean(consumed_protein_g)*365*0.16)%>%
-  mutate(GEO = "Canada")%>%
-  drop_na() #no associated food group (yet)
-
-#cross referenced with food available in Canada on StatsCan https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=3210005401
-#chicken under
-#beef over
-#pork is almost exact
-#milk is comparable
-#grain under reported? hard to compare flour to bread
-#eggs under (1/3)
-
-
-#use national availability stats and adjust them by CCHS data
-
-food_consum_g_prov <- food_consum_g%>%
-  filter(value > 0)%>%
-  group_by(GEO, food_group)%>%
-  mutate(GEO = case_when(GEO == "Newfoundland Labrador" ~ "Newfoundland and Labrador",
-                   TRUE ~ GEO))%>%
-  summarise(`consumed g/cap/year` = median(value)*365, `consumed N g/cap/year` = median(consumed_protein_g)*365*0.16)%>%
-  bind_rows(food_consum_g_CAN)%>%
-  drop_na()%>%
-  left_join(prov_pop)%>%
-  mutate(`consumed N g/year` = `consumed N g/cap/year`*Population, `consumed g/year` = `consumed g/cap/year`*Population)
-
 VNF_food_CAN <- bind_rows(VNF_meat_CAN, VNF_crop_group_CAN)
 
-VN_food <- left_join(food_consum_g_prov, VNF_food_CAN, by =c("food_group"="Food group"))%>%
+VN_food <- left_join(food_consum, VNF_food_CAN, by =c("food_group"="Food group"))%>%
   rename("GEO"="GEO.x")%>%
-  mutate(`N kg/cap/year` = `consumed g/cap/year`/1000 * `VNF kgN/kg`,
-         `N kg/year` = `consumed g/year`/1000 * `VNF kgN/kg`)%>%
+  mutate(`N kg/cap/year` = `consumed kg/cap` * `VNF kgN/kg`,
+         `N kg/year` = `consumed kg` * `VNF kgN/kg`)%>%
   select(GEO, food_group, `N footprint sector`, `N kg/cap/year`, `N kg/year`)%>%
   rename(Subsector = food_group)%>%
   drop_na()
@@ -1143,12 +1159,12 @@ N_wastewater <-  read.csv("Data/Food/Wastewater/38100125.csv")%>%
   filter(year %in% years)%>%
   group_by(GEO, VALUE, `Population.by.treatment.type`, `%N_removal`)%>%
   summarise(percent_pop = mean(percent_pop))%>%
-  left_join(food_consum_g_prov)%>%
+  left_join(food_consum)%>%
   filter(!(GEO %in% c("Canada", "Yukon"))) #Canada average currently includes the North, need to remove and re-calculate for comparison with provinces
 
 N_wastewater_prov <- N_wastewater%>%
-  mutate(`N wastewater loss kg/cap/year` = `consumed N g/cap/year`/ 1000 * (percent_pop) * (1-`%N_removal`),
-         `N wastewater loss kg/year` = `consumed N g/year`/ 1000 * (percent_pop) * (1-`%N_removal`))%>%
+  mutate(`N wastewater loss kg/cap/year` = `consumed N kg/cap` * (percent_pop) * (1-`%N_removal`),
+         `N wastewater loss kg/year` = `consumed N kg` * (percent_pop) * (1-`%N_removal`))%>%
   group_by(GEO)%>%
   summarise(`N kg/cap/year` = sum(`N wastewater loss kg/cap/year`), `N kg/year` = sum(`N wastewater loss kg/year`))%>%
   mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment")%>%
@@ -1172,9 +1188,12 @@ N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
   mutate(GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland and Labrador"), 
          Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Dairy", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
          `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  filter(!(Subsector %in% c("Transport", "Beef", "Oil and Gas Industry")))%>%
+  filter(!(Subsector %in% c("Transport", "Beef", "Oil and Gas Industry")))
+
+write_csv(N_footprint,"Results_Images/N_footprint.csv")
+
   group_by(GEO)%>%
-  summarise(sum(`N kg/cap/year`))
+  summarise(`N kg/cap/year`= sum(`N kg/cap/year`))
 
 ggplot(data_percentage, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = GEO))+
   geom_bar(stat="identity") +
@@ -1225,7 +1244,7 @@ ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edwar
 colors <- 15
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
 
-ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = GEO))+
+ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap`, x = GEO))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_manual(values = mycolors)+
   geom_hline(aes(yintercept=0.40))+

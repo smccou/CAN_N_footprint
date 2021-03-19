@@ -1,43 +1,8 @@
 ---
 title: "Sub-national nitrogen footprints from nitrogen budgets provide emission driver context: a Canadian example"
-shorttitle: Canadian nitrogen footprint
 
 author:
 - name: Sibeal McCourt
-  affiliation: '1'
-  corresponding: yes
-  address: Postal address
-  email: sibeal.mccourt@mail.mcgill.ca
-  role:
-  - Conceptualization
-  - Writing - Original Draft Preparation
-  - Writing - Review & Editing
-- name: ''
-  affiliation: '1,2'
-  role: Writing - Review & Editing
-  
-affiliation:
-- id: '1'
-  institution: 
-- id: '2'
-  institution: 
-
-authornote: |
-  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
-  Enter author note here.
-
-abstract: |
-  >300 words \nOne or two sentences providing a **basic introduction** to
-  the field,  comprehensible to a scientist in any discipline.\nTwo to three sentences
-  of **more detailed background**, comprehensible  to scientists in related disciplines.\nOne
-  sentence clearly stating the **general problem** being addressed by  this particular
-  study.\nOne sentence summarizing the main result (with the words \"**here we show**\"
-  or their equivalent).\nTwo or three sentences explaining what the **main result**
-  reveals in direct comparison to what was thought to be the case previously, or how
-  the  main result adds to previous knowledge.\nOne or two sentences to put the results
-  into a more **general context**.\nTwo or three sentences to provide a **broader
-  perspective**, readily comprehensible to a scientist in any discipline.\n\n<!--
-  https://tinyurl.com/ybremelq -->\n
 
 keywords: Nitrogen, footprint, environmental accounting
 wordcount: X
@@ -45,16 +10,7 @@ wordcount: X
 bibliography: [Ch_1.bib]
 link-citations: yes
 
-draft: no
-figurelist: no
-floatsintext: no
-footnotelist: no
-tablelist: no
-linenumbers: yes
-mask: no
-
 output: html_notebook
-#bookdown::pdf_document2: default
 ---
 
 ```{r libraries, echo=FALSE, message = FALSE}
@@ -77,35 +33,8 @@ library(RColorBrewer)
 
 ```
 
-We only require a PDF file of the new article (and any suitable supplementary data files) on submission. Authors can format their papers in the way that they choose https://publishingsupport.iopscience.iop.org/questions/structure-and-format-of-your-journal-article/
-ERL operates a double-anonymous peer review process (acknowledgments added later)
-total ~4000 words excluding titles, abstract, figures, tables, captions, and references
-
-# Introduction ~ 800 words
-
-## Nitrogen and nitrogen footprints
-
-@leachnitrogen2012: 
-@shindoTopdown2017: 
-@shibataNitrogen2017: more national case studies are needed. The VNFs are available for a few major exporting countries, however, there are few countries that have developed their own VNFs. The development of VNFs for major exporting countries is particularly important for accurately assessing the N footprint of countries that import food.
-
-## Why Canada is good as a case study
-
-## Goal of this paper
-*Domestic nitrogen footprint for Canada* focusing on subnational variability
-
-Several key differences in our approach: adjusting recommended fertilizer application rates by N from fertilizer sales. Including manure 
-
-subnational drivers
-
-make sure to address trade, even if it's not explicitly included (it's outside the scope of this paper)
-
-*Geographic drivers of why/how footprints are different*
-
-# Methodology ~1500 words
-We drew strongly on the framework of the N-calculator model developed by [@leachnitrogen2012]. We divide our nitrogen footprint model into the following sectors and sub sectors 1) N~r~ release due to burning fossil fuels, further divided into energy production, transport, oil and gas industries and other sources and 2) N~r~ related to food, divided into crop production, livestock production and waste water treatment. We calculated the total and per capita N footprint for each province for the year 2015, the most recent year where data sources could be found for all relevant categories. To estimate energy-related N~r~ we use a top-down approach, summing reports of N~r~ emissions from provincial greenhouse gas and air pollutant inventories [@National2020 @Canada2020], to account for N~2~O and NO~x~ emissions, respectively.
 ```{r Scoping, echo=FALSE, message = FALSE}
-years = c(2014, 2015, 2016)
+years = c(2016, 2017, 2018)
 
 prov_code <- matrix(c(1, "Canada", 10, "Newfoundland Labrador", 11,	"Prince Edward Island", 12,	"Nova Scotia", 13, "New Brunswick", 24, "Quebec", 35, 	"Ontario", 46,	"Manitoba", 47, "Saskatchewan", 48, "Alberta", 59, "British Columbia"), ncol=2, byrow = TRUE)
 colnames(prov_code) <- c("GEO_code", "GEO")
@@ -207,15 +136,6 @@ N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
 
 ```
 
-## Food Production
-We used a hybrid top-down and bottom-up approach to estimate the food-related portion of provincial N-footprints. We used a top-down approach to estimate provincial virtual nitrogen factor (VNF) values (the amount of N~r~ released per kg of food during the production and processing see \@ref(eq:VN kg)) and then multiplied these values by per capita food consumption data from @CCHS2015. At each step of the production process we estimated N~r~ loss to be the difference between new N~r~ inputs and N~r~ outputs, taking into account N recycling and subtracting flows of N~2~ release through denitrification, as it is not a form of N~r~ and therefore is not included in our N footprint.  
-
-\begin{equation}
-VNF = kg N_{loss}/ kg_{food} (\#eq:VN kg)
-\end{equation}
-
-### Crop VNFs 
-We estimated crop VNFs for all crops reported in Canada's Annual Field Crop, Fruit and Vegetables Surveys, grouped by crop type (see table ...), covering a total of 67 crops.
 ```{r crop_categorization, echo=FALSE, message = FALSE}
 #Names from StatsCan Crop Surveys, with doubles/subcategories removed
 field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
@@ -367,19 +287,6 @@ crop_prod <- bind_rows(field_crop_prod, potato_prod, fruit_prod, vegetable_prod)
   filter(yield_kg > 1000)
 ```
 
-For food crop VNFs total N~r~ losses to the environment include the N~r~ loss on the field, procesessing and retail losses, and household waste (see \@ref(eq: crop N losses)) 
-
-\begin{equation}
-N_{losstotalcrop} = N_{field loss} + N_{process loss} + N_{house loss} (\#eq: crop N losses)
-\end{equation}
-
-To estimate N~r~ release that occurs at the field level we calculated the difference between inputs of new N~r~: fertilizer and biological nitrogen fixation (BNF), and subtracted N removal through crop harvests and residue \@ref(eq:N field loss). Manure is not included as an input in this step as it is recycled N and not new N~r~. Manure N and related losses are explained further in the animal VNF section below.
-
-\begin{equation}
-N_{field loss} = N_{fert} + N_{BNF} - N_{yield} - N{residue} + N_{residue leaching and denitrification}  (\#eq:N field loss)
-\end{equation}
-
-To estimate fertilizer N inputs we used provincial statistics on N fertilizer sales @governmentqofcanadaFertilizer2020, and dissagregated the data based on crop areas in each province, and the provincially recommended N application rate for that crop [@yangDevelopment2007]. Because the surveys we use do not account for all crops grown in all provinces, the amount of N applied to each crop is likely an overestimation.  
 ```{r N_fertilizer, echo=FALSE, message = FALSE}
 #Fertilizer Sales N
 #download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100039-eng.zip", "Data/Food/Fertilizer/32100039-eng.zip")
@@ -442,7 +349,6 @@ N_adjusted_fert <- left_join(N_rec_fert_crop, N_rec_fert_prov)%>%
   mutate(Diff_sales_rec = N_applied_crop_kg - N_rec_crop_kg)
 ```
 
-N~r~ fixed from the atmosphere from BNF was calculated by multiplying total leguminous crop N (root, residue and product N) by the percentage of that N that is fixed from atmosphere (BNFA). Crop N was estimated using crop yields from @governmentofcanada, crop N concentrations, harvest index (HI) and BNFA values published in @karimiupdated2020. 
 ```{r N_BNF, echo=FALSE, message = FALSE}
 #BNF rates, HI and residues from @karimi2020
 HI_Nconc_BNF <- read_excel("Data/Food/Production/Crop/HI_Nconc_BNF.xlsx")%>% #Karimi et al 2020, table A1
@@ -467,8 +373,6 @@ N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% vegetable_list ~ "V
          N_BNF_kg = (yield_N_kg + residue_N_kg + root_N_kg) * (`%BNFA`/100))%>%
   replace_na(list(N_BNF_kg=0))
 ```
-
-Estimates of denitrification remain uncertain due to methodological constraints and high spatiotemporal variability. For overall denitrification losses we used the approach of @karimiupdated2020, and assumed that 10 % of the soluble N contained in fertilizer was lost through denitrification and 10% of organic N remaining in soil from crop residues is denitrified (@karimiupdated2020). We assume that there is a 1:1 ratio of N20 to N2 @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? Crop residue recycling is based on allocations of residues by @karimiupdated2020. 
 
 ```{r N_field_loss, echo=FALSE, message = FALSE}
 
@@ -495,7 +399,6 @@ N_field_loss <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_n
 #there area couple negative values. Soil N mining? 
 ```
 
-As provincial data for food processing and waste losses is currently unavailable in Canada, fractions lost in each food group were taken from the USDA loss adjusted food availability tables.  
 ```{r N_crop_processing_loss, echo=FALSE, message = FALSE}
 #USDA https://www.ers.usda.gov/data-products/food-availability-per-capita-data-system/ 
 food_processing_waste <- read_excel("Data/Food/Food_waste/food_loss_USDA.xlsx", range = "A1:D11")
@@ -552,40 +455,8 @@ VNF_crop_group$GEO <- factor(VNF_crop_group$GEO,levels = c("Canada", "British Co
 #write_csv(VNF_crop_group, file.path("Results_Images/VNF_crop_group.csv"))
 ```
 
-```{r VNF food crop graph, echo=FALSE, message = FALSE}
-
-ggplot(VNF_crop_group, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
-  geom_bar(position="stack", stat="identity") +
-  facet_wrap(~factor(`Food group`))+
-  scale_y_sqrt(breaks = c(10,40,80,120))+
-  coord_flip()+
-  labs(caption = "Virtual nitrogen factors (g N / kg) for food crops") +
-  scale_fill_brewer(palette="Paired")+
-  theme_classic()+
-  theme(axis.title.y = element_blank(), 
-        axis.title.x = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = "none",
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.25),
-        panel.grid = element_blank(),
-        panel.border = element_blank(),
-        plot.caption = element_text(hjust = 0))
-
-#ggsave("Results_Images/VNF_crop_CAN.pdf")
-
-```
-
-
 *Notes on VNF results/cross check with Leach 2020
 Veg and root VNFs are similar. Grains and fruit about 3 times as high. This seems plausible due to climate, also because of different fruit choices. e.g. apples are about twice, blueberries (a significant crop), are much higher. Legumes are significantly higher, this is because I include more than soybeans (which alone are comparable to Leach). Other legumes have fertilizer recommendations as well, which will increase the VNF dramatically. Also using actual sales, which are almost all higher than recommended rate
-
-### Meat & animal product VNFs
-VNFs for meat and animal products (dairy and eggs) are also calculated by estimating the total N~r~ lost during the production of a food item divided by weight of food item see \@ref(eq:VN kg)). Total N~r~ released during the production of animal products includes virtual nitrogen associated with animal feed, the N~r~ released from manure \@ref(eq:animal N losses), as well as processing and household waste losses. We recognize that there is a slight overlap in how we might attribute emissions to animal products and meat. For example layer poultry produce both eggs and meat. However, in a previous study examining ammonia emissions in Canadian livestock (@sheppardLinkage2015), they found that 97% of dairy cow emissions could be attributed to milk production, and 93% of layer emissions could be attributed to egg production. Therefore we will estimate beef VNFs using only beef cattle, dairy emission from dairy cattle, chicken meat from broiler chickens, and eggs from layer chickens.  
-\begin{equation}
-N_{losstotalanimal} = VN_{feed} + N_{manure} + N_{process} (\#eq:animal N losses)
-\end{equation}
-
-VNF factors for feed crops were estimated the same way as for food crops except we assumed minimal processing losses between harvest and animal consumption. 
 
 ```{r VNF_feed, echo=FALSE, message = FALSE}
 VNF_feed_prov <- N_crop_process%>%
@@ -619,8 +490,6 @@ ggplot(VNF_feed_CAN, aes(y = `VNF kgN/kg`*1000, x = `Crop type`, fill = `Crop ty
 
 #ggsave("Results_Images/VNF_feed_avg.pdf")
 ```
-
-We estimated total N~r~ released due the production of animal feed by multiplying the weight of feed consumed per animal by the relevant VNF. Feed diet fractions and amounts were based on data from a Canadian farm survey published by @sheppardLinkage2015. Provincial animal populations were taken from various livestock surveys (please see appendix ...)
 
 ```{r animal_pop_data, echo=FALSE, message = FALSE}
 #note on chicken numbers: there's no info # of broiler chickens. Have # of layers, and total number slaughtered. To estimate standing broiler population we have taken the number of total chickens slaughtered in a year and divided by 6.2 (Huffman), which assumes the average age to maturity ~60 days to estimate the number of broilers (matches closely with 114 million number from SPCA). 
@@ -722,8 +591,6 @@ VN_N_feed <- read_excel("Data/Food/Production/Animal/Feed_ratios.xlsx")%>%  #fee
                                    TRUE ~ `Pasture (nat)`))%>%
   select(1:4, 6, 39)
 ```
-
-We assumed that amount of N~r~ released in manure was equal to the difference between N consumed through feed and the N contained in animals removed for slaughter. Feed N was calculated using the feed rates above (@sheppardLinkage2015) and N concentrations from @karimiupdated2020. Since animal slaughter rates are only available at the national level, we used estimates on the fraction of each population that is slaughtered each year (@sheppardLinkage2015). We multiplied this by average animal weights at slaughter (@sheppardLinkage2015) and N concentrations of various animal components (@karimiupdated2020) (CROSS CHECK WITH NATIONAL STATS).#Only partial data available for animals slaughtered at the provincial or national scale (available for chicken, but not pork or beef, which are only available at the national scale and only as total animal).
 
 ```{r N_feed, echo=FALSE, message = FALSE}
 N_feed <- animal_pop%>%
@@ -851,12 +718,6 @@ N_manure_prod <- N_feed%>%
 
 ```
 
-To further refine our estimate the amount of manure N~r~ released to the environment, We then account for N lost during storage. To estimate this value we subtract the manure deposited on pastureland and multiply the remaining manure by coefficients produced by @huffmanEstimation2008 for percentages of manure N~r~ remaining after storage (based and provincial distributions of manure management practices)(@huffmanEstimation2008). (Is part of this N2?)
-
-Finally when estimating N~r~ loss related to manure, we must also account for it's recycling potential. On pastureland manure fertilizes forage or, after storage, it is assumed manure will be applied as fertilizer to crops. However there is no data available on manure application rates across Canada, nor are there estimates for what percentage of N~r~ is taken up by crops is sourced from manure vs synthetic N~r~.  
-
-We therefore estimate N~r~ losses from denitrification and leaching after manure is applied to soil, and designate remaining N~r~ as "potentially recycled N~r~" that is available for crop uptake. While this value is certainly higher than the amount of manure N~r~ that is actually recycled, it provides a useful first estimate for animal VNFs. Average provincial leaching values were taken from the Agri-food and Agriculture Canada's Indicator of Water Contamination - Nitrogen (IOWC_N) @deYong2009. Denitrification values are the same as we used for crop VNF's: we assume that 10% of remaining N in manure is denitrified @karimiupdated2020, and that it is a 1:1 N20 to N2 ratio @yangDevelopment2007. Could be 1:10 10:1. Sensitivity analysis? I think HOLOS is 50% N20 (after leaching?).
-
 ```{r, N manure recycling and loss, echo=FALSE, message = FALSE}
 manure_pasture <- read_excel("Data/Food/Production/Animal/manure_pasture.xlsx")%>% #Huffman 2008, Table 2
   as_tibble()%>%
@@ -963,33 +824,6 @@ VNF_meat$GEO <- factor(VNF_meat$GEO,levels = c("Canada", "British Columbia", "Al
 
 ```
 
-```{r Meat VNF graph, echo=FALSE, message = FALSE}
-
-ggplot(VNF_meat, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
-  geom_bar(position="stack", stat="identity") +
-  facet_wrap(~factor(`Food group`, levels=c("Beef", "Pork", "Milk", "Chicken", "Eggs")), scales = "free_x")+
-  labs(caption = "Virtual nitrogen factors (g N / kg) for animal products") +
-  scale_fill_brewer(palette="Paired")+
-  coord_flip()+
-  theme_classic()+
-  theme(axis.title.y = element_blank(), 
-        axis.title.x = element_blank(),
-        legend.position = "none",
-        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.25),
-        axis.ticks = element_blank(),
-        panel.grid = element_blank(),
-        panel.border = element_blank(),
-        plot.caption = element_text(hjust = 0))
-
-#check way to change jut beef scale grob, facet grid
-#fix scale
-
-#ggsave("Results_Images/VNF_meat_avg.pdf")
-
-```
-
-### Food Consumption and waste water treatment
-Data from the CCHS (NCI as more updated as compared to SIDE), N content from Canadian nutrient file #use national availability stats and adjust them by CCHS data
 ```{r food_consumption, echo=FALSE, message = FALSE}
 #CCHS Data
 #download
@@ -1130,17 +964,6 @@ VN_food <- left_join(food_consum, VNF_food_CAN, by =c("food_group"="Food group")
 
 ```
 
-
-About 50 of biosolids recycled (CWWA, 2012) @karimiupdated2020
-
-N removed = EF* N effluent, N effluent = (Protein consumed * population * nitrogen in protein) - sludge (@National2019)
-
-initial assumption 50% of N is removed through tertiary sewage treatment, 25% of N through secondary sewage treatment and none during primary sewage treatment @shibataFirst2014. 
-
-Primary treatment (at least one of the following processes are applied): 1) Chemical flocculation, 2) Primary sedimentation/clarification, 3) Skimming
-Secondary treatment: (at least one of the following processes are applied with secondary treatment processes) Activated sludge system (with or without extended aeration), 2) Activated sludge system (with or without pure oxygen), 3) Lagoon systems (any one or combination of aerated, aerobic, anaerobic, facultative, non-aerated, non-aerated Filtered), 4) Oxidation ditch, 5) Rotating Biological Contactor, 6) Storage ponds (polishing ponds), 7) Sequencing Batch Reactor, 8) Trickling filter
-Tertiary treatment: (at least one of the following processes are applied with secondary treatment processes): 1) Biofiltration, 2) Biological Ammonia Removal – Nitrification Only, 3) Biological Nitrogen Removal – Nitrification and Denitrification, 4) Biological Nutrient Removal (Nitrogen and Phosphorus), 5) Biological Phosphorus Removal, 6) Filtration, 7) Peat Filter
-
 ```{r wastewater, echo=FALSE, message = FALSE}
 #Population served by municipal wastewater systems by treatment category (Canada/Province)
 N_wastewater <-  read.csv("Data/Food/Wastewater/38100125.csv")%>%
@@ -1179,10 +1002,7 @@ N_wastewater_Total <- bind_rows(N_wastewater_prov, N_wastewater_CAN)%>%
   
 ```
 
-
-# Results and Discussion ~1500
-
-```{r N footprint}
+```{r N footprint, echo=FALSE}
 N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
   bind_rows(VN_food)%>%
   mutate(GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland and Labrador"), 
@@ -1192,14 +1012,89 @@ N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
 
 write_csv(N_footprint,"Results_Images/N_footprint.csv")
 
-  group_by(GEO)%>%
-  summarise(`N kg/cap/year`= sum(`N kg/cap/year`))
+```
 
-ggplot(data_percentage, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = GEO))+
+# Results and Images
+
+```{r VNF food crop graph}
+ggplot(VNF_crop_group, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
+  geom_bar(position="stack", stat="identity") +
+  facet_wrap(~factor(`Food group`))+
+  scale_y_sqrt(breaks = c(10,40,80,120))+
+  coord_flip()+
+  labs(caption = "Virtual nitrogen factors (g N / kg) for food crops") +
+  scale_fill_brewer(palette="Paired")+
+  theme_classic()+
+  theme(axis.title.y = element_blank(), 
+        axis.title.x = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.25),
+        panel.grid = element_blank(),
+        panel.border = element_blank(),
+        plot.caption = element_text(hjust = 0))
+
+#ggsave("Results_Images/VNF_crop_CAN.pdf")
+
+```
+
+```{r Meat VNF graph, echo=FALSE, message = FALSE}
+
+ggplot(VNF_meat, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
+  geom_bar(position="stack", stat="identity") +
+  facet_wrap(~factor(`Food group`, levels=c("Beef", "Pork", "Milk", "Chicken", "Eggs")), scales = "free_x")+
+  labs(caption = "Virtual nitrogen factors (g N / kg) for animal products") +
+  scale_fill_brewer(palette="Paired")+
+  coord_flip()+
+  theme_classic()+
+  theme(axis.title.y = element_blank(), 
+        axis.title.x = element_blank(),
+        legend.position = "none",
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.25),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        panel.border = element_blank(),
+        plot.caption = element_text(hjust = 0))
+
+#check way to change jut beef scale grob, facet grid
+#fix scale
+
+#ggsave("Results_Images/VNF_meat_avg.pdf")
+
+```
+
+```{r Total N footprint graph, echo=FALSE, message = FALSE}
+
+colors <- 15
+mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
+
+ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Quebec", "Ontario", "Manitoba", "Saskatchewan", "Alberta", "British Columbia")), aes(fill = `N footprint sector`, y = `N kg/year`/1000000, x = GEO))+
+  geom_bar(stat="identity") +
+  scale_fill_manual(values = mycolors)+
+  scale_x_discrete(labels = wrap_format(10))+
+  scale_y_sqrt()+
+  labs(y = "N Gg/year")+
+  coord_flip()+
+  theme_classic()+
+  theme(
+    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    plot.caption = element_text(hjust = 0))
+#ggsave("Results_Images/N_print_subsectors_total.pdf")  
+
+```
+
+```{r Provincial footprints per capita, echo=FALSE, message = FALSE}
+colors <- 15
+mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
+
+ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = GEO))+
   geom_bar(stat="identity") +
   scale_fill_brewer(palette="Paired")+
   labs(caption = "Provincial Nitrogen footprints (N kg/cap/year)")+
   scale_x_discrete(labels = wrap_format(10))+
+  coord_flip()+
   theme_classic()+
   theme(
     axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
@@ -1209,48 +1104,21 @@ ggplot(data_percentage, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x 
     plot.caption = element_text(hjust = 0))
 #ggsave("Results_Images/N_print_sectors_cap.pdf")
 
-ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Quebec", "Ontario", "Manitoba", "Saskatchewan", "Alberta", "British Columbia")), aes(fill = `Subsector`, y = `N kg/year`, x = GEO))+
-  geom_bar(stat="identity") +
-  scale_fill_manual(values = mycolors)+
-  labs(caption = "Provincial Nitrogen footprints (N kg/year)")+
-  scale_x_discrete(labels = wrap_format(10))+
-  theme_classic()+
-  theme(
-    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.ticks = element_blank(),
-    plot.caption = element_text(hjust = 0))
-#ggsave("Results_Images/N_print_subsectors_total.pdf")  
-
-ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Quebec", "Ontario", "Manitoba", "Saskatchewan", "Alberta", "British Columbia")), aes(fill = `N footprint sector`, y = `N kg/year`, x = GEO))+
-  geom_bar(stat="identity") +
-  scale_fill_brewer(palette="Paired")+
-  labs(caption = "Provincial Nitrogen footprints (N kg/year)")+
-  scale_x_discrete(labels = wrap_format(10))+
-  theme_classic()+
-  theme(
-    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.ticks = element_blank(),
-    plot.caption = element_text(hjust = 0))
-#ggsave("Results_Images/N_print_sectors_total.pdf") 
-
 ```
 
+```{r Nitrogen footprint subsectors graph, echo=FALSE}
+N_footprint <- read_csv("Results_Images/N_footprint.csv")
 
-```{r Nitrogen footprint subsectors, echo=FALSE, message = FALSE}
 colors <- 15
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
 
-ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap`, x = GEO))+
+ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = GEO))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_manual(values = mycolors)+
-  geom_hline(aes(yintercept=0.40))+
   labs(caption = "Provincial Nitrogen footprints (N kg/cap/year)")+
+  coord_flip()+
   scale_x_discrete(labels = wrap_format(10))+
-  guides(fill=guide_legend(ncol=2))+
+  guides(fill=guide_legend(ncol=1))+
   theme_classic()+
   theme(
     axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
@@ -1262,13 +1130,6 @@ ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap`, x = GEO))+
 
 ```
 
-
-
-
-
-compare to Canada result from @oitaSubstantial2016
-
-# Conclusion ~ 200
 
 
 ```{r, echo=FALSE, message = FALSE}

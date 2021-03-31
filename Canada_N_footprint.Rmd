@@ -396,7 +396,10 @@ N_field_loss <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_n
   #to get rid of oddness in surveys, e.g. some crops in some provinces have an area but no harvest or vice versa
   filter(area_ha > 0,
          yield_kg > 0)%>%
-  select(-c(4, 6:8, key, "Source.x", "Source.y"))
+  select(-c(4, 6:8, key, "Source.x", "Source.y"))%>%
+  mutate(PNB = yield_N_kg/N_applied_crop_kg)
+
+#Partial nutrient balance n yield/n applied
 #there area couple negative values. Soil N mining? 
 ```
 
@@ -444,7 +447,7 @@ VNF_crop_group_prov <- N_crop_process%>%
   mutate(Total_N_loss_kg = N_loss_field_kg + N_loss_processing_waste_kg,
          `VNF kgN/kg` = (Total_N_loss_kg / consumed_kg),
          `VNF kgN/kgN` = (Total_N_loss_kg / consumed_N_kg))%>%
-  group_by(GEO, `Food group`)%>%
+  group_by(GEO, `StatCan_name`, `Food group`)%>%
   summarise(`VNF kgN/kg` = weighted.mean(`VNF kgN/kg`, yield_kg), 
             `VNF kgN/kgN`= weighted.mean(`VNF kgN/kgN`, yield_kg))%>%
   drop_na()
@@ -459,15 +462,17 @@ VNF_crop_group_CAN <- N_crop_process%>%
   mutate(GEO = "Canada")%>%
   drop_na()%>%
   mutate(`N footprint sector` = "VN from crops")
-#write_csv(VNF_food_group_CAN, file.path("Results_Images/VNF_food_group_CAN.csv"))
 
 VNF_crop_group <- bind_rows(VNF_crop_group_prov, VNF_crop_group_CAN)%>%
   mutate(`N footprint sector` = "VN from crops",
          GEO = case_when(GEO == "Prince Edward Island" ~ "P.E.I",
+                         GEO == "Newfoundland and Labrador" ~ "NFLD",
                          TRUE ~ GEO))%>%
   select(GEO, `Food group`, `VNF kgN/kg`)
 
-VNF_crop_group$GEO <- factor(VNF_crop_group$GEO,levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "P.E.I"))
+VNF_crop_group$GEO <- factor(VNF_crop_group$GEO,levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "P.E.I", "NFLD"))
+
+
 
 #write_csv(VNF_crop_group, file.path("Results_Images/VNF_crop_group.csv"))
 ```
@@ -563,7 +568,9 @@ cattle_pop <- read_csv("Data/Food/Production/Animal/32100130.csv")%>%
 pork_pop <- read_csv("Data/Food/Production/Animal/32100160.csv")%>%
   as_tibble()%>% 
   rename("StatCan_name" = "Livestock")%>%
-  filter(`Survey date` == "At January 1", StatCan_name %in% c( "Over 81 kilograms", "54 to 80 kilograms", "23 to 53 kilograms", "Boars, 6 months and over", "Sows and gilts, 6 months and over"))%>% 
+  filter(`Survey date` == "At January 1", 
+         StatCan_name %in% c( "Over 81 kilograms", "54 to 80 kilograms", "23 to 53 kilograms", "Boars, 6 months and over", "Sows and gilts, 6 months and over"),
+         REF_DATE %in% years)%>% 
   group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
   summarise(VALUE = mean(VALUE))%>%
   replace_na(list(VALUE = 0))
@@ -572,6 +579,7 @@ pork_pop <- read_csv("Data/Food/Production/Animal/32100160.csv")%>%
 animal_pop <- bind_rows(cattle_pop, pork_pop, broiler_pop, layer_pop)
 
 ```
+
 
 ```{r VN and N per kg feed, echo=FALSE, message = FALSE}
 VNF_feed <- VNF_feed_CAN%>%
@@ -847,6 +855,34 @@ VNF_meat$GEO <- factor(VNF_meat$GEO,levels = c("Canada", "British Columbia", "Al
 
 ```
 
+Atlantic Salmon
+39% prtein in feed  Excretion  is  approximately  29 g  N  /  Kg  feed consumed or 32 g N / kg of growth. FCR 1.1. assume 70% of feed is. Chapter One: Nutrient Releases from Salmon Aquaculture.  
+```{r VNF Fish , echo=FALSE, message = FALSE}
+
+#download https://www150.statcan.gc.ca/t1/tbl1/en/cv.action?pid=3210010701 
+fish_prod <- read_csv("Data/Food/Production/Fish/32100107.csv")%>%
+  filter(`Finfish and shellfish` == "Total finfish", UOM == "Tonnes",
+         REF_DATE %in% years)%>%
+  rename("StatCan_name" = "Finfish and shellfish")%>%
+  replace_na(list(VALUE = 0))%>%
+  group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>% 
+  summarise(yeild_kg = mean(VALUE)*1000)%>%
+  mutate(N_manure_kg = yeild_kg * 0.032,
+         N_waste_loss = yeild_kg * 0.45 * 0.036, #USDA fish losses, canned salmon N content CCHS
+         consumed_kg = yeild_kg * (1-0.45),  
+         `VNF kgN/kg` = (N_manure_kg + N_waste_loss)/consumed_kg,
+         `Food group` = "Fish",
+         `N footprint sector` = "VN from meat")
+
+VNF_fish <- fish_prod%>%
+  filter(GEO == "Canada")%>%
+  ungroup()%>%
+  select(GEO, `Food group`, `N footprint sector`, `VNF kgN/kg`)
+
+```
+
+
+
 ```{r food_consumption, echo=FALSE, message = FALSE}
 #CCHS Data
 #download
@@ -976,7 +1012,8 @@ pairwise.wilcox.test(food_group_g$value, food_group_g$GEO,
 
 ```{r VN_food, echo=FALSE, message = FALSE}
 
-VNF_food_CAN <- bind_rows(VNF_meat_CAN, VNF_crop_group_CAN)
+VNF_food_CAN <- bind_rows(VNF_meat_CAN, VNF_crop_group_CAN)%>%
+  bind_rows(VNF_fish)
 
 VN_food <- left_join(food_consum, VNF_food_CAN, by =c("food_group"="Food group"))%>%
   rename("GEO"="GEO.x")%>%
@@ -1029,13 +1066,16 @@ N_wastewater_Total <- bind_rows(N_wastewater_prov, N_wastewater_CAN)%>%
 ```{r N footprint, echo=FALSE}
 N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
   bind_rows(VN_food)%>%
-  mutate(GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland and Labrador"), 
+  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
+                   GEO == "Newfoundland and Labrador" ~ "NFLD",
+                   TRUE ~ GEO),
+         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
          Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
          `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  group_by(GEO, `Subsector`)%>%
-  summarise(sum(`N kg/cap/year`))
+  group_by(GEO, `N footprint sector`)%>%
+  summarise(`N kg/cap/year` = sum(`N kg/cap/year`))
 
-#write_csv(N_footprint,"Results_Images/N_footprint.csv")
+write_csv(N_footprint,"Results_Images/N_footprint.csv")
 
 ```
 
@@ -1043,11 +1083,9 @@ N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
 
 ```{r VNF food crop graph}
 
-VNF_crop_graph <- VNF_crop_group
-
-ggplot(VNF_crop_group, aes(fill = `GEO`, y = `VNF g N/kg`, x = `GEO`))+
+ggplot(VNF_crop_group, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
   geom_bar(position="stack", stat="identity") +
-  facet_wrap(~factor(`Food group`, levels=c("Roots", "Fruits", "Grains", "Vegetables", "Oilseeds", "Legumes")), scales = "free_x")+
+  facet_wrap(~factor(`Food group`, levels=c("Roots",  "Grains", "Legumes", "Fruits", "Vegetables", "Oilseeds" )), scales = "free_x")+
   labs(caption = "Virtual nitrogen factors (g N / kg) for food crops")+
   #scale_y_log10()+
   coord_flip()+
@@ -1094,40 +1132,43 @@ ggsave("Results_Images/VNF_meat_avg.pdf")
 
 ```{r Total N footprint graph, echo=FALSE, message = FALSE}
 
-ggplot(subset(N_footprint, GEO %in% c("Newfoundland and Labrador", "Prince Edward Island", "Nova Scotia", "New Brunswick", "Quebec", "Ontario", "Manitoba", "Saskatchewan", "Alberta", "British Columbia")), aes(fill = `N footprint sector`, y = `N kg/year`/1000000, x = reorder(GEO, - `N kg/year`)))+
+total_graph <- ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footprint sector`, y = `N kg/year`/1000000, x = reorder(GEO, - `N kg/year`)))+
   geom_bar(stat="identity") +
   scale_fill_brewer(palette="Paired")+
-  scale_x_discrete(labels = wrap_format(10))+
-  labs(y = "Total provincial N footprint (Gg/year)")+
+  labs(caption = "Total provincial N footprint (Gg/year)")+
   coord_flip()+
   theme_classic()+
   theme(
-    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=8),
-    axis.title.y = element_blank(),
-    axis.ticks = element_blank(),
-    plot.caption = element_text(hjust = 0))
-#ggsave("Results_Images/N_print_total.pdf")  
-
-```
-
-```{r Graph Provincial footprints per capita by sector, echo=FALSE, message = FALSE}
-
-sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
-  geom_bar(stat="identity") +
-  scale_fill_brewer(palette="Paired")+
-  labs(caption = "Provincial Nitrogen footprints by sector (N kg/cap/year)")+
-  scale_x_discrete(labels = wrap_format(10))+
-  coord_flip()+
-  theme_classic()+
-  theme(
-    legend.position = "none",
     axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
     axis.text.y = element_text(size=8),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
+
+#ggsave("Results_Images/N_print_total.pdf")  
+
+```
+
+```{r Graph Provincial footprints per capita by sector, echo=FALSE, message = FALSE}
+
+sector_graph 
+
+ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
+  geom_bar(stat="identity") +
+  scale_fill_brewer(palette="Paired")+
+  labs(caption = "By sector (N kg/cap/year)")+
+  scale_x_discrete()+
+  coord_flip()+
+  theme_classic()+
+  theme(
+    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=8),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    plot.caption = element_text(hjust = 0))
+
 #ggsave("Results_Images/N_print_sectors_cap.pdf")
 
 ```
@@ -1137,8 +1178,8 @@ sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/c
 sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_brewer(palette="Paired")+
-  labs(caption = "Sector contribution to per capita provincial N footprints, % of total")+
-  scale_x_discrete(labels = wrap_format(10))+
+  labs(caption = "Sector contribution, % of total")+
+  scale_x_discrete()+
   coord_flip()+
   theme_classic()+
   theme(
@@ -1152,6 +1193,22 @@ sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y =
 
 ```
 
+```{r, echo=FALSE, message = FALSE}
+
+ggarrange(total_graph, 
+          ggarrange(sector_graph, sector_percent_graph,
+                    labels = c("B","C"),
+                    ncol = 2,
+                    legend = "none"),
+          nrow = 2,
+          labels= "A",
+          common.legend = TRUE)
+ggsave("Results_Images/N_print_sectors_graph.pdf")  
+
+
+```
+
+
 ```{r Graph Provincial footprints per capita by subsector, echo=FALSE, message = FALSE}
 colors <- 16
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
@@ -1160,8 +1217,7 @@ subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/yea
   geom_bar(stat="identity") +
   scale_fill_manual(values = mycolors)+
   #scale_fill_brewer(palette="Paired")+
-  labs(caption = "Nitrogen footprints by subsector (N kg/cap/year)")+
-  scale_x_discrete(labels = wrap_format(10))+
+  labs(caption = "By subsector (N kg/cap/year)")+
   coord_flip()+
   theme_classic()+
   theme(
@@ -1185,14 +1241,13 @@ subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg
   geom_bar(position = "fill", stat="identity") +
   scale_fill_manual(values = mycolors)+
   #scale_fill_brewer(palette="Paired")+
-  labs(caption = "Subsector contribution to per capita provincial N footprints, % of total")+
+  labs(caption = "Subsector, % of total")+
   coord_flip()+
-  scale_x_discrete(labels = wrap_format(10))+
   guides(fill=guide_legend(ncol=1))+
   theme_classic()+
   theme(
     axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=6),
+    axis.text.y = element_text(size=8),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
@@ -1201,16 +1256,16 @@ subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg
 
 ```
 
-```{r, echo=FALSE, message = FALSE}
 
-ggarrange(sector_graph, sector_percent_graph, subsector_graph, subsector_percent_graph,
-                    labels = c("A","B","C","D"),
-                    ncol = 2, nrow = 2,
-          legend = "none")
-ggsave("Results_Images/N_print_subsectors_cap_percent.pdf")  
-
+``` {r, echo=FALSE, message = FALSE}
+ggarrange(subsector_graph, subsector_percent_graph,
+                    labels = c("D","E"),
+                    ncol = 2,
+                    common.legend = TRUE)
+ggsave("Results_Images/N_print_subsectors_graph.pdf")  
 
 ```
+
 
 
 ```{r, echo=FALSE, message = FALSE}

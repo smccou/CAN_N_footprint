@@ -38,7 +38,7 @@ prov_pop <- read_csv("Data/Population/provincial_pop.csv", skip = 1)%>%
 #Energy
 ```{r Energy, echo=FALSE, message = FALSE}
 
-APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
+APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)
   select(Year, Region, Source, Sector, `NOX (t)`, `NH3 (t)`)%>%
   filter(is.na(Sector))%>% #removes double counts of sectors/sources
   mutate(Region = case_when(Region == "AB" ~ "Alberta",
@@ -1048,55 +1048,102 @@ sludge is typically burned or added to landfill in Canada (so still released as 
 
 ```{r wastewater, echo=FALSE, message = FALSE}
 #Population served by municipal wastewater systems by treatment category (Canada/Province)
-N_wastewater <-  read_csv("Data/Food/wastewater/wastewater.csv", skip = 1)%>%
+N_aqueous_wastewater <-  read_csv("Data/Food/wastewater/wastewater.csv", skip = 1)%>%
   rename("year" = "REF_DATE")%>%
   select(year, GEO, `Population by treatment type`, UOM, SCALAR_FACTOR, VALUE)%>%
   filter(`Population by treatment type` != 'All treatment types')%>%
   group_by(year, GEO)%>% 
   #what percent of the population is served by each treatment type
-  mutate(percent_pop=VALUE/sum(VALUE))%>%
+  mutate(percent_pop_covered=VALUE/sum(VALUE))%>%
   ungroup%>%
-  mutate(`%N removal low` = case_when(`Population by treatment type` == "No treatment" ~ 0.05,
-                                  `Population by treatment type` == "Primary treatment" ~ 0.05,
-                                  `Population by treatment type` == "Secondary treatment" ~ 0.08,
-                                  `Population by treatment type` == "Secondary treatment with additional phosphorus removal" ~ 0.08,
-                                  `Population by treatment type` == "Tertiary treatment" ~ 0.20),
-         `%N removal high` = case_when(`Population by treatment type` == "No treatment" ~ 0.10,
-                                  `Population by treatment type` == "Primary treatment" ~ 0.10,
-                                  `Population by treatment type` == "Secondary treatment" ~ 0.15,
-                                  `Population by treatment type` == "Secondary treatment with additional phosphorus removal" ~ 0.15,
-                                  `Population by treatment type` == "Tertiary treatment" ~ 0.35))%>%
+  # % aqueous N loss as TKN, N03, N02 (N2 and N20 accounted for in next step)
+  mutate(`% aqueous N loss` = case_when(`Population by treatment type` == "No treatment" ~ 0.95,
+                                  `Population by treatment type` == "Primary treatment" ~ 0.75,
+                                  `Population by treatment type` == "Secondary treatment" ~ 0.66,
+                                  `Population by treatment type` == "Secondary treatment with additional phosphorus removal" ~ 0.66,
+                                  `Population by treatment type` == "Tertiary treatment" ~ 0.30),
+         )%>%
+  #average treatment over 3 years
   filter(year %in% years)%>%
-  group_by(GEO, VALUE, `Population by treatment type`, `%N removal high`, `%N removal low`)%>%
-  summarise(percent_pop = mean(percent_pop))
-  
-N_wastewater_PROV <- left_join(food_consum, N_wastewater)%>%
+  group_by(GEO, VALUE, `Population by treatment type`, `% aqueous N loss`)%>%
+  summarise(percent_pop_covered = mean(percent_pop_covered))%>%
+  #N influent (N from food consumption)
+  left_join(food_consum)%>%
   filter(!(GEO %in% c("Canada", "Yukon")))%>% #Canada average currently includes the North, need to remove and re-calculate for comparison with provinces
-  mutate(`N wastewater loss kg/cap/year high` = `adjusted consumed N kg/cap/year` * (percent_pop) * (1-`%N removal high`),
-         `N wastewater loss kg/cap/year low` = `adjusted consumed N kg/cap/year` * (percent_pop) * (1-`%N removal low`))%>%
+  #estimate aqueous N loss
+  mutate(`N aqueous loss kg/cap/year` = `adjusted consumed N kg/cap/year` * percent_pop_covered * `% aqueous N loss`)%>%
   group_by(GEO)%>%
-  summarise(`High` = sum(`N wastewater loss kg/cap/year high`),
-            `Low` = sum(`N wastewater loss kg/cap/year low`))%>%
-  pivot_longer(cols = !GEO, names_to = "Treatment removal", values_to = "N kg/cap/year")%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment")%>%
+  summarise(`N aqueous loss kg/cap/year` = sum(`N aqueous loss kg/cap/year`))%>%
+  left_join(food_consum)%>%
+  mutate(`N inffluent kg/cap/year`= `adjusted consumed N kg/cap/year`)%>%
+  group_by(GEO)%>%
+  summarise(`N aqueous loss kg/cap/year` = mean(`N aqueous loss kg/cap/year`), `N inffluent kg/cap/year` = sum(`N inffluent kg/cap/year`))%>%
   left_join(prov_pop)%>%
-  mutate(`N kg/year` = `N kg/cap/year` * Population)
- 
+  mutate(`N aqueous loss N kg` = `N aqueous loss kg/cap/year` * Population,
+         `N inffluent N kg` = `N inffluent kg/cap/year` * Population)
+
+GHG_wastewater <- read_csv("Data/fossil_fuels/GHG_inventory.csv", skip = 1)%>%
+  select(Year, Region, Category, N2O)%>%
+  filter(Year %in% years,
+         Category == "Wastewater Treatment and Discharge")%>%
+  mutate(Category = "Wastewater Treatment",
+         `N footprint sector` = "Wastewater Treatment")%>%
+  rename("Subsector" = "Category",
+         "GEO" = "Region")%>%
+  mutate(N_kg = N2O *1000000*14.0067/44.013)%>% #convert kt N20 to kg N
+  group_by(GEO, `N footprint sector`, Subsector)%>%
+  summarise(`N20 loss N kg` = mean(N_kg))%>%
+  mutate(`N2 N kg` = `N20 loss N kg`)%>%
+  select(GEO, `N footprint sector`, Subsector, `N20 loss N kg`, `N2 N kg`)%>%
+  filter(!(GEO %in% c("Canada", "Nunavut", "Yukon", "Northwest Territories")))
+
+APEI_wastewater <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
+  select(Year, Region, Source, Sector, Subsector, `NOX (t)`, `NH3 (t)`)%>%
+  mutate(Region = case_when(Region == "AB" ~ "Alberta",
+                            Region == "BC" ~ "British Columbia",
+                            Region == "MB" ~ "Manitoba",
+                            Region == "NB" ~ "New Brunswick",
+                            Region == "NL" ~ "Newfoundland and Labrador",
+                            Region == "NS" ~ "Nova Scotia",
+                            Region == "ON" ~ "Ontario",
+                            Region == "PE" ~ "Prince Edward Island",
+                            Region == "QC" ~ "Quebec",
+                            Region == "SK" ~"Saskatchewan"))%>%
+  drop_na(Region)%>%
+  rename("GEO" = "Region")%>%
+  filter(Subsector %in% c("Incineration and Waste", "Municipal Water and Wastewater Treatment"))%>%
+  replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
+  mutate(`NH3 NOx loss Nkg/year` = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>% #convert NOx weights to N, NOx reported as NO2 equivalent 
+  filter(Year %in% years)%>%
+  group_by(GEO)%>%
+  summarise(`NH3 NOx loss Nkg/year` = mean(`NH3 NOx loss Nkg/year`))
+
+N_wastewater_PROV <- left_join(N_aqueous_wastewater,APEI_wastewater)%>%
+  left_join(GHG_wastewater)%>%
+  mutate(`N recyclable kg/year` = `N inffluent N kg` - `N aqueous loss N kg` - `N20 loss N kg` - `N2 N kg`,
+         `50% recycled` = `N recyclable kg/year` * 0.5,
+         `25% recycled` = `N recyclable kg/year` * 0.75,
+         `High` = `N aqueous loss N kg` + `N20 loss N kg` + `50% recycled`, 
+         `Low` = `N aqueous loss N kg` + `N20 loss N kg` + `25% recycled`)%>%
+  pivot_longer(cols = High:Low, names_to = "N recycled", values_to = "N kg/year")%>%
+  mutate(`N kg/cap/year` = `N kg/year` / Population)
+
 N_wastewater_CAN <- N_wastewater_PROV%>%
-  group_by(`Treatment removal`)%>%
+  group_by(`N recycled`)%>%
   summarise(`N kg/cap/year` = weighted.mean(`N kg/cap/year`, Population),
             `N kg/year` = sum(`N kg/year`))%>%
   mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment", GEO = "Canada")
 
 N_wastewater_Total <- bind_rows(N_wastewater_PROV, N_wastewater_CAN)%>%
   select(!(Population))%>%
-  mutate(GEO = factor(GEO, levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland and Labrador")),
-         `Treatment removal` = factor(`Treatment removal`, levels = c("Low", "High")))
+  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
+                   GEO == "Newfoundland and Labrador" ~ "NFLD",
+                   TRUE ~ GEO),
+         `N recycled` = factor(`N recycled`, levels = c("Low", "High")))
 
-ggplot(N_wastewater_Total, aes(fill = `Treatment removal`, y = `N kg/cap/year`, x = `Treatment removal`))+
+ggplot(N_wastewater_Total, aes(fill = `N recycled`, y = `N kg/cap/year`, x = `N recycled`))+
   geom_bar(stat="identity") + 
-  facet_wrap(~factor(`GEO`, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland and Labrador")), scales = "free")+
-  labs(caption = "Canadian wastewater N footprints, low N removal vs high N removal assumptions (N kg/cap/year)")+
+  facet_wrap(~factor(`GEO`, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")), scales = "free")+
   coord_flip()+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -1118,11 +1165,11 @@ N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
          GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
          Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
          `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  filter(`Treatment removal` == "Low" | is.na(`Treatment removal`))%>%
-  filter(`VN` == "VN provincial"| is.na(`VN`))%>%
+#choose which version you want
+  filter(`N recycled` == "Low" | is.na(`N recycled`))%>%
+  filter(`VN` == "VN CAN weighted"| is.na(`VN`))%>%
   group_by(GEO, `N footprint sector`, Subsector)%>%
   summarise(`N kg/cap/year` = sum(`N kg/cap/year`), `N kg/year` = sum(`N kg/year`))
-
 
 
 write_csv(N_footprint,"Results_Images/N_footprint.csv")
@@ -1356,9 +1403,7 @@ ggsave("Results_Images/animal_VNFs.pdf")
 
 ```{r Total N footprint graph, echo=FALSE, message = FALSE}
 
-#total_graph <- 
-  
-ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footprint sector`, y = `N kg/year`/1000000, x = reorder(GEO, - `N kg/year`)))+
+total_graph <- ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footprint sector`, y = `N kg/year`/1000000, x = reorder(GEO, - `N kg/year`)))+
   geom_bar(stat="identity") +
   scale_fill_brewer(palette="Paired")+
   labs(caption = "Total provincial N footprint (Gg/year)")+

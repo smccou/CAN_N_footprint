@@ -2,6 +2,8 @@
 title: `Canada_N_footprint`
 output: html_notebook
 ---
+Ongoing notes:
+the fertilizer application on Tame hay makes a reasonably big difference in VNFs
 
 ```{r libraries, echo=FALSE, message = FALSE}
 library(readr)
@@ -65,7 +67,7 @@ APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
   mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)) * 0.15,
                           TRUE ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031))))%>%  
   drop_na(Source, Region)%>%
-  filter(Year %in% years)%>%
+  filter(Year %in% years)
   group_by(Year, Region, Source)%>%
   summarise(`N kg/year` = sum(N_kg))%>%
   group_by(Region, Source)%>%
@@ -281,13 +283,14 @@ N_fert_sales <- read_csv("Data/food/fertilizer/fertilizer_shipments.csv", skip =
 
 #Recommended N Application Rates
 #added wheat as average of spring and winter (almost the same)
-N_recommended_rates <- read_csv("Data/Food/fertilizer/recommended_fertilizer.csv", skip = 2)%>%
+N_recommended_rates <- read_csv("Data/Food/fertilizer/recommended_fertilizer.csv", skip = 3)%>%
   mutate("Canada" = (rowSums(.[2:7])/7))%>%
   gather(GEO, Rate_kg_ha, `British Columbia`:`Canada`)
 
 #Fertilizer N Application adjusted by the recommended rate for each crop type by the ratio of total N sold provincially (kg) to the total N if recommended rates were used
 #Note for fertilizer rates and sales data, PEI, NB NFLD and NS were grouped together as the Atlantic Provinces, so the application rate for these provinces was adjusted by this region 
-#StatCan crop names were matched to crop categories for recommended fertilization rates
+#StatCan crop names were matched to crop categories for recommended fertilization rates from Yang et al
+#Tame hay includes alfalfa (0 kg/ha), seeded forage (improved pasture 50kg/ha) and other tame hay (varies). We have applied the tame hay recommended rate. 
 N_rec_fert_crop <- mutate(crop_area, key_rec_fert = case_when(StatCan_name %in% vegetable_list ~ "Vegetables",
                                                               StatCan_name %in% c("carrots", "dry onions", "parsnips", "rutabagas and turnips", "beets") ~ "Vegetables",
                                                           StatCan_name %in% c("blueberries", "raspberries", "strawberries", "cranberries") ~ "Berries",
@@ -375,7 +378,6 @@ N_field_loss <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_n
 ```
 
 Soybeans do not actually add nitrogen to the soil. As an example, imagine a 60-bushel soybean crop, which needs more than 300 lbs/acre of N. The crop can fix enough nitrogen to supply half of that. At the same time, that crop would likely be removing around 205 lbs/acre N with the beans, which have a relatively high nitrogen content due to the protein content in the seed. In this example, at best, that soil system has around 25 fewer pounds after harvest than it did at planting. This does not mean, however, that the following crop is now short 25 pounds of nitrogen https://blog-crop-news.extension.umn.edu/2018/04/why-do-we-need-soybean-nitrogen-credit.html
-
 
 ```{r Crop_processing_loss, echo=FALSE, message = FALSE}
 #USDA https://www.ers.usda.gov/data-products/food-availability-per-capita-data-system/ 
@@ -538,6 +540,8 @@ animal_pop <- bind_rows(cattle_pop, pork_pop, broiler_pop, layer_pop)
 ```
 
 ```{r VN and N per kg feed, echo=FALSE, message = FALSE}
+#note from above: tame hay includes alfalfa mix, seeded pasture, and other tame hay
+#tame hay from Sheppard is unweighted average of tame hay, tame pasture and native pasture (so roughly the same)
 VNF_feed <- VNF_feed_CAN%>%
   select(`Crop type`, "VNF kgN/kg")%>%
   pivot_wider(names_from =`Crop type`, values_from = "VNF kgN/kg")%>%
@@ -1064,7 +1068,7 @@ N_aqueous_wastewater <-  read_csv("Data/Food/wastewater/wastewater.csv", skip = 
   filter(`Population by treatment type` != 'All treatment types')%>%
   group_by(year, GEO)%>% 
   #what percent of the population is served by each treatment type
-  mutate(percent_pop_covered=VALUE/sum(VALUE))
+  mutate(percent_pop_covered=VALUE/sum(VALUE))%>%
   ungroup%>%
   # % aqueous N loss as TKN, N03, N02 (N2 and N20 accounted for in next step)
   mutate(`% aqueous N loss` = case_when(`Population by treatment type` == "No treatment" ~ 0.95,
@@ -1177,7 +1181,8 @@ N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
                    GEO == "Newfoundland and Labrador" ~ "NFLD",
                    TRUE ~ GEO),
          GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
+         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Energy Generation", "Oil and Gas Industry", "Transport", "	
+Other Industry", "Commercial & Residential"),
          `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
 #choose which version you want
   filter(`N recycled` == "Low" | is.na(`N recycled`))%>%
@@ -1365,18 +1370,20 @@ ggplot(scenario_comparison, aes(fill = `N footprint sector`, y = `N kg/cap/year`
 
 
 # Results and Images
-
 ```{r VNF food crop graph}
 
 VNF_graph <- bind_rows(VNF_meat, VNF_crop_group)
 
 write_csv(VNF_graph, "Data/Food_VNFs.csv")
 
+USA <- USA_VNF%>%
+  rename(`VNF kgN/kg` = `VNF kg N / kg food USA`, "Food group" = "Food Group")%>%
+  filter(`Food group` != "Fish")
+
 ggplot(VNF_graph, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
   geom_bar(position="stack", stat="identity") +
   facet_wrap(~factor(`Food group`, levels=c("Roots", "Milk", "Grains", "Legumes", "Fruits", "Vegetables", "Oilseeds", "Eggs", "Chicken", "Pork", "Beef")), scales = "free_x")+
-  #labs(caption = "Virtual nitrogen factors (g N / kg) for food crops")+
-  #scale_y_log10()+
+  geom_hline(aes(yintercept = (`VNF kgN/kg` * 1000)), USA)+
   coord_flip()+
   scale_fill_brewer(palette="Paired")+
   theme_classic()+
@@ -1406,16 +1413,14 @@ total_graph <- ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footpr
   coord_flip()+
   theme_classic()+
   theme(
-    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=8),
+    axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=10),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
 
-#sector_graph <- 
-  
-ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
+sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(stat="identity") +
   scale_fill_brewer(palette="Paired")+
   labs(caption = "By sector (N kg/cap/year)")+
@@ -1432,9 +1437,7 @@ ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = re
 
 ggsave("Results_Images/N_print_prov_sectors_cap_graph.pdf")
 
-#sector_percent_graph <- 
-
-ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
+sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_brewer(palette="Paired")+
   labs(caption = "Sector contribution, % of total")+
@@ -1466,11 +1469,10 @@ ggsave("Results_Images/N_print_sectors_graph.pdf")
 ```
 
 ```{r Graph Provincial footprints per capita by subsector, echo=FALSE, message = FALSE}
-colors <- 17
+colors <- 18
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
 
-#subsector_graph <- 
-ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
+subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
   geom_bar(stat="identity") +
   scale_fill_manual(values = mycolors)+
   #scale_fill_brewer(palette="Paired")+
@@ -1479,8 +1481,8 @@ ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO
   theme_classic()+
   theme(
     #legend.position = "none",
-    axis.text.x = element_text(size=12, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=12),
+    axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=10),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
@@ -1488,9 +1490,7 @@ ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO
 
 ggsave("Results_Images/N_print_prov_subsectors_cap_graph.pdf")
 
-#subsector_percent_graph <- 
-
-ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
+subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_manual(values = mycolors)+
   #scale_fill_brewer(palette="Paired")+
@@ -1499,8 +1499,8 @@ ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO
   guides(fill=guide_legend(ncol=1))+
   theme_classic()+
   theme(
-    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=8),
+    axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=10),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
@@ -1511,7 +1511,7 @@ ggarrange(subsector_graph, subsector_percent_graph,
                     ncol = 2,
                     common.legend = TRUE)
 
-ggsave("Results_Images/N_print_subsectors_graph.pdf")  
+ggsave("Results_Images/N_print_subsectors_graph.pdf", width = 10)  
 
 ```
 

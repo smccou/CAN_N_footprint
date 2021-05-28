@@ -1,0 +1,35 @@
+﻿source:,"Karimi, R., Pogue, S. J., Kröbel, R., Beauchemin, K. A., Schwinghamer, T., & Henry Janzen, H. (2020). An updated nitrogen budget for Canadian agroecosystems. Agriculture, Ecosystems & Environment, 304, 107046. https://doi.org/10.1016/j.agee.2020.107046",,,,,,
+"***berry and tree fruit Nconc from Janzen et al, 2013, USDA FoodData",,,,,,,
+Crop,H20 content (%w/w),HI,Below Ground Residue (% of DM harvest),N conc prod (%DM),N conc res (%DM),N conc root (%DM),%BNFA
+Barley,12,0.47,17,2.1,0.9,1.2,
+"Beans, all dry (white and coloured)",13,0.57,20,4.1,1,1,40
+Canary seed,12,0.25,20,2.5,0.7,1,54
+Canola (rapeseed),8.5,0.26,27,3.8,1.3,0.9,
+Chick peas,13,0.42,18,3.2,2.4,1.5,52
+Corn for grain,15,0.51,20,1.3,0.9,0.5,
+Corn for silage,70,0.9,20,1.3,1.3,0.7,
+Faba beans,13,0.45,19,4.4,3,1,67
+Flaxseed,8,0.31,16,3.9,1.2,1,
+Forage for seed,13,0.2,40,3,1.5,1.3,20
+Apples,84,0.05,30,0.2,1,1,
+Tree fruit,84,0.05,30,0.45,1,1,
+Berries and grapes,84,0.05,30,0.7,1,1,
+Lentils,13,0.38,19,3.9,1,1,53
+Mixed grains,12,0.43,20,2.4,0.7,1.1,
+Mustard seed,8.5,0.26,27,4,1.3,0.9,
+Oats,12,0.47,30,2.5,0.6,1.4,
+Other field crops,10.4,0.33,20,3.6,1.3,1.3,
+Pasture (nat),0,0.6,60,1.5,1.5,1.5,
+Pasture (seeded),0,0.6,60,1.5,1.5,1.5,
+"Peas, dry",13,0.35,18,4.1,2.1,2.2,54
+Potatoes,75,0.8,9,1.2,1.8,1.3,
+"Rye, all",12,0.4,15,1.8,0.6,1,
+Soybeans,14,0.43,18,6.3,0.7,1,55
+Sugar beets,80,0.8,5,1,2.9,1,
+Sunflower seed,2,0.34,20,2.4,1,1,
+T. hay (alfalfa &mix),13,0.8,50,2.6,1.5,1.5,66
+Tame hay,13,0.6,70,1.6,1.6,1,10
+Tobacco,20,0.8,20,2,1,1,
+Triticale,12,0.34,20,2.2,0.6,1,
+Vegetables,80,0.5,20,2,2,1,
+"Wheat, all",12,0.4,19,2.6,0.7,1,

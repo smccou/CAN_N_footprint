@@ -1,0 +1,362 @@
+﻿source,Table 38-10-0125-01  Population served by municipal wastewater systems by treatment category,,,,,,,,,,,,,
+REF_DATE,GEO,DGUID,Population by treatment type,UOM,UOM_ID,SCALAR_FACTOR,SCALAR_ID,VECTOR,COORDINATE,VALUE,STATUS,SYMBOL,TERMINATED,DECIMALS
+2013,Canada,2016A000011124,All treatment types,Persons,249,units ,0,v1064172342,1.1,29267537,A,,,0
+2013,Canada,2016A000011124,Primary treatment,Persons,249,units ,0,v1064172343,1.2,4748190,A,,,0
+2013,Canada,2016A000011124,Secondary treatment,Persons,249,units ,0,v1064172344,1.3,7522147,A,,,0
+2013,Canada,2016A000011124,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172345,1.4,7114493,A,,,0
+2013,Canada,2016A000011124,Tertiary treatment,Persons,249,units ,0,v1064172346,1.5,9284975,A,,,0
+2013,Canada,2016A000011124,No treatment,Persons,249,units ,0,v1064172347,1.6,597732,A,,,0
+2013,Newfoundland and Labrador,2016A000210,All treatment types,Persons,249,units ,0,v1064172348,2.1,371347,A,,,0
+2013,Newfoundland and Labrador,2016A000210,Primary treatment,Persons,249,units ,0,v1064172349,2.2,142583,A,,,0
+2013,Newfoundland and Labrador,2016A000210,Secondary treatment,Persons,249,units ,0,v1064172350,2.3,52825,A,,,0
+2013,Newfoundland and Labrador,2016A000210,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172351,2.4,0,,,,0
+2013,Newfoundland and Labrador,2016A000210,Tertiary treatment,Persons,249,units ,0,v1064172352,2.5,6680,A,,,0
+2013,Newfoundland and Labrador,2016A000210,No treatment,Persons,249,units ,0,v1064172353,2.6,169259,A,,,0
+2013,Prince Edward Island,2016A000211,All treatment types,Persons,249,units ,0,v1064172354,3.1,74847,A,,,0
+2013,Prince Edward Island,2016A000211,Primary treatment,Persons,249,units ,0,v1064172355,3.2,0,,,,0
+2013,Prince Edward Island,2016A000211,Secondary treatment,Persons,249,units ,0,v1064172356,3.3,59858,A,,,0
+2013,Prince Edward Island,2016A000211,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172357,3.4,0,,,,0
+2013,Prince Edward Island,2016A000211,Tertiary treatment,Persons,249,units ,0,v1064172358,3.5,14234,A,,,0
+2013,Prince Edward Island,2016A000211,No treatment,Persons,249,units ,0,v1064172359,3.6,755,A,,,0
+2013,Nova Scotia,2016A000212,All treatment types,Persons,249,units ,0,v1064172360,4.1,648687,A,,,0
+2013,Nova Scotia,2016A000212,Primary treatment,Persons,249,units ,0,v1064172361,4.2,314221,A,,,0
+2013,Nova Scotia,2016A000212,Secondary treatment,Persons,249,units ,0,v1064172362,4.3,208670,A,,,0
+2013,Nova Scotia,2016A000212,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172363,4.4,4654,A,,,0
+2013,Nova Scotia,2016A000212,Tertiary treatment,Persons,249,units ,0,v1064172364,4.5,73452,A,,,0
+2013,Nova Scotia,2016A000212,No treatment,Persons,249,units ,0,v1064172365,4.6,47690,A,,,0
+2013,New Brunswick,2016A000213,All treatment types,Persons,249,units ,0,v1064172366,5.1,459251,A,,,0
+2013,New Brunswick,2016A000213,Primary treatment,Persons,249,units ,0,v1064172367,5.2,123928,A,,,0
+2013,New Brunswick,2016A000213,Secondary treatment,Persons,249,units ,0,v1064172368,5.3,333595,A,,,0
+2013,New Brunswick,2016A000213,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172369,5.4,0,,,,0
+2013,New Brunswick,2016A000213,Tertiary treatment,Persons,249,units ,0,v1064172370,5.5,1728,A,,,0
+2013,New Brunswick,2016A000213,No treatment,Persons,249,units ,0,v1064172371,5.6,0,,,,0
+2013,Quebec,2016A000224,All treatment types,Persons,249,units ,0,v1064172372,6.1,7084056,A,,,0
+2013,Quebec,2016A000224,Primary treatment,Persons,249,units ,0,v1064172373,6.2,2680701,A,,,0
+2013,Quebec,2016A000224,Secondary treatment,Persons,249,units ,0,v1064172374,6.3,3051174,A,,,0
+2013,Quebec,2016A000224,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172375,6.4,647854,A,,,0
+2013,Quebec,2016A000224,Tertiary treatment,Persons,249,units ,0,v1064172376,6.5,669814,A,,,0
+2013,Quebec,2016A000224,No treatment,Persons,249,units ,0,v1064172377,6.6,34513,A,,,0
+2013,Ontario,2016A000235,All treatment types,Persons,249,units ,0,v1064172378,7.1,11727816,A,,,0
+2013,Ontario,2016A000235,Primary treatment,Persons,249,units ,0,v1064172379,7.2,92699,A,,,0
+2013,Ontario,2016A000235,Secondary treatment,Persons,249,units ,0,v1064172380,7.3,989569,A,,,0
+2013,Ontario,2016A000235,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172381,7.4,5644129,A,,,0
+2013,Ontario,2016A000235,Tertiary treatment,Persons,249,units ,0,v1064172382,7.5,5001419,A,,,0
+2013,Ontario,2016A000235,No treatment,Persons,249,units ,0,v1064172383,7.6,0,,,,0
+2013,Manitoba,2016A000246,All treatment types,Persons,249,units ,0,v1064172384,8.1,973118,A,,,0
+2013,Manitoba,2016A000246,Primary treatment,Persons,249,units ,0,v1064172385,8.2,14318,A,,,0
+2013,Manitoba,2016A000246,Secondary treatment,Persons,249,units ,0,v1064172386,8.3,379450,A,,,0
+2013,Manitoba,2016A000246,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172387,8.4,412422,A,,,0
+2013,Manitoba,2016A000246,Tertiary treatment,Persons,249,units ,0,v1064172388,8.5,166928,A,,,0
+2013,Manitoba,2016A000246,No treatment,Persons,249,units ,0,v1064172389,8.6,0,,,,0
+2013,Saskatchewan,2016A000247,All treatment types,Persons,249,units ,0,v1064172390,9.1,695306,A,,,0
+2013,Saskatchewan,2016A000247,Primary treatment,Persons,249,units ,0,v1064172391,9.2,0,,,,0
+2013,Saskatchewan,2016A000247,Secondary treatment,Persons,249,units ,0,v1064172392,9.3,183604,A,,,0
+2013,Saskatchewan,2016A000247,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172393,9.4,212191,A,,,0
+2013,Saskatchewan,2016A000247,Tertiary treatment,Persons,249,units ,0,v1064172394,9.5,299511,A,,,0
+2013,Saskatchewan,2016A000247,No treatment,Persons,249,units ,0,v1064172395,9.6,0,,,,0
+2013,Alberta,2016A000248,All treatment types,Persons,249,units ,0,v1064172396,10.1,3173025,A,,,0
+2013,Alberta,2016A000248,Primary treatment,Persons,249,units ,0,v1064172397,10.2,3729,A,,,0
+2013,Alberta,2016A000248,Secondary treatment,Persons,249,units ,0,v1064172398,10.3,372181,A,,,0
+2013,Alberta,2016A000248,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172399,10.4,166853,A,,,0
+2013,Alberta,2016A000248,Tertiary treatment,Persons,249,units ,0,v1064172400,10.5,2629089,A,,,0
+2013,Alberta,2016A000248,No treatment,Persons,249,units ,0,v1064172401,10.6,1173,A,,,0
+2013,British Columbia,2016A000259,All treatment types,Persons,249,units ,0,v1064172402,11.1,4034142,A,,,0
+2013,British Columbia,2016A000259,Primary treatment,Persons,249,units ,0,v1064172403,11.2,1376011,A,,,0
+2013,British Columbia,2016A000259,Secondary treatment,Persons,249,units ,0,v1064172404,11.3,1865279,A,,,0
+2013,British Columbia,2016A000259,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172405,11.4,26390,A,,,0
+2013,British Columbia,2016A000259,Tertiary treatment,Persons,249,units ,0,v1064172406,11.5,422120,A,,,0
+2013,British Columbia,2016A000259,No treatment,Persons,249,units ,0,v1064172407,11.6,344342,A,,,0
+2013,Yukon,2016A000260,All treatment types,Persons,249,units ,0,v1064172408,12.1,25942,A,,,0
+2013,Yukon,2016A000260,Primary treatment,Persons,249,units ,0,v1064172409,12.2,0,,,,0
+2013,Yukon,2016A000260,Secondary treatment,Persons,249,units ,0,v1064172410,12.3,25942,A,,,0
+2013,Yukon,2016A000260,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172411,12.4,0,,,,0
+2013,Yukon,2016A000260,Tertiary treatment,Persons,249,units ,0,v1064172412,12.5,0,,,,0
+2013,Yukon,2016A000260,No treatment,Persons,249,units ,0,v1064172413,12.6,0,,,,0
+2014,Canada,2016A000011124,All treatment types,Persons,249,units ,0,v1064172342,1.1,29624119,A,,,0
+2014,Canada,2016A000011124,Primary treatment,Persons,249,units ,0,v1064172343,1.2,4734933,A,,,0
+2014,Canada,2016A000011124,Secondary treatment,Persons,249,units ,0,v1064172344,1.3,7623215,A,,,0
+2014,Canada,2016A000011124,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172345,1.4,7192801,A,,,0
+2014,Canada,2016A000011124,Tertiary treatment,Persons,249,units ,0,v1064172346,1.5,9474637,A,,,0
+2014,Canada,2016A000011124,No treatment,Persons,249,units ,0,v1064172347,1.6,598533,A,,,0
+2014,Newfoundland and Labrador,2016A000210,All treatment types,Persons,249,units ,0,v1064172348,2.1,372341,A,,,0
+2014,Newfoundland and Labrador,2016A000210,Primary treatment,Persons,249,units ,0,v1064172349,2.2,143256,A,,,0
+2014,Newfoundland and Labrador,2016A000210,Secondary treatment,Persons,249,units ,0,v1064172350,2.3,55226,A,,,0
+2014,Newfoundland and Labrador,2016A000210,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172351,2.4,0,,,,0
+2014,Newfoundland and Labrador,2016A000210,Tertiary treatment,Persons,249,units ,0,v1064172352,2.5,6661,A,,,0
+2014,Newfoundland and Labrador,2016A000210,No treatment,Persons,249,units ,0,v1064172353,2.6,167198,A,,,0
+2014,Prince Edward Island,2016A000211,All treatment types,Persons,249,units ,0,v1064172354,3.1,75403,A,,,0
+2014,Prince Edward Island,2016A000211,Primary treatment,Persons,249,units ,0,v1064172355,3.2,0,,,,0
+2014,Prince Edward Island,2016A000211,Secondary treatment,Persons,249,units ,0,v1064172356,3.3,61461,A,,,0
+2014,Prince Edward Island,2016A000211,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172357,3.4,0,,,,0
+2014,Prince Edward Island,2016A000211,Tertiary treatment,Persons,249,units ,0,v1064172358,3.5,13942,A,,,0
+2014,Prince Edward Island,2016A000211,No treatment,Persons,249,units ,0,v1064172359,3.6,0,,,,0
+2014,Nova Scotia,2016A000212,All treatment types,Persons,249,units ,0,v1064172360,4.1,649665,A,,,0
+2014,Nova Scotia,2016A000212,Primary treatment,Persons,249,units ,0,v1064172361,4.2,315751,A,,,0
+2014,Nova Scotia,2016A000212,Secondary treatment,Persons,249,units ,0,v1064172362,4.3,199515,A,,,0
+2014,Nova Scotia,2016A000212,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172363,4.4,15449,A,,,0
+2014,Nova Scotia,2016A000212,Tertiary treatment,Persons,249,units ,0,v1064172364,4.5,72193,A,,,0
+2014,Nova Scotia,2016A000212,No treatment,Persons,249,units ,0,v1064172365,4.6,46757,A,,,0
+2014,New Brunswick,2016A000213,All treatment types,Persons,249,units ,0,v1064172366,5.1,464566,A,,,0
+2014,New Brunswick,2016A000213,Primary treatment,Persons,249,units ,0,v1064172367,5.2,124619,A,,,0
+2014,New Brunswick,2016A000213,Secondary treatment,Persons,249,units ,0,v1064172368,5.3,338224,A,,,0
+2014,New Brunswick,2016A000213,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172369,5.4,0,,,,0
+2014,New Brunswick,2016A000213,Tertiary treatment,Persons,249,units ,0,v1064172370,5.5,1723,A,,,0
+2014,New Brunswick,2016A000213,No treatment,Persons,249,units ,0,v1064172371,5.6,0,,,,0
+2014,Quebec,2016A000224,All treatment types,Persons,249,units ,0,v1064172372,6.1,7159034,A,,,0
+2014,Quebec,2016A000224,Primary treatment,Persons,249,units ,0,v1064172373,6.2,2698022,A,,,0
+2014,Quebec,2016A000224,Secondary treatment,Persons,249,units ,0,v1064172374,6.3,3078346,A,,,0
+2014,Quebec,2016A000224,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172375,6.4,672703,A,,,0
+2014,Quebec,2016A000224,Tertiary treatment,Persons,249,units ,0,v1064172376,6.5,675502,A,,,0
+2014,Quebec,2016A000224,No treatment,Persons,249,units ,0,v1064172377,6.6,34461,A,,,0
+2014,Ontario,2016A000235,All treatment types,Persons,249,units ,0,v1064172378,7.1,11819066,A,,,0
+2014,Ontario,2016A000235,Primary treatment,Persons,249,units ,0,v1064172379,7.2,46046,A,,,0
+2014,Ontario,2016A000235,Secondary treatment,Persons,249,units ,0,v1064172380,7.3,989398,A,,,0
+2014,Ontario,2016A000235,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172381,7.4,5692074,A,,,0
+2014,Ontario,2016A000235,Tertiary treatment,Persons,249,units ,0,v1064172382,7.5,5091548,A,,,0
+2014,Ontario,2016A000235,No treatment,Persons,249,units ,0,v1064172383,7.6,0,,,,0
+2014,Manitoba,2016A000246,All treatment types,Persons,249,units ,0,v1064172384,8.1,977092,A,,,0
+2014,Manitoba,2016A000246,Primary treatment,Persons,249,units ,0,v1064172385,8.2,14477,A,,,0
+2014,Manitoba,2016A000246,Secondary treatment,Persons,249,units ,0,v1064172386,8.3,376147,A,,,0
+2014,Manitoba,2016A000246,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172387,8.4,414820,A,,,0
+2014,Manitoba,2016A000246,Tertiary treatment,Persons,249,units ,0,v1064172388,8.5,171648,A,,,0
+2014,Manitoba,2016A000246,No treatment,Persons,249,units ,0,v1064172389,8.6,0,,,,0
+2014,Saskatchewan,2016A000247,All treatment types,Persons,249,units ,0,v1064172390,9.1,708573,A,,,0
+2014,Saskatchewan,2016A000247,Primary treatment,Persons,249,units ,0,v1064172391,9.2,0,,,,0
+2014,Saskatchewan,2016A000247,Secondary treatment,Persons,249,units ,0,v1064172392,9.3,190711,A,,,0
+2014,Saskatchewan,2016A000247,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172393,9.4,212425,A,,,0
+2014,Saskatchewan,2016A000247,Tertiary treatment,Persons,249,units ,0,v1064172394,9.5,304627,A,,,0
+2014,Saskatchewan,2016A000247,No treatment,Persons,249,units ,0,v1064172395,9.6,810,A,,,0
+2014,Alberta,2016A000248,All treatment types,Persons,249,units ,0,v1064172396,10.1,3253353,A,,,0
+2014,Alberta,2016A000248,Primary treatment,Persons,249,units ,0,v1064172397,10.2,3722,A,,,0
+2014,Alberta,2016A000248,Secondary treatment,Persons,249,units ,0,v1064172398,10.3,390195,A,,,0
+2014,Alberta,2016A000248,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172399,10.4,158650,A,,,0
+2014,Alberta,2016A000248,Tertiary treatment,Persons,249,units ,0,v1064172400,10.5,2700383,A,,,0
+2014,Alberta,2016A000248,No treatment,Persons,249,units ,0,v1064172401,10.6,403,A,,,0
+2014,British Columbia,2016A000259,All treatment types,Persons,249,units ,0,v1064172402,11.1,4119312,A,,,0
+2014,British Columbia,2016A000259,Primary treatment,Persons,249,units ,0,v1064172403,11.2,1389040,A,,,0
+2014,British Columbia,2016A000259,Secondary treatment,Persons,249,units ,0,v1064172404,11.3,1918278,A,,,0
+2014,British Columbia,2016A000259,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172405,11.4,26680,A,,,0
+2014,British Columbia,2016A000259,Tertiary treatment,Persons,249,units ,0,v1064172406,11.5,436410,A,,,0
+2014,British Columbia,2016A000259,No treatment,Persons,249,units ,0,v1064172407,11.6,348904,A,,,0
+2014,Yukon,2016A000260,All treatment types,Persons,249,units ,0,v1064172408,12.1,25714,A,,,0
+2014,Yukon,2016A000260,Primary treatment,Persons,249,units ,0,v1064172409,12.2,0,,,,0
+2014,Yukon,2016A000260,Secondary treatment,Persons,249,units ,0,v1064172410,12.3,25714,A,,,0
+2014,Yukon,2016A000260,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172411,12.4,0,,,,0
+2014,Yukon,2016A000260,Tertiary treatment,Persons,249,units ,0,v1064172412,12.5,0,,,,0
+2014,Yukon,2016A000260,No treatment,Persons,249,units ,0,v1064172413,12.6,0,,,,0
+2015,Canada,2016A000011124,All treatment types,Persons,249,units ,0,v1064172342,1.1,29876734,A,,,0
+2015,Canada,2016A000011124,Primary treatment,Persons,249,units ,0,v1064172343,1.2,4767663,A,,,0
+2015,Canada,2016A000011124,Secondary treatment,Persons,249,units ,0,v1064172344,1.3,7650653,A,,,0
+2015,Canada,2016A000011124,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172345,1.4,7267600,A,,,0
+2015,Canada,2016A000011124,Tertiary treatment,Persons,249,units ,0,v1064172346,1.5,9591504,A,,,0
+2015,Canada,2016A000011124,No treatment,Persons,249,units ,0,v1064172347,1.6,599314,A,,,0
+2015,Newfoundland and Labrador,2016A000210,All treatment types,Persons,249,units ,0,v1064172348,2.1,370580,A,,,0
+2015,Newfoundland and Labrador,2016A000210,Primary treatment,Persons,249,units ,0,v1064172349,2.2,143896,A,,,0
+2015,Newfoundland and Labrador,2016A000210,Secondary treatment,Persons,249,units ,0,v1064172350,2.3,53979,A,,,0
+2015,Newfoundland and Labrador,2016A000210,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172351,2.4,0,,,,0
+2015,Newfoundland and Labrador,2016A000210,Tertiary treatment,Persons,249,units ,0,v1064172352,2.5,6642,A,,,0
+2015,Newfoundland and Labrador,2016A000210,No treatment,Persons,249,units ,0,v1064172353,2.6,166063,A,,,0
+2015,Prince Edward Island,2016A000211,All treatment types,Persons,249,units ,0,v1064172354,3.1,75182,A,,,0
+2015,Prince Edward Island,2016A000211,Primary treatment,Persons,249,units ,0,v1064172355,3.2,0,,,,0
+2015,Prince Edward Island,2016A000211,Secondary treatment,Persons,249,units ,0,v1064172356,3.3,61226,A,,,0
+2015,Prince Edward Island,2016A000211,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172357,3.4,0,,,,0
+2015,Prince Edward Island,2016A000211,Tertiary treatment,Persons,249,units ,0,v1064172358,3.5,13956,A,,,0
+2015,Prince Edward Island,2016A000211,No treatment,Persons,249,units ,0,v1064172359,3.6,0,,,,0
+2015,Nova Scotia,2016A000212,All treatment types,Persons,249,units ,0,v1064172360,4.1,649612,A,,,0
+2015,Nova Scotia,2016A000212,Primary treatment,Persons,249,units ,0,v1064172361,4.2,317760,A,,,0
+2015,Nova Scotia,2016A000212,Secondary treatment,Persons,249,units ,0,v1064172362,4.3,201559,A,,,0
+2015,Nova Scotia,2016A000212,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172363,4.4,13205,A,,,0
+2015,Nova Scotia,2016A000212,Tertiary treatment,Persons,249,units ,0,v1064172364,4.5,71701,A,,,0
+2015,Nova Scotia,2016A000212,No treatment,Persons,249,units ,0,v1064172365,4.6,45387,A,,,0
+2015,New Brunswick,2016A000213,All treatment types,Persons,249,units ,0,v1064172366,5.1,463208,A,,,0
+2015,New Brunswick,2016A000213,Primary treatment,Persons,249,units ,0,v1064172367,5.2,125309,A,,,0
+2015,New Brunswick,2016A000213,Secondary treatment,Persons,249,units ,0,v1064172368,5.3,336181,A,,,0
+2015,New Brunswick,2016A000213,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172369,5.4,0,,,,0
+2015,New Brunswick,2016A000213,Tertiary treatment,Persons,249,units ,0,v1064172370,5.5,1718,A,,,0
+2015,New Brunswick,2016A000213,No treatment,Persons,249,units ,0,v1064172371,5.6,0,,,,0
+2015,Quebec,2016A000224,All treatment types,Persons,249,units ,0,v1064172372,6.1,7200629,A,,,0
+2015,Quebec,2016A000224,Primary treatment,Persons,249,units ,0,v1064172373,6.2,2713967,A,,,0
+2015,Quebec,2016A000224,Secondary treatment,Persons,249,units ,0,v1064172374,6.3,3095803,A,,,0
+2015,Quebec,2016A000224,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172375,6.4,678233,A,,,0
+2015,Quebec,2016A000224,Tertiary treatment,Persons,249,units ,0,v1064172376,6.5,678215,A,,,0
+2015,Quebec,2016A000224,No treatment,Persons,249,units ,0,v1064172377,6.6,34411,A,,,0
+2015,Ontario,2016A000235,All treatment types,Persons,249,units ,0,v1064172378,7.1,11907344,A,,,0
+2015,Ontario,2016A000235,Primary treatment,Persons,249,units ,0,v1064172379,7.2,45832,A,,,0
+2015,Ontario,2016A000235,Secondary treatment,Persons,249,units ,0,v1064172380,7.3,984801,A,,,0
+2015,Ontario,2016A000235,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172381,7.4,5742832,A,,,0
+2015,Ontario,2016A000235,Tertiary treatment,Persons,249,units ,0,v1064172382,7.5,5133879,A,,,0
+2015,Ontario,2016A000235,No treatment,Persons,249,units ,0,v1064172383,7.6,0,,,,0
+2015,Manitoba,2016A000246,All treatment types,Persons,249,units ,0,v1064172384,8.1,989808,A,,,0
+2015,Manitoba,2016A000246,Primary treatment,Persons,249,units ,0,v1064172385,8.2,14635,A,,,0
+2015,Manitoba,2016A000246,Secondary treatment,Persons,249,units ,0,v1064172386,8.3,385670,A,,,0
+2015,Manitoba,2016A000246,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172387,8.4,416927,A,,,0
+2015,Manitoba,2016A000246,Tertiary treatment,Persons,249,units ,0,v1064172388,8.5,172576,A,,,0
+2015,Manitoba,2016A000246,No treatment,Persons,249,units ,0,v1064172389,8.6,0,,,,0
+2015,Saskatchewan,2016A000247,All treatment types,Persons,249,units ,0,v1064172390,9.1,717153,A,,,0
+2015,Saskatchewan,2016A000247,Primary treatment,Persons,249,units ,0,v1064172391,9.2,0,,,,0
+2015,Saskatchewan,2016A000247,Secondary treatment,Persons,249,units ,0,v1064172392,9.3,190644,A,,,0
+2015,Saskatchewan,2016A000247,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172393,9.4,216536,A,,,0
+2015,Saskatchewan,2016A000247,Tertiary treatment,Persons,249,units ,0,v1064172394,9.5,309973,A,,,0
+2015,Saskatchewan,2016A000247,No treatment,Persons,249,units ,0,v1064172395,9.6,0,,,,0
+2015,Alberta,2016A000248,All treatment types,Persons,249,units ,0,v1064172396,10.1,3322564,A,,,0
+2015,Alberta,2016A000248,Primary treatment,Persons,249,units ,0,v1064172397,10.2,4196,A,,,0
+2015,Alberta,2016A000248,Secondary treatment,Persons,249,units ,0,v1064172398,10.3,380962,A,,,0
+2015,Alberta,2016A000248,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172399,10.4,172898,A,,,0
+2015,Alberta,2016A000248,Tertiary treatment,Persons,249,units ,0,v1064172400,10.5,2764508,A,,,0
+2015,Alberta,2016A000248,No treatment,Persons,249,units ,0,v1064172401,10.6,0,,,,0
+2015,British Columbia,2016A000259,All treatment types,Persons,249,units ,0,v1064172402,11.1,4153958,A,,,0
+2015,British Columbia,2016A000259,Primary treatment,Persons,249,units ,0,v1064172403,11.2,1402068,A,,,0
+2015,British Columbia,2016A000259,Secondary treatment,Persons,249,units ,0,v1064172404,11.3,1933132,A,,,0
+2015,British Columbia,2016A000259,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172405,11.4,26969,A,,,0
+2015,British Columbia,2016A000259,Tertiary treatment,Persons,249,units ,0,v1064172406,11.5,438336,A,,,0
+2015,British Columbia,2016A000259,No treatment,Persons,249,units ,0,v1064172407,11.6,353453,A,,,0
+2015,Yukon,2016A000260,All treatment types,Persons,249,units ,0,v1064172408,12.1,26696,A,,,0
+2015,Yukon,2016A000260,Primary treatment,Persons,249,units ,0,v1064172409,12.2,0,,,,0
+2015,Yukon,2016A000260,Secondary treatment,Persons,249,units ,0,v1064172410,12.3,26696,A,,,0
+2015,Yukon,2016A000260,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172411,12.4,0,,,,0
+2015,Yukon,2016A000260,Tertiary treatment,Persons,249,units ,0,v1064172412,12.5,0,,,,0
+2015,Yukon,2016A000260,No treatment,Persons,249,units ,0,v1064172413,12.6,0,,,,0
+2016,Canada,2016A000011124,All treatment types,Persons,249,units ,0,v1064172342,1.1,30122553,A,,,0
+2016,Canada,2016A000011124,Primary treatment,Persons,249,units ,0,v1064172343,1.2,4801383,A,,,0
+2016,Canada,2016A000011124,Secondary treatment,Persons,249,units ,0,v1064172344,1.3,7685279,A,,,0
+2016,Canada,2016A000011124,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172345,1.4,7296505,A,,,0
+2016,Canada,2016A000011124,Tertiary treatment,Persons,249,units ,0,v1064172346,1.5,9734166,A,,,0
+2016,Canada,2016A000011124,No treatment,Persons,249,units ,0,v1064172347,1.6,605220,A,,,0
+2016,Newfoundland and Labrador,2016A000210,All treatment types,Persons,249,units ,0,v1064172348,2.1,374107,A,,,0
+2016,Newfoundland and Labrador,2016A000210,Primary treatment,Persons,249,units ,0,v1064172349,2.2,144535,A,,,0
+2016,Newfoundland and Labrador,2016A000210,Secondary treatment,Persons,249,units ,0,v1064172350,2.3,54361,A,,,0
+2016,Newfoundland and Labrador,2016A000210,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172351,2.4,0,,,,0
+2016,Newfoundland and Labrador,2016A000210,Tertiary treatment,Persons,249,units ,0,v1064172352,2.5,6623,A,,,0
+2016,Newfoundland and Labrador,2016A000210,No treatment,Persons,249,units ,0,v1064172353,2.6,168588,A,,,0
+2016,Prince Edward Island,2016A000211,All treatment types,Persons,249,units ,0,v1064172354,3.1,76476,A,,,0
+2016,Prince Edward Island,2016A000211,Primary treatment,Persons,249,units ,0,v1064172355,3.2,297,A,,,0
+2016,Prince Edward Island,2016A000211,Secondary treatment,Persons,249,units ,0,v1064172356,3.3,62208,A,,,0
+2016,Prince Edward Island,2016A000211,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172357,3.4,0,,,,0
+2016,Prince Edward Island,2016A000211,Tertiary treatment,Persons,249,units ,0,v1064172358,3.5,13971,A,,,0
+2016,Prince Edward Island,2016A000211,No treatment,Persons,249,units ,0,v1064172359,3.6,0,,,,0
+2016,Nova Scotia,2016A000212,All treatment types,Persons,249,units ,0,v1064172360,4.1,650461,A,,,0
+2016,Nova Scotia,2016A000212,Primary treatment,Persons,249,units ,0,v1064172361,4.2,318808,A,,,0
+2016,Nova Scotia,2016A000212,Secondary treatment,Persons,249,units ,0,v1064172362,4.3,209240,A,,,0
+2016,Nova Scotia,2016A000212,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172363,4.4,300,A,,,0
+2016,Nova Scotia,2016A000212,Tertiary treatment,Persons,249,units ,0,v1064172364,4.5,78439,A,,,0
+2016,Nova Scotia,2016A000212,No treatment,Persons,249,units ,0,v1064172365,4.6,43674,A,,,0
+2016,New Brunswick,2016A000213,All treatment types,Persons,249,units ,0,v1064172366,5.1,462807,A,,,0
+2016,New Brunswick,2016A000213,Primary treatment,Persons,249,units ,0,v1064172367,5.2,126000,A,,,0
+2016,New Brunswick,2016A000213,Secondary treatment,Persons,249,units ,0,v1064172368,5.3,335094,A,,,0
+2016,New Brunswick,2016A000213,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172369,5.4,0,,,,0
+2016,New Brunswick,2016A000213,Tertiary treatment,Persons,249,units ,0,v1064172370,5.5,1713,A,,,0
+2016,New Brunswick,2016A000213,No treatment,Persons,249,units ,0,v1064172371,5.6,0,,,,0
+2016,Quebec,2016A000224,All treatment types,Persons,249,units ,0,v1064172372,6.1,7248455,A,,,0
+2016,Quebec,2016A000224,Primary treatment,Persons,249,units ,0,v1064172373,6.2,2731268,A,,,0
+2016,Quebec,2016A000224,Secondary treatment,Persons,249,units ,0,v1064172374,6.3,3118071,A,,,0
+2016,Quebec,2016A000224,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172375,6.4,672388,A,,,0
+2016,Quebec,2016A000224,Tertiary treatment,Persons,249,units ,0,v1064172376,6.5,692369,A,,,0
+2016,Quebec,2016A000224,No treatment,Persons,249,units ,0,v1064172377,6.6,34359,A,,,0
+2016,Ontario,2016A000235,All treatment types,Persons,249,units ,0,v1064172378,7.1,11985771,A,,,0
+2016,Ontario,2016A000235,Primary treatment,Persons,249,units ,0,v1064172379,7.2,45620,A,,,0
+2016,Ontario,2016A000235,Secondary treatment,Persons,249,units ,0,v1064172380,7.3,984709,A,,,0
+2016,Ontario,2016A000235,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172381,7.4,5785659,A,,,0
+2016,Ontario,2016A000235,Tertiary treatment,Persons,249,units ,0,v1064172382,7.5,5169783,A,,,0
+2016,Ontario,2016A000235,No treatment,Persons,249,units ,0,v1064172383,7.6,0,,,,0
+2016,Manitoba,2016A000246,All treatment types,Persons,249,units ,0,v1064172384,8.1,985123,A,,,0
+2016,Manitoba,2016A000246,Primary treatment,Persons,249,units ,0,v1064172385,8.2,16051,A,,,0
+2016,Manitoba,2016A000246,Secondary treatment,Persons,249,units ,0,v1064172386,8.3,370880,A,,,0
+2016,Manitoba,2016A000246,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172387,8.4,425337,A,,,0
+2016,Manitoba,2016A000246,Tertiary treatment,Persons,249,units ,0,v1064172388,8.5,172261,A,,,0
+2016,Manitoba,2016A000246,No treatment,Persons,249,units ,0,v1064172389,8.6,594,A,,,0
+2016,Saskatchewan,2016A000247,All treatment types,Persons,249,units ,0,v1064172390,9.1,727713,A,,,0
+2016,Saskatchewan,2016A000247,Primary treatment,Persons,249,units ,0,v1064172391,9.2,0,,,,0
+2016,Saskatchewan,2016A000247,Secondary treatment,Persons,249,units ,0,v1064172392,9.3,191421,A,,,0
+2016,Saskatchewan,2016A000247,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172393,9.4,220975,A,,,0
+2016,Saskatchewan,2016A000247,Tertiary treatment,Persons,249,units ,0,v1064172394,9.5,315317,A,,,0
+2016,Saskatchewan,2016A000247,No treatment,Persons,249,units ,0,v1064172395,9.6,0,,,,0
+2016,Alberta,2016A000248,All treatment types,Persons,249,units ,0,v1064172396,10.1,3386308,A,,,0
+2016,Alberta,2016A000248,Primary treatment,Persons,249,units ,0,v1064172397,10.2,3708,A,,,0
+2016,Alberta,2016A000248,Secondary treatment,Persons,249,units ,0,v1064172398,10.3,381832,A,,,0
+2016,Alberta,2016A000248,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172399,10.4,164588,A,,,0
+2016,Alberta,2016A000248,Tertiary treatment,Persons,249,units ,0,v1064172400,10.5,2836180,A,,,0
+2016,Alberta,2016A000248,No treatment,Persons,249,units ,0,v1064172401,10.6,0,,,,0
+2016,British Columbia,2016A000259,All treatment types,Persons,249,units ,0,v1064172402,11.1,4198259,A,,,0
+2016,British Columbia,2016A000259,Primary treatment,Persons,249,units ,0,v1064172403,11.2,1415096,A,,,0
+2016,British Columbia,2016A000259,Secondary treatment,Persons,249,units ,0,v1064172404,11.3,1950390,A,,,0
+2016,British Columbia,2016A000259,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172405,11.4,27258,A,,,0
+2016,British Columbia,2016A000259,Tertiary treatment,Persons,249,units ,0,v1064172406,11.5,447510,A,,,0
+2016,British Columbia,2016A000259,No treatment,Persons,249,units ,0,v1064172407,11.6,358005,A,,,0
+2016,Yukon,2016A000260,All treatment types,Persons,249,units ,0,v1064172408,12.1,27073,A,,,0
+2016,Yukon,2016A000260,Primary treatment,Persons,249,units ,0,v1064172409,12.2,0,,,,0
+2016,Yukon,2016A000260,Secondary treatment,Persons,249,units ,0,v1064172410,12.3,27073,A,,,0
+2016,Yukon,2016A000260,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172411,12.4,0,,,,0
+2016,Yukon,2016A000260,Tertiary treatment,Persons,249,units ,0,v1064172412,12.5,0,,,,0
+2016,Yukon,2016A000260,No treatment,Persons,249,units ,0,v1064172413,12.6,0,,,,0
+2017,Canada,2016A000011124,All treatment types,Persons,249,units ,0,v1064172342,1.1,30415372,A,,,0
+2017,Canada,2016A000011124,Primary treatment,Persons,249,units ,0,v1064172343,1.2,4831017,A,,,0
+2017,Canada,2016A000011124,Secondary treatment,Persons,249,units ,0,v1064172344,1.3,7741492,A,,,0
+2017,Canada,2016A000011124,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172345,1.4,7363938,A,,,0
+2017,Canada,2016A000011124,Tertiary treatment,Persons,249,units ,0,v1064172346,1.5,9867451,A,,,0
+2017,Canada,2016A000011124,No treatment,Persons,249,units ,0,v1064172347,1.6,611474,A,,,0
+2017,Newfoundland and Labrador,2016A000210,All treatment types,Persons,249,units ,0,v1064172348,2.1,376031,A,,,0
+2017,Newfoundland and Labrador,2016A000210,Primary treatment,Persons,249,units ,0,v1064172349,2.2,145654,A,,,0
+2017,Newfoundland and Labrador,2016A000210,Secondary treatment,Persons,249,units ,0,v1064172350,2.3,53660,A,,,0
+2017,Newfoundland and Labrador,2016A000210,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172351,2.4,0,,,,0
+2017,Newfoundland and Labrador,2016A000210,Tertiary treatment,Persons,249,units ,0,v1064172352,2.5,6604,A,,,0
+2017,Newfoundland and Labrador,2016A000210,No treatment,Persons,249,units ,0,v1064172353,2.6,170113,A,,,0
+2017,Prince Edward Island,2016A000211,All treatment types,Persons,249,units ,0,v1064172354,3.1,77187,A,,,0
+2017,Prince Edward Island,2016A000211,Primary treatment,Persons,249,units ,0,v1064172355,3.2,294,A,,,0
+2017,Prince Edward Island,2016A000211,Secondary treatment,Persons,249,units ,0,v1064172356,3.3,62907,A,,,0
+2017,Prince Edward Island,2016A000211,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172357,3.4,0,,,,0
+2017,Prince Edward Island,2016A000211,Tertiary treatment,Persons,249,units ,0,v1064172358,3.5,13986,A,,,0
+2017,Prince Edward Island,2016A000211,No treatment,Persons,249,units ,0,v1064172359,3.6,0,,,,0
+2017,Nova Scotia,2016A000212,All treatment types,Persons,249,units ,0,v1064172360,4.1,652341,A,,,0
+2017,Nova Scotia,2016A000212,Primary treatment,Persons,249,units ,0,v1064172361,4.2,320443,A,,,0
+2017,Nova Scotia,2016A000212,Secondary treatment,Persons,249,units ,0,v1064172362,4.3,209763,A,,,0
+2017,Nova Scotia,2016A000212,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172363,4.4,302,A,,,0
+2017,Nova Scotia,2016A000212,Tertiary treatment,Persons,249,units ,0,v1064172364,4.5,78445,A,,,0
+2017,Nova Scotia,2016A000212,No treatment,Persons,249,units ,0,v1064172365,4.6,43388,A,,,0
+2017,New Brunswick,2016A000213,All treatment types,Persons,249,units ,0,v1064172366,5.1,463435,A,,,0
+2017,New Brunswick,2016A000213,Primary treatment,Persons,249,units ,0,v1064172367,5.2,126691,A,,,0
+2017,New Brunswick,2016A000213,Secondary treatment,Persons,249,units ,0,v1064172368,5.3,335036,A,,,0
+2017,New Brunswick,2016A000213,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172369,5.4,0,,,,0
+2017,New Brunswick,2016A000213,Tertiary treatment,Persons,249,units ,0,v1064172370,5.5,1708,A,,,0
+2017,New Brunswick,2016A000213,No treatment,Persons,249,units ,0,v1064172371,5.6,0,,,,0
+2017,Quebec,2016A000224,All treatment types,Persons,249,units ,0,v1064172372,6.1,7298037,A,,,0
+2017,Quebec,2016A000224,Primary treatment,Persons,249,units ,0,v1064172373,6.2,2747509,A,,,0
+2017,Quebec,2016A000224,Secondary treatment,Persons,249,units ,0,v1064172374,6.3,3133952,A,,,0
+2017,Quebec,2016A000224,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172375,6.4,676864,A,,,0
+2017,Quebec,2016A000224,Tertiary treatment,Persons,249,units ,0,v1064172376,6.5,705405,A,,,0
+2017,Quebec,2016A000224,No treatment,Persons,249,units ,0,v1064172377,6.6,34307,A,,,0
+2017,Ontario,2016A000235,All treatment types,Persons,249,units ,0,v1064172378,7.1,12082798,A,,,0
+2017,Ontario,2016A000235,Primary treatment,Persons,249,units ,0,v1064172379,7.2,45408,A,,,0
+2017,Ontario,2016A000235,Secondary treatment,Persons,249,units ,0,v1064172380,7.3,995865,A,,,0
+2017,Ontario,2016A000235,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172381,7.4,5835557,A,,,0
+2017,Ontario,2016A000235,Tertiary treatment,Persons,249,units ,0,v1064172382,7.5,5205968,A,,,0
+2017,Ontario,2016A000235,No treatment,Persons,249,units ,0,v1064172383,7.6,0,,,,0
+2017,Manitoba,2016A000246,All treatment types,Persons,249,units ,0,v1064172384,8.1,1005401,A,,,0
+2017,Manitoba,2016A000246,Primary treatment,Persons,249,units ,0,v1064172385,8.2,16224,A,,,0
+2017,Manitoba,2016A000246,Secondary treatment,Persons,249,units ,0,v1064172386,8.3,383370,A,,,0
+2017,Manitoba,2016A000246,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172387,8.4,430716,A,,,0
+2017,Manitoba,2016A000246,Tertiary treatment,Persons,249,units ,0,v1064172388,8.5,174491,A,,,0
+2017,Manitoba,2016A000246,No treatment,Persons,249,units ,0,v1064172389,8.6,600,A,,,0
+2017,Saskatchewan,2016A000247,All treatment types,Persons,249,units ,0,v1064172390,9.1,738426,A,,,0
+2017,Saskatchewan,2016A000247,Primary treatment,Persons,249,units ,0,v1064172391,9.2,0,,,,0
+2017,Saskatchewan,2016A000247,Secondary treatment,Persons,249,units ,0,v1064172392,9.3,191842,A,,,0
+2017,Saskatchewan,2016A000247,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172393,9.4,225414,A,,,0
+2017,Saskatchewan,2016A000247,Tertiary treatment,Persons,249,units ,0,v1064172394,9.5,320661,A,,,0
+2017,Saskatchewan,2016A000247,No treatment,Persons,249,units ,0,v1064172395,9.6,509,A,,,0
+2017,Alberta,2016A000248,All treatment types,Persons,249,units ,0,v1064172396,10.1,3462432,A,,,0
+2017,Alberta,2016A000248,Primary treatment,Persons,249,units ,0,v1064172397,10.2,3701,A,,,0
+2017,Alberta,2016A000248,Secondary treatment,Persons,249,units ,0,v1064172398,10.3,384304,A,,,0
+2017,Alberta,2016A000248,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172399,10.4,167538,A,,,0
+2017,Alberta,2016A000248,Tertiary treatment,Persons,249,units ,0,v1064172400,10.5,2906889,A,,,0
+2017,Alberta,2016A000248,No treatment,Persons,249,units ,0,v1064172401,10.6,0,,,,0
+2017,British Columbia,2016A000259,All treatment types,Persons,249,units ,0,v1064172402,11.1,4231834,A,,,0
+2017,British Columbia,2016A000259,Primary treatment,Persons,249,units ,0,v1064172403,11.2,1425093,A,,,0
+2017,British Columbia,2016A000259,Secondary treatment,Persons,249,units ,0,v1064172404,11.3,1963343,A,,,0
+2017,British Columbia,2016A000259,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172405,11.4,27547,A,,,0
+2017,British Columbia,2016A000259,Tertiary treatment,Persons,249,units ,0,v1064172406,11.5,453294,A,,,0
+2017,British Columbia,2016A000259,No treatment,Persons,249,units ,0,v1064172407,11.6,362557,A,,,0
+2017,Yukon,2016A000260,All treatment types,Persons,249,units ,0,v1064172408,12.1,27450,A,,,0
+2017,Yukon,2016A000260,Primary treatment,Persons,249,units ,0,v1064172409,12.2,0,,,,0
+2017,Yukon,2016A000260,Secondary treatment,Persons,249,units ,0,v1064172410,12.3,27450,A,,,0
+2017,Yukon,2016A000260,Secondary treatment with additional phosphorus removal,Persons,249,units ,0,v1064172411,12.4,0,,,,0
+2017,Yukon,2016A000260,Tertiary treatment,Persons,249,units ,0,v1064172412,12.5,0,,,,0
+2017,Yukon,2016A000260,No treatment,Persons,249,units ,0,v1064172413,12.6,0,,,,0

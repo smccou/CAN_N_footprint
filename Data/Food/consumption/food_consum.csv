@@ -1,0 +1,133 @@
+GEO,food_group,CCHS consumed kg/cap/year,adjusted consumed kg/cap
+Prince Edward Island,Beef,24.33551309,11.35554479
+Alberta,Chicken,37.58707528,20.16111078
+Alberta,Eggs,15.0571203,10.04076532
+Alberta,Fish,26.36820827,2.502789971
+Alberta,Fruits,37.78142153,44.08144302
+Alberta,Grains,25.50831159,48.4086245
+Alberta,Legumes,23.31170086,2.696542106
+Quebec,Beef,24.91735884,11.62704823
+Alberta,Oilseeds,3.262691067,12.36543905
+Alberta,Pork,19.13661337,9.877991647
+Alberta,Roots,26.6875218,50.17938546
+Alberta,Vegetables,15.77760713,33.14003348
+Manitoba,Beef,26.99159261,12.59493637
+British Columbia,Chicken,35.55392263,19.07055996
+British Columbia,Eggs,15.34386074,10.23197675
+British Columbia,Fish,23.71421046,2.250880588
+British Columbia,Fruits,39.48428943,46.06826277
+British Columbia,Grains,25.81233939,48.98559597
+British Columbia,Legumes,23.7944305,2.752381052
+Nova Scotia,Beef,27.16111345,12.67403893
+British Columbia,Oilseeds,3.080903975,11.67647489
+British Columbia,Pork,19.68171125,10.15936182
+British Columbia,Roots,23.78856626,44.72860556
+British Columbia,Vegetables,17.04976728,35.81213893
+Canada,Beef,27.39736181,12.78427819
+Manitoba,Chicken,31.69351998,16.99990123
+Manitoba,Eggs,12.46770131,8.314024225
+Manitoba,Fish,24.59373154,2.334362048
+Manitoba,Fruits,38.03966354,44.38274668
+Manitoba,Grains,25.39468791,48.19299416
+Manitoba,Legumes,21.80765757,2.522564408
+Newfoundland and Labrador,Beef,27.59915724,12.87844086
+Manitoba,Oilseeds,3.081964613,11.68049466
+Manitoba,Pork,22.0187044,11.36567761
+Manitoba,Roots,25.28188023,47.53641881
+Manitoba,Vegetables,16.13651727,33.89390533
+New Brunswick,Beef,27.60158169,12.87957217
+New Brunswick,Chicken,32.68158607,17.52988421
+New Brunswick,Eggs,13.67258618,9.117495673
+New Brunswick,Fish,33.32451927,3.163061813
+New Brunswick,Fruits,37.70805286,43.99584018
+New Brunswick,Grains,22.50727118,42.71337346
+New Brunswick,Legumes,23.39546711,2.706231627
+Alberta,Beef,28.40079141,13.25250295
+New Brunswick,Oilseeds,3.400341037,12.88712568
+New Brunswick,Pork,19.94385122,10.29467398
+New Brunswick,Roots,29.41156851,55.30129191
+New Brunswick,Vegetables,14.75847123,30.99939215
+British Columbia,Beef,28.55458083,13.32426485
+Newfoundland and Labrador,Chicken,33.22450887,17.82109938
+Newfoundland and Labrador,Eggs,11.68865333,7.794519979
+Newfoundland and Labrador,Fish,35.17304664,3.338518398
+Newfoundland and Labrador,Fruits,33.58408926,39.18420898
+Newfoundland and Labrador,Grains,21.1699386,40.1754387
+Newfoundland and Labrador,Legumes,27.41491841,3.171174952
+Saskatchewan,Beef,28.79520226,13.43654468
+Newfoundland and Labrador,Oilseeds,3.231511276,12.24726917
+Newfoundland and Labrador,Pork,19.2139875,9.917930844
+Newfoundland and Labrador,Roots,29.72477882,55.89020762
+Newfoundland and Labrador,Vegetables,12.99722985,27.29999732
+Ontario,Beef,29.09643273,13.57710618
+Nova Scotia,Chicken,34.33400749,18.41621684
+Nova Scotia,Eggs,14.86182374,9.910532786
+Nova Scotia,Fish,28.77636518,2.731364887
+Nova Scotia,Fruits,36.51469149,42.60348676
+Nova Scotia,Grains,22.8197114,43.30630965
+Nova Scotia,Legumes,23.22392248,2.686388489
+British Columbia,Milk,43.31307787,36.92243886
+Nova Scotia,Oilseeds,3.52431681,13.35698778
+Nova Scotia,Pork,19.84482783,10.2435598
+Nova Scotia,Roots,28.66288465,53.89357423
+Nova Scotia,Vegetables,15.07581324,31.66595234
+Nova Scotia,Milk,46.27963344,39.45129324
+Ontario,Chicken,35.23395478,18.89893429
+Ontario,Eggs,14.31449069,9.545546481
+Ontario,Fish,25.88597656,2.457018007
+Ontario,Fruits,38.24738657,44.62510735
+Ontario,Grains,26.10965825,49.54983547
+Ontario,Legumes,22.60833316,2.615181222
+Ontario,Milk,46.75972887,39.86055286
+Ontario,Oilseeds,3.114220868,11.80274428
+Ontario,Pork,20.79025706,10.73157416
+Ontario,Roots,23.73944905,44.63625261
+Ontario,Vegetables,16.32731696,34.29467005
+Canada,Milk,48.61203231,41.43955772
+Prince Edward Island,Chicken,30.22250533,16.21087232
+Prince Edward Island,Eggs,13.33488531,8.892301538
+Prince Edward Island,Fish,33.99622524,3.226818096
+Prince Edward Island,Fruits,35.15105609,41.01246627
+Prince Edward Island,Grains,23.02625148,43.69827293
+Prince Edward Island,Legumes,22.74703974,2.631225873
+Alberta,Milk,48.71377625,41.52628983
+Prince Edward Island,Oilseeds,3.249682989,12.31613907
+Prince Edward Island,Pork,19.25368568,9.938422363
+Prince Edward Island,Roots,32.01804912,60.20214392
+Prince Edward Island,Vegetables,15.13191326,31.78378748
+Quebec,Milk,49.33467557,42.0555784
+Quebec,Chicken,32.87664944,17.6345131
+Quebec,Eggs,13.88723479,9.260633024
+Quebec,Fish,27.67410412,2.626741626
+Quebec,Fruits,39.07597044,45.59185691
+Quebec,Grains,25.75102033,48.86922716
+Quebec,Legumes,19.42167081,2.24656937
+Prince Edward Island,Milk,50.60213181,43.13602749
+Quebec,Oilseeds,3.466073523,13.13624858
+Quebec,Pork,25.69132937,13.26142364
+Quebec,Roots,24.52460189,46.1125413
+Quebec,Vegetables,17.54781723,36.85826664
+Newfoundland and Labrador,Milk,50.64202038,43.17003069
+Saskatchewan,Chicken,36.46063835,19.55690788
+Saskatchewan,Eggs,13.28475274,8.858870884
+Saskatchewan,Fish,27.05991394,2.568444566
+Saskatchewan,Fruits,38.52977265,44.95458108
+Saskatchewan,Grains,23.34349679,44.30032802
+Saskatchewan,Legumes,17.91027258,2.071740902
+New Brunswick,Milk,51.05058244,43.51831136
+Saskatchewan,Oilseeds,3.165672514,11.9977435
+Saskatchewan,Pork,21.00557476,10.84271747
+Saskatchewan,Roots,26.62025781,50.05291191
+Saskatchewan,Vegetables,15.49758241,32.55185628
+Manitoba,Milk,51.91354908,44.25395137
+Canada,Chicken,34.3834099,18.44271551
+Canada,Eggs,14.02043475,9.349456751
+Canada,Fish,27.31822684,2.592962839
+Canada,Fruits,37.98007548,44.31322236
+Canada,Grains,24.74147387,46.95335142
+Canada,Legumes,22.28224365,2.577461361
+Saskatchewan,Milk,55.33688762,47.17219256
+Canada,Oilseeds,3.247414322,12.30754094
+Canada,Pork,20.98575262,10.83248561
+Canada,Roots,26.26691012,49.38852763
+Canada,Vegetables,16.11608307,33.85098438

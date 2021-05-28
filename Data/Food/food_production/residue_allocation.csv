@@ -1,0 +1,34 @@
+﻿source:,"Karimi, R., Pogue, S. J., Kröbel, R., Beauchemin, K. A., Schwinghamer, T., & Henry Janzen, H. (2020). An updated nitrogen budget for Canadian agroecosystems. Agriculture, Ecosystems & Environment, 304, 107046. https://doi.org/10.1016/j.agee.2020.107046",,,,,
+Crop,Product: Livestock %,Product: Soil %,Product: Export %,Residue: Livestock %,Residue: Soil %,Residue: Export %
+Barley,0.66,0.03,0.31,0.2,0.8,0
+"Beans, all dry (white and coloured)",0,0.02,0.98,0.1,0.9,0
+Canary seed,0.05,0.03,0.92,0.3,0.7,0
+Canola (rapeseed),0.05,0.01,0.94,0,1,0
+Chick peas,0.13,0.097,0.77,0,1,0
+Corn for grain,0.57,0.02,0.41,0.05,0.9,0.05
+Corn for silage,1,0,0,0,1,0
+Faba beans,0.6,0.02,0.38,0,1,0
+Flaxseed,0.04,0.05,0.91,0,0.6,0.4
+Forage for seed,0.28,0.02,0.7,0.2,0.8,0
+Apples,0,0,1,0,0.4,0.6
+Tree fruit,0,0,1,0,0.4,0.6
+Berries and grapes,0,0,1,0,0.6,0.4
+Lentils,0.23,0.04,0.73,0.1,0.9,0
+Mixed grains,0.98,0.02,0,0.16,0.83,0.01
+Mustard seed,0.09,0.01,0.9,0,1,0
+Oats,0.24,0.03,0.73,0.2,0.8,0
+Other field crops,0,0.02,0.98,0.08,0.81,0.11
+Pasture (nat),1,0,0,0,1,0
+Pasture (seeded),1,0,0,0,1,0
+"Peas, dry",0.15,0.06,0.79,0.2,0.8,0
+Potatoes,0,0.05,0.95,0,1,0
+"Rye, all",0.18,0.03,0.79,0.15,0.85,0
+Soybeans,0.35,0.02,0.63,0,1,0
+Sugar beets,0.7,0.02,0.28,0.1,0.9,0
+Sunflower seed,0.07,0.01,0.92,0,1,0
+T. hay (alfalfa &mix),0.95,0,0.05,0,1,0
+Tame hay,0.95,0,0.05,0,1,0
+Tobacco,0,0.02,0.98,0,1,0
+Triticale,0.28,0.02,0.7,0.2,0.8,0
+Vegetables,0,0.02,0.98,0,1,0
+"Wheat, all",0.19,0.03,0.78,0.13,0.85,0.02

@@ -5,6 +5,8 @@ output: html_notebook
 Ongoing notes:
 the fertilizer application on Tame hay makes a reasonably big difference in VNFs
 
+Soybeans do not actually add nitrogen to the soil. As an example, imagine a 60-bushel soybean crop, which needs more than 300 lbs/acre of N. The crop can fix enough nitrogen to supply half of that. At the same time, that crop would likely be removing around 205 lbs/acre N with the beans, which have a relatively high nitrogen content due to the protein content in the seed. In this example, at best, that soil system has around 25 fewer pounds after harvest than it did at planting. This does not mean, however, that the following crop is now short 25 pounds of nitrogen https://blog-crop-news.extension.umn.edu/2018/04/why-do-we-need-soybean-nitrogen-credit.html
+
 ```{r libraries, echo=FALSE, message = FALSE}
 library(readr)
 library(readxl)
@@ -42,7 +44,7 @@ prov_pop <- read_csv("Data/Population/provincial_pop.csv", skip = 1)%>%
 
 # for source/sector descriptors http://publications.gc.ca/collections/collection_2021/eccc/En81-30-2019-eng.pdf
 APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
-  select(Year, Region, Source, Sector, Subsector, `NOX (t)`, `NH3 (t)`)%>%
+  select(Year, Region, Source, Sector, Subsector, `NOX (t)`)%>%
   filter(!(is.na(Subsector)))%>% #removes double counts of sectors/sources
   mutate(Region = case_when(Region == "AB" ~ "Alberta",
                             Region == "BC" ~ "British Columbia",
@@ -59,15 +61,15 @@ APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
                             Source == "Electric Power Generation (Utilities)" ~ "Energy Generation",
                             Source == "Manufacturing" ~ "Other Industry",
                             (Source == "Transportation and Mobile Equipment" & Sector != "Marine Transportation")  ~ "Transport",
-                            Sector == "Commercial and Institutional Fuel Combustion" ~ "Commercial & Residential",
-                            Sector == "Residential Fuel Combustion" ~ "Commercial & Residential"))%>% #Incineration and waste captured in Wastewater, paints, dust, and fire sources minimal
-  replace_na(list(`NOX (t)`= 0, `NH3 (t)` = 0))%>%
+                            Sector == "Commercial and Institutional Fuel Combustion" ~ "Energy Generation",
+                            Sector == "Residential Fuel Combustion" ~ "Energy Generation"))%>% #Incineration and waste captured in Wastewater, paints, dust, and fire sources minimal
+  replace_na(list(`NOX (t)`= 0))%>%
   #convert NOx weights to N, NOx reported as NO2 equivalent
   #take into account oil export
-  mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)) * 0.15,
-                          TRUE ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031))))%>%  
+  mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ (`NOX (t)` * 1000 * 14.0067 / 46.0055) * 0.15,
+                          TRUE ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055))))%>%  
   drop_na(Source, Region)%>%
-  filter(Year %in% years)
+  filter(Year %in% years)%>%
   group_by(Year, Region, Source)%>%
   summarise(`N kg/year` = sum(N_kg))%>%
   group_by(Region, Source)%>%
@@ -94,8 +96,8 @@ GHG_energy <- read_csv("Data/fossil_fuels/GHG_inventory.csv", skip = 1)%>%
                             Category == "Mining" ~ "Other Industry",
                             Category == "Manufacturing Industries" ~ "Other Industry",
                             Category == "Construction" ~ "Other Industry",
-                            Category == "Commercial and Institutional" ~ "Commercial & Residential",
-                            Category == "Residential" ~ "Commercial & Residential",
+                            Category == "Commercial and Institutional" ~ "Energy Generation",
+                            Category == "Residential" ~ "Energy Generation",
                             Category == "Domestic Aviation" ~ "Transport",
                             Category == "Road Transportation" ~ "Transport",
                             Category == "Railways" ~ "Transport",
@@ -106,7 +108,7 @@ GHG_energy <- read_csv("Data/fossil_fuels/GHG_inventory.csv", skip = 1)%>%
   #convert kt N20 to kg N
   #take into account oil export
   mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ N2O *1000000*14.0067/44.013*0.15,
-                          TRUE ~ N2O *1000000*14.0067/44.013))%>% 
+                          TRUE ~ N2O *1000000*14.0067/44.013))%>%
   filter(Year %in% years)%>%
   group_by(Year, Region, Source)%>%
   summarise(`N kg/year` = sum(N_kg))%>%
@@ -126,7 +128,7 @@ N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
 
 ```
 
-#Crops
+#Crop VNF
 ```{r crop_categorization, echo=FALSE, message = FALSE}
 #Names from StatsCan Crop Surveys, with doubles/subcategories removed
 field_crop_list = c("Barley", "Beans, all dry (white and coloured)", "Canary seed", "Canola (rapeseed)", "Chick peas", "Corn for grain", "Corn for silage", "Faba beans", "Flaxseed", "Lentils", "Rye, all", "Oats", "Soybeans", "Sugar beets", "Peas, dry", "Sunflower seed", "Tame hay", "Triticale", "Wheat, all")                                          
@@ -377,8 +379,6 @@ N_field_loss <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_n
 #there area couple negative values. Soil N mining? 
 ```
 
-Soybeans do not actually add nitrogen to the soil. As an example, imagine a 60-bushel soybean crop, which needs more than 300 lbs/acre of N. The crop can fix enough nitrogen to supply half of that. At the same time, that crop would likely be removing around 205 lbs/acre N with the beans, which have a relatively high nitrogen content due to the protein content in the seed. In this example, at best, that soil system has around 25 fewer pounds after harvest than it did at planting. This does not mean, however, that the following crop is now short 25 pounds of nitrogen https://blog-crop-news.extension.umn.edu/2018/04/why-do-we-need-soybean-nitrogen-credit.html
-
 ```{r Crop_processing_loss, echo=FALSE, message = FALSE}
 #USDA https://www.ers.usda.gov/data-products/food-availability-per-capita-data-system/ 
 food_processing_waste <- read_excel("Data/Food/food_loss_USDA.xlsx", skip = 1)
@@ -441,10 +441,7 @@ VNF_crop_group <- bind_rows(VNF_crop_group_prov, VNF_crop_group_CAN)%>%
 #write_csv(VNF_crop_group, file.path("Results_Images/VNF_crop_group.csv"))
 ```
 
-*Notes on VNF results/cross check with Leach 2020
-Veg and root VNFs are similar. Grains and fruit ~3 times as high. This seems plausible due to climate, also because of different fruit choices. e.g. apples are about twice, blueberries (a significant crop), are much higher. Legumes are significantly higher, this is because I include more than soybeans (which alone are comparable to Leach). Other legumes have fertilizer recommendations as well, which will increase the VNF dramatically. Also using actual sales, which are almost all higher than recommended rate
-
-#Animals
+#Animal VNF
 ```{r VNF_feed, echo=FALSE, message = FALSE}
 VNF_feed_prov <- N_crop_process%>%
   filter(StatCan_name %in% feed_list)%>%
@@ -760,8 +757,6 @@ N_manure_loss <- N_manure_prod%>%
          N_manure_recycled_kg = N_manure_to_soil_kg - N_manure_leaching_kg - N_manure_N20_kg - N_manure_N2_kg)
 ```
 
-recycling of animal products? (e.g. pet food?) meat N content? Karimi vs CNF vs lasaletta
-
 ```{r N_process_meat, echo=FALSE, message = FALSE}
 
 # food availability StatsCan doesn't have retail/household losses for meat items so went with USDA values
@@ -843,7 +838,7 @@ VNF_animal <- bind_rows(VNF_fish, VNF_meat)%>%
                                   TRUE ~ `VNF kgN/kg`))
 ```
 
-
+#Food Consumption
 ```{r food_consumption, echo=FALSE, message = FALSE}
 
 CCHS_food_names <- read_excel("Data/Food/consumption/cchs-82M0024-E-2015-nu-nci_EDITED.xlsx")%>%
@@ -1049,17 +1044,7 @@ ggplot(VN_sensitivity, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x =
 ggsave("Results_Images/VN_sensitivity_graph.pdf")
 ```
 
-
-Nitrogen removal occurs in two ways: 
-
-(1) biological: a) combined well known autotrophic nitrification (partial or complete) and heterotrophic denitrification. or Completely autotrophic. In that group all anammox based processes and autotrophic denitrification using hydrogen (experimental). These are tertiary treatment. 80-85% removal TN for annamox (Oleszkiewicz, 2005). In a biological nutrient removal wastewater treatment approximately 65% of the incoming nitrogen is removed through nitrification and denitrification process
-
-(2) physicochemical processes 1) those which target removal of dissolved nitrogen species like ammonia, nitrates or DON, and 2) those designed to reduce TN nitrogen by removing particulate and/or colloidal nitrogen. Ammonia not generally removed, nitrate Processes applied to reduce the suspended and colloidal forms of nitrogen are most commonly used as a tertiary treatment
-
-
-sludge is typically burned or added to landfill in Canada (so still released as Nr). Potential recycling 25%
-
-
+#Wastewater
 ```{r wastewater, echo=FALSE, message = FALSE}
 #Population served by municipal wastewater systems by treatment category (Canada/Province)
 N_aqueous_wastewater <-  read_csv("Data/Food/wastewater/wastewater.csv", skip = 1)%>%
@@ -1174,6 +1159,7 @@ ggsave("Results_Images/wastewater_sensitivity_graph.pdf")
 
 ```
 
+#Total N footprint
 ```{r N footprints, echo=FALSE}
 N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
   bind_rows(VN_sensitivity)%>%
@@ -1182,7 +1168,7 @@ N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
                    TRUE ~ GEO),
          GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
          Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Energy Generation", "Oil and Gas Industry", "Transport", "	
-Other Industry", "Commercial & Residential"),
+Other Industry"),
          `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
 #choose which version you want
   filter(`N recycled` == "Low" | is.na(`N recycled`))%>%
@@ -1194,180 +1180,6 @@ Other Industry", "Commercial & Residential"),
 write_csv(N_footprint,"Results_Images/N_footprint.csv")
 
 ```
-
-#Scenario Analysis
-
-```{r Scenarios, echo=FALSE, message = FALSE}
-
-#Transport Scenario: 50% reduction in transport emissions
-N_energy_T1 <- N_energy%>%
-  mutate(`N kg/cap/year` = case_when(Subsector == "Transport" ~ `N kg/cap/year` * 0.5,
-                                     TRUE ~ `N kg/cap/year`))
-
-N_footprint_T1 <- bind_rows(N_wastewater_Total, N_energy_T1)%>%
-  bind_rows(VN_food)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO),
-         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
-         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  group_by(GEO, `N footprint sector`)%>%
-  summarise(`T1` = sum(`N kg/cap/year`)) 
-
-#Energy Scenario: 50% reduction in oil and gas industry emissions
-N_energy_E1 <- N_energy%>%
-  mutate(`N kg/cap/year` = case_when(Subsector == "Oil and Gas Industry" ~ `N kg/cap/year` * 0.5,
-                                     TRUE ~ `N kg/cap/year`))
-
-N_footprint_E1 <- bind_rows(N_wastewater_Total, N_energy_E1)%>%
-  bind_rows(VN_food)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO),
-         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
-         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  group_by(GEO, `N footprint sector`)%>%
-  summarise(`E1` = sum(`N kg/cap/year`))
-
-#Transport and Energy Scenarios
-N_energy_E2 <- N_energy%>%
-  mutate(`N kg/cap/year` = case_when(Subsector == "Oil and Gas Industry" ~ `N kg/cap/year` * 0.5,
-                                     Subsector == "Transport" ~ `N kg/cap/year` * 0.5,
-                                     TRUE ~ `N kg/cap/year`))
-
-
-#Food Scenario: beef reduced 50% chicken increase 50%
-food_consum_F1 <- food_consum%>%
-  mutate(`adjusted consumed N kg/cap/year` = case_when(food_group == "Beef" ~ `adjusted consumed N kg/cap/year` * 0.5,
-                                              food_group == "Chicken" ~ `adjusted consumed N kg/cap/year` * 1.5, 
-                                              TRUE ~ `adjusted consumed N kg/cap/year`),
-         `adjusted consumed kg/cap/year` = case_when(food_group == "Beef" ~ `adjusted consumed kg/cap/year` * 0.5,
-                                              food_group == "Chicken" ~ `adjusted consumed kg/cap/year` * 1.5, 
-                                              TRUE ~ `adjusted consumed kg/cap/year`))
-
-VN_food_F1 <- left_join(food_consum_F1, VNF_food_CAN, by =c("food_group"="Food group"))%>%
-  rename("GEO"="GEO.x")%>%
-  mutate(`N kg/cap/year` = `adjusted consumed kg/cap/year` * `VNF kgN/kg`,
-         `N kg/year` = `adjusted consumed kg` * `VNF kgN/kg`)%>%
-  select(GEO, food_group, `N footprint sector`, `N kg/cap/year`, `N kg/year`)%>%
-  rename(Subsector = food_group)%>%
-  drop_na()
-
-N_wastewater_prov_F1 <- N_wastewater%>%
-  left_join(food_consum_F1)%>%
-  filter(!(GEO %in% c("Canada", "Yukon")))%>% #Canada average currently includes the North, need to remove and re-calculate for comparison with provinces
-  mutate(`N wastewater loss kg/cap/year` = `adjusted consumed N kg/cap/year` * (percent_pop) * (1-`%N_removal`),
-         `N wastewater loss kg/year` = `adjusted consumed N kg` * (percent_pop) * (1-`%N_removal`))%>%
-  group_by(GEO)%>%
-  summarise(`N kg/cap/year` = sum(`N wastewater loss kg/cap/year`), `N kg/year` = sum(`N wastewater loss kg/year`))%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment")%>%
-  left_join(prov_pop)
- 
-N_wastewater_CAN_F1 <- N_wastewater_prov_F1%>%
-  summarise(`N kg/cap/year` = weighted.mean(`N kg/cap/year`, Population), `N kg/year` = sum(`N kg/year`))%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment", GEO = "Canada")
-
-N_wastewater_Total_F1 <- bind_rows(N_wastewater_prov_F1, N_wastewater_CAN_F1)%>%
-  select(!(Population))
-
-N_footprint_F1 <- bind_rows(N_wastewater_Total_F1, N_energy)%>%
-  bind_rows(VN_food_F1)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO),
-         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
-         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  group_by(GEO, `N footprint sector`)%>%
-  summarise(`F1` = sum(`N kg/cap/year`)) 
-
-#Improved Waste water treatment: 100% population tertiary treatment
-N_wastewater_prov_W1 <- N_wastewater%>%
-  left_join(food_consum)%>%
-  filter(!(GEO %in% c("Canada", "Yukon")))%>% #Canada average currently includes the North, need to remove and re-calculate for comparison with provinces
-  filter(`Population by treatment type` == "Tertiary treatment")%>%
-  mutate(`N wastewater loss kg/cap/year` = `adjusted consumed N kg/cap/year` * 0.5)%>%
-  group_by(GEO)%>%
-  summarise(`N kg/cap/year` = sum(`N wastewater loss kg/cap/year`))%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment")%>%
-  left_join(prov_pop)
- 
-N_wastewater_CAN_W1 <- N_wastewater_prov_W1%>%
-  summarise(`N kg/cap/year` = weighted.mean(`N kg/cap/year`, Population))%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment", GEO = "Canada")
-
-N_wastewater_Total_W1 <- bind_rows(N_wastewater_prov_W1, N_wastewater_CAN_W1)%>%
-  select(!(Population))
-
-N_footprint_W1 <- bind_rows(N_wastewater_Total_W1, N_energy)%>%
-  bind_rows(VN_food)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO),
-         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
-         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  group_by(GEO, `N footprint sector`)%>%
-  summarise(`W1` = sum(`N kg/cap/year`)) 
-
-#Lower Beef and better waste water treatment
-N_wastewater_prov_W2 <- N_wastewater%>%
-  left_join(food_consum_F1)%>%
-  filter(!(GEO %in% c("Canada", "Yukon")))%>% #Canada average currently includes the North, need to remove and re-calculate for comparison with provinces
-  filter(`Population by treatment type` == "Tertiary treatment")%>%
-  mutate(`N wastewater loss kg/cap/year` = `adjusted consumed N kg/cap/year` * 0.5)%>%
-  group_by(GEO)%>%
-  summarise(`N kg/cap/year` = sum(`N wastewater loss kg/cap/year`))%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment")%>%
-  left_join(prov_pop)
- 
-N_wastewater_CAN_W2 <- N_wastewater_prov_W2%>%
-  summarise(`N kg/cap/year` = weighted.mean(`N kg/cap/year`, Population))%>%
-  mutate(`N footprint sector` = "Wastewater Treatment", "Subsector" = "Wastewater Treatment", GEO = "Canada")
-
-N_wastewater_Total_W2 <- bind_rows(N_wastewater_prov_W2, N_wastewater_CAN_W2)%>%
-  select(!(Population))
-  
-
-#All scenarios A3
-N_footprint_A4 <- bind_rows(N_wastewater_Total_W2, N_energy_E2)%>%
-  bind_rows(VN_food_F1)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO),
-         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Electricity Generation", "Oil and Gas Industry", "Transport"),
-         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
-  group_by(GEO, `N footprint sector`)%>%
-  summarise(`A4` = sum(`N kg/cap/year`)) 
-
-scenario_comparison <- left_join(N_footprint, N_footprint_T1)%>%
-  left_join(N_footprint_E1)%>%
-  left_join(N_footprint_F1)%>%
-  left_join(N_footprint_W1)%>%
-  left_join(N_footprint_A4)%>%
-  select(!`N kg/year`)%>%
-  rename("O" = "N kg/cap/year" )%>%
-  pivot_longer(cols = c("O", "T1", "E1", "W1", "F1", "A4"), names_to = "Scenario", values_to = "N kg/cap/year")%>%
-  filter(GEO == "Canada")
-
-ggplot(scenario_comparison, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(Scenario, + `N kg/cap/year`)))+
-  geom_bar(stat="identity")+
-  #facet_wrap(vars(GEO))+
-  scale_fill_brewer(palette="Paired")+
-  labs(x = "Scenario", y="kg N/cap/year" )+
-  coord_flip()+
-  theme_classic()+
-  theme(
-    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=8),
-    axis.ticks = element_blank(),
-    plot.caption = element_text(hjust = 0))
-
-```
-
 
 # Results and Images
 ```{r VNF food crop graph}
@@ -1435,7 +1247,7 @@ sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/c
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
 
-ggsave("Results_Images/N_print_prov_sectors_cap_graph.pdf")
+#ggsave("Results_Images/N_print_prov_sectors_cap_graph.pdf")
 
 sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
@@ -1452,7 +1264,7 @@ sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y =
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
 
-ggsave("Results_Images/N_print_prov_sectors_percent_graph.pdf")
+#ggsave("Results_Images/N_print_prov_sectors_percent_graph.pdf")
 
 ggarrange(total_graph, 
           ggarrange(sector_graph, sector_percent_graph,
@@ -1469,7 +1281,7 @@ ggsave("Results_Images/N_print_sectors_graph.pdf")
 ```
 
 ```{r Graph Provincial footprints per capita by subsector, echo=FALSE, message = FALSE}
-colors <- 18
+colors <- 17
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
 
 subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
@@ -1488,7 +1300,7 @@ subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/yea
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
 
-ggsave("Results_Images/N_print_prov_subsectors_cap_graph.pdf")
+#ggsave("Results_Images/N_print_prov_subsectors_cap_graph.pdf")
 
 subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
@@ -1512,11 +1324,6 @@ ggarrange(subsector_graph, subsector_percent_graph,
                     common.legend = TRUE)
 
 ggsave("Results_Images/N_print_subsectors_graph.pdf", width = 10)  
-
-```
-
-```{r, echo=FALSE, message = FALSE}
-
 
 ```
 

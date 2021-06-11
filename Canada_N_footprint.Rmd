@@ -2,10 +2,6 @@
 title: `Canada_N_footprint`
 output: html_notebook
 ---
-Ongoing notes:
-the fertilizer application on Tame hay makes a reasonably big difference in VNFs
-
-Soybeans do not actually add nitrogen to the soil. As an example, imagine a 60-bushel soybean crop, which needs more than 300 lbs/acre of N. The crop can fix enough nitrogen to supply half of that. At the same time, that crop would likely be removing around 205 lbs/acre N with the beans, which have a relatively high nitrogen content due to the protein content in the seed. In this example, at best, that soil system has around 25 fewer pounds after harvest than it did at planting. This does not mean, however, that the following crop is now short 25 pounds of nitrogen https://blog-crop-news.extension.umn.edu/2018/04/why-do-we-need-soybean-nitrogen-credit.html
 
 ```{r libraries, echo=FALSE, message = FALSE}
 library(readr)
@@ -37,95 +33,6 @@ prov_pop <- read_csv("Data/Population/provincial_pop.csv", skip = 1)%>%
   filter(year %in% c(17, 18, 19))%>%
   group_by(GEO)%>%
   summarize(Population = mean(VALUE))
-```
-
-#Energy
-```{r Energy, echo=FALSE, message = FALSE}
-
-# for source/sector descriptors http://publications.gc.ca/collections/collection_2021/eccc/En81-30-2019-eng.pdf
-APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
-  select(Year, Region, Source, Sector, Subsector, `NOX (t)`)%>%
-  filter(!(is.na(Subsector)))%>% #removes double counts of sectors/sources
-  mutate(Region = case_when(Region == "AB" ~ "Alberta",
-                            Region == "BC" ~ "British Columbia",
-                            Region == "MB" ~ "Manitoba",
-                            Region == "NB" ~ "New Brunswick",
-                            Region == "NL" ~ "Newfoundland and Labrador",
-                            Region == "NS" ~ "Nova Scotia",
-                            Region == "ON" ~ "Ontario",
-                            Region == "PE" ~ "Prince Edward Island",
-                            Region == "QC" ~ "Quebec",
-                            Region == "SK" ~"Saskatchewan"))%>%
-  mutate(Source = case_when(Source == "Ore and Mineral Industries" ~ "Other Industry",
-                            Source == "Oil and Gas Industry" ~ "Oil and Gas Industry",
-                            Source == "Electric Power Generation (Utilities)" ~ "Energy Generation",
-                            Source == "Manufacturing" ~ "Other Industry",
-                            (Source == "Transportation and Mobile Equipment" & Sector != "Marine Transportation")  ~ "Transport",
-                            Sector == "Commercial and Institutional Fuel Combustion" ~ "Energy Generation",
-                            Sector == "Residential Fuel Combustion" ~ "Energy Generation"))%>% #Incineration and waste captured in Wastewater, paints, dust, and fire sources minimal
-  replace_na(list(`NOX (t)`= 0))%>%
-  #convert NOx weights to N, NOx reported as NO2 equivalent
-  #take into account oil export
-  mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ (`NOX (t)` * 1000 * 14.0067 / 46.0055) * 0.15,
-                          TRUE ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055))))%>%  
-  drop_na(Source, Region)%>%
-  filter(Year %in% years)%>%
-  group_by(Year, Region, Source)%>%
-  summarise(`N kg/year` = sum(N_kg))%>%
-  group_by(Region, Source)%>%
-  summarise(`N kg/year` = mean(`N kg/year`))
-
-#Canada has only Grand total emissions, so calculated sub categories separately
-CAN_APEI <- APEI_energy%>%
-  group_by(Source)%>%
-  summarise(`N kg/year` = sum(`N kg/year`))%>%
-  mutate(Region = "Canada")
-
-APEI_energy <- bind_rows(APEI_energy, CAN_APEI)%>%
-  left_join(prov_pop, by = c("Region"="GEO"))%>%
-  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
-  select(Region, Source, `N kg/cap/year`,`N kg/year`)
-
-
-#see GHG executive summary file for explanation of categories http://publications.gc.ca/collections/collection_2020/eccc/En81-4-2018-1-eng.pdf
-GHG_energy <- read_csv("Data/fossil_fuels/GHG_inventory.csv", skip = 1)%>%
-  select(Year, Region, Category, N2O)%>%
-  mutate(Source = case_when(Category == "Public Electricity and Heat Production" ~ "Energy Generation",
-                            Category == "Petroleum Refining Industries" ~ "Oil and Gas Industry",
-                            Category == "Oil and Gas Extraction" ~ "Oil and Gas Industry",
-                            Category == "Mining" ~ "Other Industry",
-                            Category == "Manufacturing Industries" ~ "Other Industry",
-                            Category == "Construction" ~ "Other Industry",
-                            Category == "Commercial and Institutional" ~ "Energy Generation",
-                            Category == "Residential" ~ "Energy Generation",
-                            Category == "Domestic Aviation" ~ "Transport",
-                            Category == "Road Transportation" ~ "Transport",
-                            Category == "Railways" ~ "Transport",
-                            Category == "Domestic Navigation" ~ "Transport",
-                            Category == "INDUSTRIAL PROCESSES AND PRODUCT USE" ~ "Other Industry"))%>%
-  drop_na(Source)%>% #could include "Fugitive Sources" "CO2 Transport and Storage"
-  replace_na(list(N2O = 0))%>%
-  #convert kt N20 to kg N
-  #take into account oil export
-  mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ N2O *1000000*14.0067/44.013*0.15,
-                          TRUE ~ N2O *1000000*14.0067/44.013))%>%
-  filter(Year %in% years)%>%
-  group_by(Year, Region, Source)%>%
-  summarise(`N kg/year` = sum(N_kg))%>%
-  group_by(Region, Source)%>%
-  summarise(`N kg/year` = mean(`N kg/year`))%>%
-  left_join(prov_pop, by = c("Region"="GEO"))%>%
-  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
-  select(Region, Source, `N kg/cap/year`, `N kg/year`)
-
-N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
-  filter(Region %in% c("Canada", "Newfoundland and Labrador",	"Prince Edward Island",	"Nova Scotia", "New Brunswick", "Quebec", 	"Ontario",	"Manitoba", "Saskatchewan", "Alberta", "British Columbia"))%>%
-  group_by(Region, Source)%>%
-  summarise(`N kg/cap/year` = sum(`N kg/cap/year`),
-            `N kg/year` = sum(`N kg/year`))%>%
-  mutate(`N footprint sector` = "Fossil Fuels")%>%
-  rename("GEO"="Region", "Subsector"="Source")
-
 ```
 
 #Crop VNF
@@ -341,7 +248,7 @@ N_BNF <- mutate(crop_prod, key = case_when(StatCan_name %in% vegetable_list ~ "V
   left_join(HI_Nconc_BNF, by = c("key" = "Crop"))%>%
   mutate(yield_DM_kg = yield_kg * ((1-(`H20 content (%w/w)`/100))),
          yield_N_kg = yield_DM_kg * (`N conc prod (%DM)`/100),
-         residue_DM_kg = case_when(key %in% c("Berries and grapes", "Tree fruit") ~ ((yield_DM_kg / HI) - yield_DM_kg) * 0.1, #takes in to account ~10 yr lifespan of trees/shrubs
+         residue_DM_kg = case_when(key %in% c("Berries and grapes", "Tree fruit") ~ ((yield_DM_kg / HI) - yield_DM_kg) * 0.1, #takes into account ~10 yr lifespan of trees/shrubs
                                 TRUE ~ ((yield_DM_kg / HI) - yield_DM_kg)),
          residue_N_kg = residue_DM_kg * `N conc res (%DM)`/ 100,
          root_DM_kg = `Below Ground Residue (% of DM harvest)`/ 100  * yield_DM_kg,
@@ -375,11 +282,10 @@ N_field_loss <- left_join(N_adjusted_fert, N_BNF, by = c("GEO"="GEO", "StatCan_n
   select(-c(4, 6:8, key))%>%
   mutate(PNB = yield_N_kg/N_applied_crop_kg)
 
-#measure of NUE partial nutrient balance: n yield/n applied
-#there area couple negative values. Soil N mining? 
 ```
 
 ```{r Crop_processing_loss, echo=FALSE, message = FALSE}
+
 #USDA https://www.ers.usda.gov/data-products/food-availability-per-capita-data-system/ 
 food_processing_waste <- read_excel("Data/Food/food_loss_USDA.xlsx", skip = 1)
 
@@ -429,16 +335,10 @@ VNF_crop_group_CAN <- N_crop_process%>%
   mutate(`N footprint sector` = "VN from crops")
 
 VNF_crop_group <- bind_rows(VNF_crop_group_prov, VNF_crop_group_CAN)%>%
-  mutate(`N footprint sector` = "VN from crops",
-         GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                         GEO == "Newfoundland and Labrador" ~ "NFLD",
-                         TRUE ~ GEO))%>%
+  mutate(`N footprint sector` = "VN from crops")%>%
   select(GEO, `Food group`, `N footprint sector`, `VNF kgN/kg weighted`, `VNF kgN/kg`)%>%
   mutate(`VNF kgN/kg` = case_when(GEO == "Canada" ~ `VNF kgN/kg weighted`,
-                                  TRUE ~ `VNF kgN/kg`),
-         GEO = factor(GEO, levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")))
-
-#write_csv(VNF_crop_group, file.path("Results_Images/VNF_crop_group.csv"))
+                                  TRUE ~ `VNF kgN/kg`))
 ```
 
 #Animal VNF
@@ -519,7 +419,6 @@ cattle_pop <- read_csv("Data/Food/food_production/animal/cattle.csv", skip=1)%>%
   group_by(GEO, StatCan_name, UOM, SCALAR_FACTOR)%>%
   summarise(VALUE = mean(VALUE)) #average pop over 3 years
 #Did not include "Calves, under 1 year"
-
 
 pork_pop <- read_csv("Data/Food/food_production/animal/hog.csv", skip=1)%>%
   as_tibble()%>% 
@@ -683,8 +582,8 @@ N_manure_prod <- N_feed%>%
                               key_product == "Milk" ~ milk_kg,
                               key_product == "Eggs" ~ `eggs_kg` + `leakers_kg`),
          yield_N_kg = case_when(key_product %in% c("Pork", "Beef", "Chicken") ~ yield_kg * `% N carcass`,
-                                key_product == "Milk" ~ yield_kg * 0.00528,   # %N from Karimi
-                                key_product == "Eggs" ~ yield_kg * 0.0199))%>%   #%N from Karimi
+                                key_product == "Milk" ~ yield_kg * 0.00512,   #USDA protein * 0.16
+                                key_product == "Eggs" ~ yield_kg * 0.0208))%>%   #USDA protein * 0.16
           replace_na(list(yield_N_kg=0))%>%  
   mutate(N_manure_prod_kg = case_when(key_product %in% c("Pork", "Beef", "Chicken") ~ N_feed_kg - (N_animal_content_kg * animals_slaughtered),
                               key_product %in% c("Milk", "Eggs") ~ N_feed_kg - yield_N_kg))%>%
@@ -698,9 +597,9 @@ N_manure_prod <- N_feed%>%
   
 #to look at manure
   #mutate(`manure/head`= N_manure_prod_kg/VALUE/1000)%>%
-  #group_by(key_product)%>%
+  #group_by(StatCan_name)%>%
   #summarise(`N manure/head` = weighted.mean(`manure/head`, VALUE))
-#*manure sanity check* compare to Huffman(mine): manure production per head broiler 0.4 (0.21), layer 0.6 (0.74), dairy cow 122 (96), beef cattle 78 (69), hogs 9.9 (14) 
+#*manure sanity check* compare to Huffman(mine): manure production per head broiler 0.4 (0.21), layer 0.6 (0.73), dairy cow 122 (82), beef cow/bull 78 (71/78), hogs 9.9 (14) 
 
 ```
 
@@ -800,14 +699,8 @@ VNF_meat_CAN <- N_animal_process%>%
          `N footprint sector` = "VN from meat")
 
 VNF_meat <- bind_rows(VNF_meat_prov, VNF_meat_CAN)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO))%>%
   mutate(`VNF kgN/kg` = case_when(GEO == "Canada" ~ `VNF kgN/kg weighted`,
-                                  TRUE ~ `VNF kgN/kg`),
-         GEO = factor(GEO, levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")))
-
-#write_csv(VNF_meat, "Results_Images/Animal_VNF.csv")
+                                  TRUE ~ `VNF kgN/kg`))
 
 #download https://www150.statcan.gc.ca/t1/tbl1/en/cv.action?pid=3210010701 
 fish_prod <- read_csv("Data/Food/food_production/animal/aquaculture.csv", skip=1)%>%
@@ -927,9 +820,8 @@ food_consum <- bind_rows(food_consum_prov, food_consum_CAN)%>%
   mutate(`adjusted consumed N kg` = `adjusted consumed N kg/cap/year` * Population, 
          `adjusted consumed kg` = `adjusted consumed kg/cap/year`*Population)
  
-
-#sanity check adults should be getting ~3.2-3.8kg N/year/cap
-  # group_by(GEO)%>%
+#sanity check adults should be getting ~3.2-3.8kg N/year/cap, my results are 3.1-3.4 kg N/year/cap
+  #group_by(GEO)%>%
   #summarise("N_consum" = sum(`adjusted consumed N kg/cap/year`))
 
 ```
@@ -946,7 +838,6 @@ food_stats <- food_consum_g%>%
     sd = sd(value, na.rm = TRUE),
     median = median(value, na.rm = TRUE)
   )
-write_csv(food_stats, "Data/foodstats.csv")
 
 # look at normality (It's not normal)
 food_group_g <- food_consum_g%>%
@@ -957,7 +848,6 @@ ggqqplot(food_group_g$`value`)
 
 # outliers https://www.r-bloggers.com/2020/01/how-to-remove-outliers-in-r/
 # https://www.r-bloggers.com/2017/06/add-p-values-and-significance-levels-to-ggplots
-
 
 # http://www.sthda.com/english/wiki/kruskal-wallis-test-in-r
 
@@ -971,7 +861,6 @@ pairwise.wilcox.test(food_group_g$value, food_group_g$GEO,
                  p.adjust.method = "BH")
 
 ```
-
 
 ```{r VN_food, echo=FALSE, message = FALSE}
 
@@ -999,14 +888,13 @@ USA_VNF <- read_excel("Data/Food/Leach_USA_VNF.xlsx", skip = 1)
 VN_sensitivity_PROV <- left_join(food_consum, VNF_CAN, by =c("food_group"="Food group"))%>%
   left_join(USA_VNF, by = c("food_group"="Food Group"))%>%
   left_join(VNF_PROV, by =c("food_group"="Food group", "GEO" = "GEO", "N footprint sector" = "N footprint sector"))%>%
-  mutate(`VNF USA` = case_when(`food_group` == "Oilseeds" ~ `adjusted consumed kg/cap/year` * `VNF kgN/kg weighted`,
+  mutate(`VNF U.S.` = case_when(`food_group` == "Oilseeds" ~ `adjusted consumed kg/cap/year` * `VNF kgN/kg weighted`,
                                 TRUE ~ `adjusted consumed kg/cap/year` * `VNF kg N / kg food USA`),
          `VNF CAN weighted` = `adjusted consumed kg/cap/year` * `VNF kgN/kg weighted`,
          `VNF provincial` = case_when(is.na(`VNF kgN/kg`) ~ `adjusted consumed kg/cap/year` * `VNF kgN/kg weighted`,
                                      TRUE ~ `adjusted consumed kg/cap/year` * `VNF kgN/kg`))%>%
-         
   rename(Subsector = food_group)%>%
-  select(GEO, `N footprint sector`, Subsector, Population, `VNF USA`, `VNF CAN weighted`, `VNF provincial`)%>%
+  select(GEO, `N footprint sector`, Subsector, Population, `VNF U.S.`, `VNF CAN weighted`, `VNF provincial`)%>%
   pivot_longer(cols = starts_with("VN"), names_to = "VNF", values_to = "N kg/cap/year")%>%
   group_by(GEO,`N footprint sector`, Subsector, VNF, Population)%>%
   summarise(`N kg/cap/year` = sum(`N kg/cap/year`))%>%
@@ -1021,27 +909,12 @@ VN_sensitivity_CAN <- VN_sensitivity_PROV%>%
 VN_sensitivity <- VN_sensitivity_PROV%>%
   select(!Population)%>%
   bind_rows(VN_sensitivity_CAN)%>%
-  mutate(VNF = factor(VNF, levels = c("VNF provincial", "VNF CAN weighted", "VNF USA")),
-         GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
+  mutate(VNF = factor(VNF, levels = c("VNF provincial", "VNF CAN weighted", "VNF U.S.")))%>%
+  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
                    GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO))
-
-ggplot(VN_sensitivity, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = `VNF`))+
-  geom_bar(stat="identity") + 
-  facet_wrap(~factor(`GEO`, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")))+
-  #geom_text(aes(label = round(`N kg/cap/year`, 1)), position = position_stack(vjust= 0.5), size = 3)+
-  labs(caption = "Canadian food N footprint using different VNFs (N kg/cap/year)")+
-  coord_flip()+
-  scale_fill_brewer(palette="Reds")+
-  theme_classic()+
-  theme(axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=10),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.ticks = element_blank(),
-    plot.caption = element_text(hjust = 0))
-
-ggsave("Results_Images/VN_sensitivity_graph.pdf")
+                   TRUE ~ GEO),
+         GEO = factor(GEO, levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")),
+         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"))
 ```
 
 #Wastewater
@@ -1115,15 +988,15 @@ APEI_wastewater <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
   mutate(`NH3 NOx loss Nkg/year` = ((`NOX (t)` * 1000 * 14.0067 / 46.0055) + (`NH3 (t)` * 1000 * 14.0067 / 17.031)))%>% #convert NOx weights to N, NOx reported as NO2 equivalent 
   filter(Year %in% years)%>%
   group_by(GEO)%>%
-  summarise(`NH3 NOx loss Nkg/year` = mean(`NH3 NOx loss Nkg/year`))
+  summarise(`NH3 NOx loss Nkg` = mean(`NH3 NOx loss Nkg/year`))
 
 N_wastewater_PROV <- left_join(N_aqueous_wastewater,APEI_wastewater)%>%
   left_join(GHG_wastewater)%>%
   mutate(`N recyclable kg/year` = `N inffluent N kg` - `N aqueous loss N kg` - `N20 loss N kg` - `N2 N kg`,
          `50% recycled` = `N recyclable kg/year` * 0.5,
          `25% recycled` = `N recyclable kg/year` * 0.75,
-         `High` = `N aqueous loss N kg` + `N20 loss N kg` + `50% recycled`, 
-         `Low` = `N aqueous loss N kg` + `N20 loss N kg` + `25% recycled`)%>%
+         `High` = `N aqueous loss N kg` + `N20 loss N kg` + `NH3 NOx loss Nkg` + `50% recycled`, 
+         `Low` = `N aqueous loss N kg` + `N20 loss N kg` + `NH3 NOx loss Nkg` + `25% recycled`)%>%
   pivot_longer(cols = High:Low, names_to = "N recycled", values_to = "N kg/year")%>%
   mutate(`N kg/cap/year` = `N kg/year` / Population)
 
@@ -1140,53 +1013,138 @@ N_wastewater_Total <- bind_rows(N_wastewater_PROV, N_wastewater_CAN)%>%
                    TRUE ~ GEO),
          `N recycled` = factor(`N recycled`, levels = c("Low", "High")))
 
-ggplot(N_wastewater_Total, aes(fill = `N recycled`, y = `N kg/cap/year`, x = `N recycled`))+
-  geom_bar(stat="identity") + 
-  facet_wrap(~factor(`GEO`, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")), scales = "free")+
-  coord_flip()+
-  labs(caption ="Canadian wastewater N footprint using high (50%) and low (25%) recycling assumptions (N kg/cap/year)")+
-  scale_fill_brewer(palette="Blues")+
-  theme_classic()+
-  theme(axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
-        legend.position = "none",
-    axis.text.y = element_text(size=8),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank(),
-    axis.ticks = element_blank(),
-    plot.caption = element_text(hjust = 0))
+```
 
-ggsave("Results_Images/wastewater_sensitivity_graph.pdf")
+#Fossil Fuels
+```{r Fossil Fuels, echo=FALSE, message = FALSE}
+
+# for source/sector descriptors http://publications.gc.ca/collections/collection_2021/eccc/En81-30-2019-eng.pdf pg15
+APEI_energy <- read_csv("Data/fossil_fuels/APEI_inventory.csv", skip = 1)%>%
+  select(Year, Region, Source, Sector, Subsector, `NOX (t)`)%>%
+  filter(!(is.na(Subsector)))%>% #removes double counts of sectors/sources
+  mutate(Region = case_when(Region == "AB" ~ "Alberta",
+                            Region == "BC" ~ "British Columbia",
+                            Region == "MB" ~ "Manitoba",
+                            Region == "NB" ~ "New Brunswick",
+                            Region == "NL" ~ "Newfoundland and Labrador",
+                            Region == "NS" ~ "Nova Scotia",
+                            Region == "ON" ~ "Ontario",
+                            Region == "PE" ~ "Prince Edward Island",
+                            Region == "QC" ~ "Quebec",
+                            Region == "SK" ~"Saskatchewan"))%>%
+  mutate(Source = case_when(Source == "Electric Power Generation (Utilities)" ~ "Energy Generation",
+                            Sector == "Residential Fuel Combustion" ~ "Energy Generation",
+                            Sector == "Commercial and Institutional Fuel Combustion" ~ "Energy Generation",
+                            Sector == "Home Firewood Burning" ~ "Energy Generation",
+                            Source == "Ore and Mineral Industries" ~ "Other Industry",
+                            Source == "Oil and Gas Industry" ~ "Oil and Gas Industry",
+                            Source == "Manufacturing" ~ "Other Industry",
+                            #(Source == "Transportation and Mobile Equipment" & Sector %in% c("Light-duty Gasoline Trucks", "Light-duty Gasoline Vehicles", "Off-Road Gasoline/LPG/NG Vehicles and Equipment", "Air Transportation")) ~ "Transport",
+                            (Source == "Transportation and Mobile Equipment" & Sector != "Marine Transport") ~ "Transport"
+                            ))%>% #Incineration and waste captured in Wastewater, paints, dust, and fire sources minimal
+  replace_na(list(`NOX (t)`= 0))%>%
+  #convert NOx weights to N, NOx reported as NO2 equivalent
+  
+##MODIFY BASED ON TAKING INTO ACCOUNT OIL EXPORTS###
+  mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ (`NOX (t)` * 1000 * 14.0067 / 46.0055)*0.15,
+                          TRUE ~ ((`NOX (t)` * 1000 * 14.0067 / 46.0055))))%>%  
+  drop_na(Source, Region)%>%
+  filter(Year %in% years)%>%
+  group_by(Year, Region, Source)%>%
+  summarise(`N kg/year` = sum(N_kg))%>%
+  group_by(Region, Source)%>%
+  summarise(`N kg/year` = mean(`N kg/year`))
+
+#Canada has only Grand total emissions, so calculated sub categories separately
+CAN_APEI <- APEI_energy%>%
+  group_by(Source)%>%
+  summarise(`N kg/year` = sum(`N kg/year`))%>%
+  mutate(Region = "Canada")
+
+APEI_energy <- bind_rows(APEI_energy, CAN_APEI)%>%
+  left_join(prov_pop, by = c("Region"="GEO"))%>%
+  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
+  select(Region, Source, `N kg/cap/year`,`N kg/year`)
+
+#see GHG executive summary file for explanation of categories http://publications.gc.ca/collections/collection_2020/eccc/En81-4-2018-1-eng.pdf pg 7
+GHG_energy <- read_csv("Data/fossil_fuels/GHG_inventory.csv", skip = 1)%>%
+  select(Year, Region, Category, N2O)%>%
+  mutate(Source = case_when(Category == "Public Electricity and Heat Production" ~ "Energy Generation",
+                            Category == "Residential" ~ "Energy Generation",
+                            Category == "Commercial and Institutional" ~ "Energy Generation",
+                            Category == "Petroleum Refining Industries" ~ "Oil and Gas Industry",
+                            Category == "Oil and Gas Extraction" ~ "Oil and Gas Industry",
+                            Category == "Mining" ~ "Other Industry",
+                            Category == "Manufacturing Industries" ~ "Other Industry",
+                            Category == "Construction" ~ "Other Industry",
+                            Category == "Domestic Aviation" ~ "Transport",
+                            Category == "Road Transportation" ~ "Transport",
+                            Category == "Railways" ~ "Transport",
+                            Category == "Domestic Navigation" ~ "Transport",
+                            Category == "Other Transportation" ~ "Transport",
+                            Category == "INDUSTRIAL PROCESSES AND PRODUCT USE" ~ "Other Industry"
+                            ))%>%
+  drop_na(Source)%>% #could include "Fugitive Sources" "CO2 Transport and Storage"
+  replace_na(list(N2O = 0))%>%
+  #convert kt N20 to kg N
+
+###MODIFY BASED ON TAKING INTO ACCOUNT OIL EXPORTS###
+  mutate(N_kg = case_when(Source == "Oil and Gas Industry" ~ N2O *1000000*14.0067/44.013*0.15,
+                          TRUE ~ N2O *1000000*14.0067/44.013))%>%
+  filter(Year %in% years)%>%
+  group_by(Year, Region, Source)%>%
+  summarise(`N kg/year` = sum(N_kg))%>%
+  group_by(Region, Source)%>%
+  summarise(`N kg/year` = mean(`N kg/year`))%>%
+  left_join(prov_pop, by = c("Region"="GEO"))%>%
+  mutate(`N kg/cap/year` = `N kg/year` / Population)%>%
+  select(Region, Source, `N kg/cap/year`, `N kg/year`)
+
+N_energy <- bind_rows(APEI_energy, GHG_energy)%>%
+  filter(Region %in% c("Canada", "Newfoundland and Labrador",	"Prince Edward Island",	"Nova Scotia", "New Brunswick", "Quebec", 	"Ontario",	"Manitoba", "Saskatchewan", "Alberta", "British Columbia"))%>%
+  group_by(Region, Source)%>%
+  summarise(`N kg/cap/year` = sum(`N kg/cap/year`),
+            `N kg/year` = sum(`N kg/year`))%>%
+  mutate(`N footprint sector` = "Fossil Fuels")%>%
+  rename("GEO"="Region", "Subsector"="Source")%>%
+  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
+                   GEO == "Newfoundland and Labrador" ~ "NFLD",
+                   TRUE ~ GEO),
+         GEO = factor(GEO, levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")),
+         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"))
 
 ```
 
 #Total N footprint
-```{r N footprints, echo=FALSE}
+```{r N footprints, echo=FALSE, message = FALSE}
 N_footprint <- bind_rows(N_wastewater_Total, N_energy)%>%
   bind_rows(VN_sensitivity)%>%
-  mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
-                   GEO == "Newfoundland and Labrador" ~ "NFLD",
-                   TRUE ~ GEO),
-         GEO = fct_relevel(GEO, "Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD"), 
-         Subsector = fct_relevel(Subsector, "Beef", "Pork", "Chicken", "Eggs", "Milk", "Fish", "Legumes", "Oilseeds", "Grains", "Fruits", "Vegetables", "Roots", "Wastewater Treatment", "Energy Generation", "Oil and Gas Industry", "Transport", "	
-Other Industry"),
-         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from meat","VN from crops", "Wastewater Treatment", "Fossil Fuels"))%>%
 #choose which version you want
   filter(`N recycled` == "Low" | is.na(`N recycled`))%>%
   filter(`VNF` == "VNF CAN weighted"| is.na(`VNF`))%>%
+  mutate(`N footprint sector` = factor(`N footprint sector`, levels = c("VN from crops", "VN from meat", "Wastewater Treatment", "Fossil Fuels")),
+         `N footprint sector` = fct_relevel(`N footprint sector`, "VN from crops", "VN from meat", "Wastewater Treatment", "Fossil Fuels"),
+         Subsector = factor(Subsector, levels = c("Fruits", "Vegetables", "Grains", "Roots", "Legumes", "Oilseeds", "Milk", "Eggs", "Fish", "Chicken", "Pork", "Beef",          
+"Wastewater Treatment", "Energy Generation", "Oil and Gas Industry", "Other Industry", "Transport")),
+         Subsector = fct_relevel(Subsector, "Fruits", "Vegetables", "Grains", "Roots", "Legumes", "Oilseeds", "Milk", "Eggs", "Fish", "Chicken", "Pork", "Beef",      "Wastewater Treatment", "Energy Generation", "Oil and Gas Industry", "Other Industry", "Transport"))%>%
   group_by(GEO, `N footprint sector`, Subsector)%>%
   summarise(`N kg/cap/year` = sum(`N kg/cap/year`), `N kg/year` = sum(`N kg/year`))
 
-
-write_csv(N_footprint,"Results_Images/N_footprint.csv")
+#write_csv(N_footprint,"Results_Images/N_footprint.csv")
 
 ```
 
 # Results and Images
-```{r VNF food crop graph}
+```{r VNF food crop graph, echo=FALSE, message = FALSE}
 
-VNF_graph <- bind_rows(VNF_meat, VNF_crop_group)
-
-write_csv(VNF_graph, "Data/Food_VNFs.csv")
+VNF_graph <- bind_rows(VNF_meat, VNF_crop_group)%>%
+   mutate(GEO = case_when(GEO == "Prince Edward Island" ~ "PEI",
+                         GEO == "Newfoundland and Labrador" ~ "NFLD",
+                         TRUE ~ GEO))%>%
+  select(GEO, `Food group`, `N footprint sector`, `VNF kgN/kg weighted`, `VNF kgN/kg`)%>%
+  mutate(`VNF kgN/kg` = case_when(GEO == "Canada" ~ `VNF kgN/kg weighted`,
+                                  TRUE ~ `VNF kgN/kg`),
+         GEO = factor(GEO, levels = c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")))
 
 USA <- USA_VNF%>%
   rename(`VNF kgN/kg` = `VNF kg N / kg food USA`, "Food group" = "Food Group")%>%
@@ -1203,15 +1161,14 @@ ggplot(VNF_graph, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
         axis.title.x = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "none",
-        axis.text.x = element_text(size = 12, angle = 90, hjust = 1, vjust = 0.25),
-        axis.text.y = element_text(size = 10),
+        axis.text.x = element_text(size = 11, angle = 90, hjust = 1, vjust = 0.25),
+        axis.text.y = element_text(size = 12),
         strip.text = element_text(size = 12),
         panel.grid = element_blank(),
         panel.border = element_blank(),
         plot.caption = element_text(hjust = 0))
 
-
-ggsave("Results_Images/VNF_graph.pdf")  
+#ggsave("Results_Images/fig_5_VNF_graph.pdf")  
 
 
 ```
@@ -1225,8 +1182,8 @@ total_graph <- ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footpr
   coord_flip()+
   theme_classic()+
   theme(
-    axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=10),
+    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=8),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
@@ -1240,14 +1197,12 @@ sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/c
   coord_flip()+
   theme_classic()+
   theme(
-    axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=10),
+    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=8),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
-
-#ggsave("Results_Images/N_print_prov_sectors_cap_graph.pdf")
 
 sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
@@ -1257,14 +1212,12 @@ sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y =
   coord_flip()+
   theme_classic()+
   theme(
-    axis.text.x = element_text(size=10, angle = 90, hjust = 1, vjust = 0.5),
-    axis.text.y = element_text(size=10),
+    axis.text.x = element_text(size=8, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=8),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     plot.caption = element_text(hjust = 0))
-
-#ggsave("Results_Images/N_print_prov_sectors_percent_graph.pdf")
 
 ggarrange(total_graph, 
           ggarrange(sector_graph, sector_percent_graph,
@@ -1275,8 +1228,7 @@ ggarrange(total_graph,
           labels= "A",
           common.legend = TRUE)
 
-ggsave("Results_Images/N_print_sectors_graph.pdf")  
-
+#ggsave("Results_Images/N_print_sectors_graph.pdf")  
 
 ```
 
@@ -1284,7 +1236,8 @@ ggsave("Results_Images/N_print_sectors_graph.pdf")
 colors <- 17
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(colors)
 
-subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
+#subsector_graph <- 
+ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
   geom_bar(stat="identity") +
   scale_fill_manual(values = mycolors)+
   #scale_fill_brewer(palette="Paired")+
@@ -1319,12 +1272,51 @@ subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg
     plot.caption = element_text(hjust = 0))
 
 ggarrange(subsector_graph, subsector_percent_graph,
-                    labels = c("D","E"),
+                    labels = c("A","B"),
                     ncol = 2,
                     common.legend = TRUE)
 
-ggsave("Results_Images/N_print_subsectors_graph.pdf", width = 10)  
+#ggsave("Results_Images/N_print_subsectors_graph.pdf", width = 10)  
 
 ```
 
+```{r Wastewater graph, echo=FALSE, message = FALSE}
+ggplot(N_wastewater_Total, aes(fill = `N recycled`, y = `N kg/cap/year`, x = `N recycled`))+
+  geom_bar(stat="identity") + 
+  facet_wrap(~factor(`GEO`, levels=c("Canada", "British Columbia", "Alberta", "Saskatchewan", "Manitoba", "Ontario", "Quebec", "New Brunswick", "Nova Scotia", "PEI", "NFLD")), scales = "free")+
+  coord_flip()+
+  labs(caption ="Canadian wastewater N footprint using high (50%) and low (25%) recycling assumptions (N kg/cap/year)")+
+  scale_fill_brewer(palette="Blues")+
+  theme_classic()+
+  theme(strip.text.x = element_text(size = 12),
+        legend.position = "none",
+        axis.text.x = element_text(size=12, angle = 90, hjust = 1, vjust = 0.5),
+        axis.text.y = element_text(size=12),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    plot.caption = element_text(hjust = 0))
 
+#ggsave("Results_Images/fig_7_wastewater_sensitivity_graph.pdf", width = 10)
+```
+
+```{r Wastewater graph, echo=FALSE, message = FALSE}
+ggplot(VN_sensitivity, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = `VNF`))+
+  geom_bar(stat="identity") + 
+  facet_wrap(~factor(GEO))+
+  labs(caption = "Canadian food N footprint using different VNFs (N kg/cap/year)")+
+  coord_flip()+
+  scale_fill_brewer(palette="Reds")+
+  theme_classic()+
+  theme(strip.text = element_text(size = 12),
+        legend.text=element_text(size=12),
+        legend.title = element_text(size=12),
+    axis.text.x = element_text(size=12, angle = 90, hjust = 1, vjust = 0.5),
+    axis.text.y = element_text(size=12),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    axis.ticks = element_blank(),
+    plot.caption = element_text(hjust = 0))
+
+#ggsave("Results_Images/fig_6_VN_sensitivity_graph.pdf", width = 10)
+```

@@ -1,2 +1,2 @@
 # CAN_N_footprint
-Sibeal's PhD R script to estimate Canadian's avg N footprint
+R script for estimating Canada's national and provincial total and percapita N footprints

@@ -1,0 +1,8 @@
+﻿source: ,"Karimi, R., Pogue, S. J., Kröbel, R., Beauchemin, K. A., Schwinghamer, T., & Henry Janzen, H. (2020). An updated nitrogen budget for Canadian agroecosystems. Agriculture, Ecosystems & Environment, 304, 107046. https://doi.org/10.1016/j.agee.2020.107046",,,,,,,,,,,,,,,,
+Livestock Type,% live weight organs,protein content organs,% live weight foot,protein content foot,% dressed/live,% carcass weight skin,protein content skin,% carcass bone,N content bone,%carcass meat,protein content meat,% N meat protein,% N protein,% N live weight,Foot/organs ,% N carcass,% N total
+Cattle,0.16,0.19,0.004,0.95,0.63,0.07,0.32,0.15,6.3,0.78,0.206,0.179,0.16,0.028355944,0.005472,0.04179572,0.031803304
+Calves,0.16,0.19,0.004,0.95,0.58,0.07,0.32,0.15,6.3,0.78,0.2,0.179,0.16,0.02605388,0.005472,0.040958,0.02922764
+Sheep and lamb,0.12,0.19,0.004,0.95,0.625,0.113,0.32,0.16,6.14,0.727,0.171,0.179,0.16,0.025259964,0.004256,0.037862343,0.027919964
+Hog,0.07,0.15,0.004,0.95,0.775,0.055,0.32,0.11,6.6,0.835,0.186,0.179,0.16,0.02986908,0.002288,0.03787649,0.03164228
+Chicken,0.1,0.115,0.044,0.16,0.72,0.08,0.9,0.1,7.83,0.82,0.195,0.179,0.16,0.035370504,0.0029664,0.0479721,0.037506312
+Other fowl,0.1,0.115,0.044,0.16,0.73,0.08,0.9,0.11,6.6,0.81,0.177,0.179,0.16,0.033244486,0.0029664,0.04444323,0.035409958

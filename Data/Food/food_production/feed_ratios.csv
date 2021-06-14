@@ -1,0 +1,15 @@
+﻿source:,"Sheppard, S. C., & Bittman, S. (2015). Linkage of food consumption and export to ammonia emissions in Canada and the overriding implications for mitigation. Atmospheric Environment, 103, 43–52. https://doi.org/10.1016/j.atmosenv.2014.12.023",,,,,,,,
+Animal,Feed DMI kg/animal/year,%Grain east,%Grain west,%Whole corn east,%Whole corn west,%Straw/Hay east,%Straw/Hay west,%Forage east,%Forage west
+Broiler,26,1,1,0,0,0,0,0,0
+Layer,37,1,1,0,0,0,0,0,0
+Beef cow,4600,0.03,0.04,0.06,0.01,0.01,0.07,0.9,0.88
+Beef bull,5000,0.03,0.04,0.06,0.01,0.01,0.07,0.9,0.88
+Beef heifer,3200,0.22,0.24,0.16,0.02,0.02,0.06,0.59,0.68
+Beef steer,2800,0.22,0.24,0.16,0.02,0.02,0.06,0.59,0.68
+Dairy cow,7900,0.1,0.1,0.13,0.13,0,0,0.77,0.77
+Dairy heifer,3000,0.1,0.1,0.13,0.13,0,0,0.77,0.77
+Calves,1400,0.065,0.07,0.095,0.07,0,0,0.835,0.825
+Sow and gilts,660,1,1,0,0,0,0,0,0
+Boar,910,1,1,0,0,0,0,0,0
+Piglet and wiener,270,1,1,0,0,0,0,0,0
+Grower,840,1,1,0,0,0,0,0,0

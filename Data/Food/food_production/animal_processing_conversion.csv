@@ -1,0 +1,16 @@
+﻿source:,"Sheppard, S. C., & Bittman, S. (2015). Linkage of food consumption and export to ammonia emissions in Canada and the overriding implications for mitigation. Atmospheric Environment, 103, 43–52. https://doi.org/10.1016/j.atmosenv.2014.12.023",,,,
+Animal,Fraction Population slaughtered,Weight at slaughter (kg/animal),Carcass/Live (kg/kg),Retail/Carcass (kg/kg),Conversion_factor
+Beef bull,0.15,680,0.62,0.6,252.96
+Beef cow,0.15,650,0.62,0.6,241.8
+Beef heifer,0.91,580,0.62,0.6,215.76
+Beef steer,0.82,610,0.62,0.6,226.92
+Boar,0.27,170,0.81,0.71,97.767
+Broiler,6.2,2.4,0.62,1,1.488
+Calves,0.074,190,0.62,0.6,70.68
+Dairy heifer,0,0,0,0,0
+Dairy cow,0.24,630,0.62,0.6,234.36
+Grower,2.9,110,0.81,0.71,63.261
+Layer,0.99,1.7,0.62,1,1.054
+Sow and gilts,0.27,170,0.81,0.71,97.767
+Piglet and wiener,0,0,0,0,0
+Turkey,2.8,9.6,0.8,1,7.68

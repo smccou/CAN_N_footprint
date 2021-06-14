@@ -1,0 +1,153 @@
+﻿BNS name,CNF name,CNF weight (g),CNF protein (g),% N
+# BNSD36F: Gram Weight - Celery,,40,0,0
+# BNSD36J: Gram Weight - Onion/Green Onions/Leeks/Garlic,yellow onions,41,1,0.003902439
+# BNSD40B: Gram Weight - Apple,,138,0.3,0.000347826
+# BNSD40H: Gram Weight - Pears,,166,1,0.000963855
+# BNSD40A: Gram Weight - Citrus Fruit (Oranges/Lemons/Grapefruits),,131,1,0.001221374
+# BNSD36O: Gram Weight - Juices : Tomato & Vegetables,tomato,128,1,0.00125
+# BNSD36N: Gram Weight - Tomatoes,,123,1,0.001300813
+# BNSD40C: Gram Weight - Banana,,118,1,0.001355932
+# BNSD40E: Gram Weight - Grapes/Raisins,,100,1,0.0016
+# BNSD40G: Gram Weight - Peaches/Nectarines,peach,98,1,0.001632653
+# BNSD40F: Gram Weight - Melons (Canteloup/Honeydew/Watermelon),,85,1,0.001882353
+# BNSD40K: Gram Weight - Strawberries,,84,1,0.001904762
+# BNSD36L: Gram Weight - Peppers : Red/Green,,82,1,0.00195122
+# BNSD36E: Gram Weight - Carrots,,80,1,0.002
+# BNSD36C: Gram Weight - Cabbage / Kale,"cabbage green, raw",79,1,0.002025316
+# BNSD40L: Gram Weight - Other Fruits (Blueberrie/Date/Kiwi/Fruit Salad),blueberry,77,1,0.002077922
+# BNSD40D: Gram Weight - Cherries,,68,1,0.002352941
+# BNSD39A: Gram Weight - Potato,boiled,135,2,0.00237037
+# BNSD08A: Gram Weight - Pies : Commercial,apple,125,2,0.00256
+# BNSD36H: Gram Weight - Lettuce/Leafy Greens (Spinach/Mustard Greens),,58,1,0.002758621
+# BNSD38B: Gram Weight - Fried/Roasted Potatoes,baked,156,3,0.003076923
+# BNSD36P: Gram Weight - Other Veg. (Cucumber/Beet/Turnip),Beets,90,2,0.003555556
+# BNSD05A: Gram Weight - Whole Grain/Oats/High Fibre Breakfast Cereals,oatmeal quick,173,4,0.003699422
+# BNSD01B: Gram Weight - Rice,white rice,83,2,0.003855422
+# BNSD36B: Gram Weight - Broccoli,,82,2,0.003902439
+# BNSD04D: Gram Weight - Pancakes/Waffles,pancake,40,1,0.004
+# BNSD04F: Gram Weight - Dry Mixes (Cakes/Muffins/Pancakes),pancake,40,1,0.004
+# BNSD36M: Gram Weight - Squashes,zuchinni,40,1,0.004
+# BNSD10J: Gram Weight - Plant-based Beverage (Soy/Almond/Coconut),soy milk,257,7,0.004357977
+# BNSD43C: Gram Weight - Gelatin/Dessert Toppings/Pudding Mixes : Commercial,chocolate pudding,99,3,0.004848485
+# BNSD10A: Gram Weight - Milk : Whole,,258,8,0.00496124
+# BNSD10K: Gram Weight - Milk : Goat/Sheep,milk whole,258,8,0.00496124
+# BNSD46D: Gram Weight - Other Beverages (Malted Milk/Chocolate beverage),chocolate milk,264,9,0.005454545
+# BNSD36G: Gram Weight - Corn,,87,3,0.005517241
+# BNSD10I: Gram Weight - Milk : Other (Whey/Buttermilk),buttermilk,259,9,0.005559846
+# BNSD10B: Gram Weight - Milk : 2%,,258,9,0.005581395
+# BNSD10C: Gram Weight - Milk : 1%,,258,9,0.005581395
+# BNSD10D: Gram Weight - Milk : Skim,,258,9,0.005581395
+# BNSD36I: Gram Weight - Mushrooms,,54,2,0.005925926
+# BNSD09A: Gram Weight - Ice Cream,"vanilla, regular",76,3,0.006315789
+# BNSD09C: Gram Weight - Frozen Yoghurt,vanilla,76,3,0.006315789
+# BNSD08C: Gram Weight - Danishes/Doughnuts/Other Pastries : Commercial,doughnut,47,2,0.006808511
+# BNSD36K: Gram Weight - Peas/Snow Peas,green,85,4,0.007529412
+# BNSD01A: Gram Weight - Pasta,spaghetti,148,7,0.007567568
+# BNSD36A: Gram Weight - Beans,baked,188,9,0.007659574
+# BNSD15B: Gram Weight - Yoghurts : More than 2.1% B.F.,,181,9,0.007955801
+# BNSD07A: Gram Weight - Cookies : Commercial,chocolate chip ,20,1,0.008
+# BNSD04C: Gram Weight - Muffins/English muffins,"fruit muffin, commercial",113,6,0.008495575
+# BNSD15A: Gram Weight - Yoghurts : Less than 2% B.F.,,181,10,0.008839779
+# BNSD36D: Gram Weight - Cauliflower,,53,3,0.009056604
+# BNSD07B: Gram Weight - Biscuits : Commercial,"biscuit, plain",51,3,0.009411765
+# BNSD09B: Gram Weight - Ice Milk,fudgesicle,51,3,0.009411765
+# BNSD16B: Gram Weight - Egg Substitutes,,113,7,0.009911504
+# BNSD10E: Gram Weight - Milk : Evaporated Whole,,16,1,0.01
+# BNSD10F: Gram Weight - Milk: Evaporated 2%,,16,1,0.01
+# BNSD10G: Gram Weight - Milk : Evaporated Skim,,16,1,0.01
+# BNSD38A: Gram Weight - Potato Chips,flavoured,43,3,0.011162791
+# BNSD07C: Gram Weight - Granola Bar,nut and raisin granola bar,28,2,0.011428571
+# BNSD08B: Gram Weight - Cakes : Commercial (Frozen Cake),angelfood,28,2,0.011428571
+# BNSD44A: Gram Weight - Chocolate Bar,kit kat,42,3,0.011428571
+# BNSD42B: Gram Weight - Salty/High-Fat Snacks (Incl Tortilla Chips),tortilla chips,50,4,0.0128
+# BNSD02A: Gram Weight - White Breads,Bread white comemrcial,35,3,0.013714286
+# BNSD03A: Gram Weight - Whole Wheat Breads,bread whole wheat,35,3,0.013714286
+# BNSD03B: Gram Weight - Other Whole Grain Breads,bread whole wheat,35,3,0.013714286
+# BNSD06A: Gram Weight - Breakfast Cereal (Other),cheerios,35,3,0.013714286
+# BNSD04E: Gram Weight - Croissants/Piecrusts/Phyllo Dough,croissant,57,5,0.014035088
+# BNSD04A: Gram Weight - Rolls/Bagels/Pita/Croutons/Dumplings/Matzo/Tortilla,pita/bagel,65.5,6,0.014656489
+# BNSD04B: Gram Weight - Crackers/Crispbreads,melba toast,10,1,0.016
+# BNSD10H: Gram Weight - Milk : Condensed,,19,2,0.016842105
+# BNSD01C: Gram Weight - Cereal/Grains/Flours,wheat flour,66,7,0.016969697
+# BNSD16A: Gram Weight - Egg,,50,6,0.0192
+# BNSD42A: Gram Weight - Plain Popcorn/Pretzels,popcorn,8,1,0.02
+# BNSD14A: Gram Weight - Cottage Cheese,,119,15,0.020168067
+# BNSD37B: Gram Weight - Foods made with Vegetable Proteins (Tofu),firm tofu,150,21,0.0224
+# BNSD30A: Gram Weight - Sausage,bratwurst,75,11,0.023466667
+# BNSD28B: Gram Weight - Liver Pate,pate canned,26,4,0.024615385
+# BNSD37A: Gram Weight - Legume,soybeans,127,21,0.026456693
+# BNSD32A: Gram Weight - Luncheon Meat,deli meat ham,56,10,0.028571429
+# BNSD27E: Gram Weight - Other Birds : Duck/Pheasant/Pigeon,duck,75,14,0.029866667
+# BNSD33B: Gram Weight - Seeds,sunflower seed,32,6,0.03
+# BNSD14C: Gram Weight - Cheese: 10% B.F. to 25% B.F.,mozarella,50,10,0.032
+# BNSD14D: Gram Weight - Cheese: More than 25% B.F.,mozarella,50,10,0.032
+# BNSD35A: Gram Weight - Shellfish,lobster,77,16,0.033246753
+# BNSD25E: Gram Weight - Ham : Cured - Lean + Fat,,75,16,0.034133333
+# BNSD33C: Gram Weight - Peanut Butter / Other Nut Spreads,,31,7,0.036129032
+# BNSD34B: Gram Weight - Fish : Superior or Equal to 6% Total Fat,salmon canned,75,17,0.036266667
+# BNSD25C: Gram Weight - Bacon,,47,11,0.037446809
+# BNSD23B: Gram Weight - Veal : Lean + Fat/Ground,ground,75,18,0.0384
+# BNSD25B: Gram Weight - Pork : Fresh - Lean + Fat/Ground,ground,75,18,0.0384
+# BNSD33A: Gram Weight - Nuts,peanuts shelled,37,9,0.038918919
+# BNSD24B: Gram Weight - Lamb : Lean + Fat/Ground,ground,75,19,0.040533333
+# BNSD25D: Gram Weight - Ham : Cured - Lean Only,,75,19,0.040533333
+# BNSD27B: Gram Weight - Chicken : Meat + Skin,breast meat and skin,75,19,0.040533333
+# BNSD27C: Gram Weight - Turkey : Meat Only,dark meat,75,19,0.040533333
+# BNSD34A: Gram Weight - Fish : Less than 6% Total Fat,tuna canned,75,19,0.040533333
+# BNSD14B: Gram Weight - Cheese : Less than 10% B.F.,mozarella,50,13,0.0416
+# BNSD24A: Gram Weight - Lamb : Lean Only,,75,20,0.042666667
+# BNSD28A: Gram Weight - Liver,,75,20,0.042666667
+# BNSD25A: Gram Weight - Pork : Fresh - Lean Only,tenderloin,75,21,0.0448
+# BNSD27D: Gram Weight - Turkey : Meat + Skin/Ground,ground,75,21,0.0448
+# BNSD22C: Gram Weight - Beef : Ground,,75,22,0.046933333
+# BNSD22B: Gram Weight - Beef : Lean + Fat,steak,75,23,0.049066667
+# BNSD31A: Gram Weight - Game Meat,deer,75,23,0.049066667
+# BNSD27A: Gram Weight - Chicken : Meat Only,breast meat,75,25,0.053333333
+# BNSD23A: Gram Weight - Veal : Lean Only,stewing,75,26,0.055466667
+# BNSD22A: Gram Weight - Beef : Lean Only,stewing beef,75,28,0.059733333
+# BNSD13A: Gram Weight - Whipping cream,,,0,0
+# BNSD13B: Gram Weight - Table cream,,,0,0
+# BNSD13C: Gram Weight - Half & Half cream,,,0,0
+# BNSD13D: Gram Weight - Sour cream,,,0,0
+# BNSD17A: Gram Weight - Butter,,,0,0
+# BNSD18A: Gram Weight - Regular Margarine,,,0,0
+# BNSD18B: Gram Weight - Calorie-Reduced Margarine,,,0,0
+# BNSD20A: Gram Weight - Block Margarine,,,0,0
+# BNSD21A: Gram Weight - Vegetable oils,,,0,0
+# BNSD21B: Gram Weight - Animal Fats,,,0,0
+# BNSD21C: Gram Weight - Shortening,,,0,0
+# BNSD27F: Gram Weight - Birds : Skin only,,,0,0
+# BNSD29A: Gram Weight - Offal,,,0,0
+# BNSD40I: Gram Weight - Pineapple,,125,1,0.00128
+# BNSD40J: Gram Weight - Plums/Prunes,,66,0.05,0.000121212
+# BNSD41A: Gram Weight - Sugars : White/Brown,,,0,0
+# BNSD41B: Gram Weight - Jams/Jellies/Marmalade,,,0,0
+# BNSD41C: Gram Weight - Other Sugars (Syrups/Molasses/Honey),,,0,0
+# BNSD41D: Gram Weight - Sugar Substitutes,,,0,0
+# BNSD43A: Gram Weight - Candy/Gum,,,0,0
+# BNSD43B: Gram Weight - Ice Pop/Sherbert,,,0,0
+# BNSD45A: Gram Weight - Fruit Juice,,,0,0
+# BNSD46A: Gram Weight - Soft Drink : Regular,,,0,0
+# BNSD46B: Gram Weight - Soft Drink : Diet,,,0,0
+# BNSD46C: Gram Weight - Fruit Drinks,,,0,0
+# BNSD46E: Gram Weight - Energy Drink,,,0,0
+# BNSD46F: Gram Weight - Vitamin Water,,,0,0
+# BNSD46G: Gram Weight - Sports Drink,,,0,0
+# BNSD47A: Gram Weight - Spirits,,,0,0
+# BNSD47B: Gram Weight - Liqueurs,,,0,0
+# BNSD48A: Gram Weight - Wine,,,0,0
+# BNSD49A: Gram Weight - Beer,,,0,0
+# BNSD49B: Gram Weight - Coolers,,,0,0
+# BNSD50A: Gram Weight - Soups with Vegetables,tomato soup,262,6,0.003664122
+# BNSD50B: Gram Weight - Soups without Vegetables,chicken noodle,254,13,0.008188976
+# BNSD50C: Gram Weight - Gravies,,,0,0
+# BNSD50D: Gram Weight - Sauces (White/Bearnaise/Soya/Tartar/Ketchup),,,0,0
+# BNSD50E: Gram Weight - Salad Dressings (With or Without Oil),,,0,0
+# BNSD50F: Gram Weight - Seasonings (Salt/Vinegar),,,0,0
+# BNSD51A: Gram Weight - Tea (Incl Iced Tea),,,0,0
+# BNSD51B: Gram Weight - Coffee,,,0,0
+# BNSD51C: Gram Weight - Water (Well/Mineral),,,0,0
+# BNSD52A: Gram Weight - Babyfood products,,,0,0
+# BNSD52B: Gram Weight - Infant Formula,,,0,0
+# BNSD53A: Gram Weight - Spices,,,0,0
+# BNSD53B: Gram Weight - Others (Baking Soda/Baking Powder/Yeast),,,0,0

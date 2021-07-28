@@ -2082,81 +2082,281 @@ REF_DATE,GEO,DGUID,Fertilizer nutrient content,Period,UOM,UOM_ID,SCALAR_FACTOR,S
 2018/2019,British Columbia,2016A000259,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471681,10.4.4,,x,,,0
 2019/2020,Canada,2016A000011124,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471522,1.1.1,523,,,,0
 2019/2020,Canada,2016A000011124,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471562,1.1.2,1281,,,,0
+2019/2020,Canada,2016A000011124,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471602,1.1.3,1760,,,,0
+2019/2020,Canada,2016A000011124,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471642,1.1.4,2672,,,,0
 2019/2020,Canada,2016A000011124,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471523,1.2.1,194,,,,0
 2019/2020,Canada,2016A000011124,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471563,1.2.2,522,,,,0
+2019/2020,Canada,2016A000011124,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471603,1.2.3,801,,,,0
+2019/2020,Canada,2016A000011124,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471643,1.2.4,1137,,,,0
 2019/2020,Canada,2016A000011124,Potash,July to September,Metric tonnes,214,thousands,3,v52471524,1.3.1,,x,,,0
 2019/2020,Canada,2016A000011124,Potash,July to December,Metric tonnes,214,thousands,3,v52471564,1.3.2,183,,,,0
+2019/2020,Canada,2016A000011124,Potash,July to March,Metric tonnes,214,thousands,3,v52471604,1.3.3,258,,,,0
+2019/2020,Canada,2016A000011124,Potash,July to June,Metric tonnes,214,thousands,3,v52471644,1.3.4,410,,,,0
 2019/2020,Canada,2016A000011124,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471525,1.4.1,51,,,,0
 2019/2020,Canada,2016A000011124,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471565,1.4.2,140,,,,0
+2019/2020,Canada,2016A000011124,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471605,1.4.3,216,,,,0
+2019/2020,Canada,2016A000011124,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471645,1.4.4,353,,,,0
 2019/2020,Eastern provinces,,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471526,2.1.1,63,,,,0
 2019/2020,Eastern provinces,,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471566,2.1.2,181,,,,0
+2019/2020,Eastern provinces,,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471606,2.1.3,234,,,,0
+2019/2020,Eastern provinces,,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471646,2.1.4,393,,,,0
 2019/2020,Eastern provinces,,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471527,2.2.1,52,,,,0
 2019/2020,Eastern provinces,,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471567,2.2.2,128,,,,0
+2019/2020,Eastern provinces,,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471607,2.2.3,160,,,,0
+2019/2020,Eastern provinces,,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471647,2.2.4,218,,,,0
 2019/2020,Eastern provinces,,Potash,July to September,Metric tonnes,214,thousands,3,v52471528,2.3.1,,x,,,0
 2019/2020,Eastern provinces,,Potash,July to December,Metric tonnes,214,thousands,3,v52471568,2.3.2,81,,,,0
+2019/2020,Eastern provinces,,Potash,July to March,Metric tonnes,214,thousands,3,v52471608,2.3.3,118,,,,0
+2019/2020,Eastern provinces,,Potash,July to June,Metric tonnes,214,thousands,3,v52471648,2.3.4,183,,,,0
 2019/2020,Eastern provinces,,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471529,2.4.1,9,,,,0
 2019/2020,Eastern provinces,,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471569,2.4.2,29,,,,0
+2019/2020,Eastern provinces,,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471609,2.4.3,41,,,,0
+2019/2020,Eastern provinces,,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471649,2.4.4,64,,,,0
 2019/2020,Atlantic provinces,2016A00011,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471530,3.1.1,6,,,,0
 2019/2020,Atlantic provinces,2016A00011,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471570,3.1.2,17,,,,0
+2019/2020,Atlantic provinces,2016A00011,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471610,3.1.3,26,,,,0
+2019/2020,Atlantic provinces,2016A00011,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471650,3.1.4,36,,,,0
 2019/2020,Atlantic provinces,2016A00011,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471531,3.2.1,5,,,,0
 2019/2020,Atlantic provinces,2016A00011,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471571,3.2.2,27,,,,0
+2019/2020,Atlantic provinces,2016A00011,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471611,3.2.3,42,,,,0
+2019/2020,Atlantic provinces,2016A00011,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471651,3.2.4,55,,,,0
 2019/2020,Atlantic provinces,2016A00011,Potash,July to September,Metric tonnes,214,thousands,3,v52471532,3.3.1,,x,,,0
 2019/2020,Atlantic provinces,2016A00011,Potash,July to December,Metric tonnes,214,thousands,3,v52471572,3.3.2,,x,,,0
+2019/2020,Atlantic provinces,2016A00011,Potash,July to March,Metric tonnes,214,thousands,3,v52471612,3.3.3,,x,,,0
+2019/2020,Atlantic provinces,2016A00011,Potash,July to June,Metric tonnes,214,thousands,3,v52471652,3.3.4,,x,,,0
 2019/2020,Atlantic provinces,2016A00011,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471533,3.4.1,0,,,,0
 2019/2020,Atlantic provinces,2016A00011,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471573,3.4.2,5,,,,0
+2019/2020,Atlantic provinces,2016A00011,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471613,3.4.3,8,,,,0
+2019/2020,Atlantic provinces,2016A00011,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471653,3.4.4,12,,,,0
 2019/2020,Quebec,2016A000224,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471534,4.1.1,27,,,,0
 2019/2020,Quebec,2016A000224,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471574,4.1.2,57,,,,0
+2019/2020,Quebec,2016A000224,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471614,4.1.3,76,,,,0
+2019/2020,Quebec,2016A000224,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471654,4.1.4,173,,,,0
 2019/2020,Quebec,2016A000224,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471535,4.2.1,1,,,,0
 2019/2020,Quebec,2016A000224,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471575,4.2.2,31,,,,0
+2019/2020,Quebec,2016A000224,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471615,4.2.3,34,,,,0
+2019/2020,Quebec,2016A000224,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471655,4.2.4,59,,,,0
 2019/2020,Quebec,2016A000224,Potash,July to September,Metric tonnes,214,thousands,3,v52471536,4.3.1,,x,,,0
 2019/2020,Quebec,2016A000224,Potash,July to December,Metric tonnes,214,thousands,3,v52471576,4.3.2,,x,,,0
+2019/2020,Quebec,2016A000224,Potash,July to March,Metric tonnes,214,thousands,3,v52471616,4.3.3,,x,,,0
+2019/2020,Quebec,2016A000224,Potash,July to June,Metric tonnes,214,thousands,3,v52471656,4.3.4,,x,,,0
 2019/2020,Quebec,2016A000224,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471537,4.4.1,4,,,,0
 2019/2020,Quebec,2016A000224,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471577,4.4.2,6,,,,0
+2019/2020,Quebec,2016A000224,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471617,4.4.3,7,,,,0
+2019/2020,Quebec,2016A000224,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471657,4.4.4,19,,,,0
 2019/2020,Ontario,2016A000235,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471538,5.1.1,30,,,,0
 2019/2020,Ontario,2016A000235,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471578,5.1.2,107,,,,0
+2019/2020,Ontario,2016A000235,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471618,5.1.3,132,,,,0
+2019/2020,Ontario,2016A000235,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471658,5.1.4,184,,,,0
 2019/2020,Ontario,2016A000235,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471539,5.2.1,45,,,,0
 2019/2020,Ontario,2016A000235,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471579,5.2.2,70,,,,0
+2019/2020,Ontario,2016A000235,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471619,5.2.3,84,,,,0
+2019/2020,Ontario,2016A000235,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471659,5.2.4,103,,,,0
 2019/2020,Ontario,2016A000235,Potash,July to September,Metric tonnes,214,thousands,3,v52471540,5.3.1,,x,,,0
 2019/2020,Ontario,2016A000235,Potash,July to December,Metric tonnes,214,thousands,3,v52471580,5.3.2,,x,,,0
+2019/2020,Ontario,2016A000235,Potash,July to March,Metric tonnes,214,thousands,3,v52471620,5.3.3,85,,,,0
+2019/2020,Ontario,2016A000235,Potash,July to June,Metric tonnes,214,thousands,3,v52471660,5.3.4,120,,,,0
 2019/2020,Ontario,2016A000235,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471541,5.4.1,5,,,,0
 2019/2020,Ontario,2016A000235,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471581,5.4.2,17,,,,0
+2019/2020,Ontario,2016A000235,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471621,5.4.3,26,,,,0
+2019/2020,Ontario,2016A000235,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471661,5.4.4,34,,,,0
 2019/2020,Prairie provinces,2016A00014,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471542,6.1.1,460,,,,0
 2019/2020,Prairie provinces,2016A00014,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471582,6.1.2,1100,,,,0
+2019/2020,Prairie provinces,2016A00014,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471622,6.1.3,1526,,,,0
+2019/2020,Prairie provinces,2016A00014,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471662,6.1.4,2279,,,,0
 2019/2020,Prairie provinces,2016A00014,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471543,6.2.1,142,,,,0
 2019/2020,Prairie provinces,2016A00014,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471583,6.2.2,394,,,,0
+2019/2020,Prairie provinces,2016A00014,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471623,6.2.3,640,,,,0
+2019/2020,Prairie provinces,2016A00014,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471663,6.2.4,919,,,,0
 2019/2020,Prairie provinces,2016A00014,Potash,July to September,Metric tonnes,214,thousands,3,v52471544,6.3.1,,x,,,0
 2019/2020,Prairie provinces,2016A00014,Potash,July to December,Metric tonnes,214,thousands,3,v52471584,6.3.2,102,,,,0
+2019/2020,Prairie provinces,2016A00014,Potash,July to March,Metric tonnes,214,thousands,3,v52471624,6.3.3,140,,,,0
+2019/2020,Prairie provinces,2016A00014,Potash,July to June,Metric tonnes,214,thousands,3,v52471664,6.3.4,227,,,,0
 2019/2020,Prairie provinces,2016A00014,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471545,6.4.1,42,,,,0
 2019/2020,Prairie provinces,2016A00014,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471585,6.4.2,111,,,,0
+2019/2020,Prairie provinces,2016A00014,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471625,6.4.3,175,,,,0
+2019/2020,Prairie provinces,2016A00014,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471665,6.4.4,289,,,,0
 2019/2020,Manitoba,2016A000246,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471546,7.1.1,92,,,,0
 2019/2020,Manitoba,2016A000246,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471586,7.1.2,224,,,,0
+2019/2020,Manitoba,2016A000246,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471626,7.1.3,291,,,,0
+2019/2020,Manitoba,2016A000246,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471666,7.1.4,469,,,,0
 2019/2020,Manitoba,2016A000246,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471547,7.2.1,35,,,,0
 2019/2020,Manitoba,2016A000246,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471587,7.2.2,94,,,,0
+2019/2020,Manitoba,2016A000246,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471627,7.2.3,144,,,,0
+2019/2020,Manitoba,2016A000246,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471667,7.2.4,216,,,,0
 2019/2020,Manitoba,2016A000246,Potash,July to September,Metric tonnes,214,thousands,3,v52471548,7.3.1,,x,,,0
 2019/2020,Manitoba,2016A000246,Potash,July to December,Metric tonnes,214,thousands,3,v52471588,7.3.2,28,,,,0
+2019/2020,Manitoba,2016A000246,Potash,July to March,Metric tonnes,214,thousands,3,v52471628,7.3.3,35,,,,0
+2019/2020,Manitoba,2016A000246,Potash,July to June,Metric tonnes,214,thousands,3,v52471668,7.3.4,64,,,,0
 2019/2020,Manitoba,2016A000246,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471549,7.4.1,8,,,,0
 2019/2020,Manitoba,2016A000246,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471589,7.4.2,19,,,,0
+2019/2020,Manitoba,2016A000246,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471629,7.4.3,29,,,,0
+2019/2020,Manitoba,2016A000246,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471669,7.4.4,53,,,,0
 2019/2020,Saskatchewan,2016A000247,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471550,8.1.1,178,,,,0
 2019/2020,Saskatchewan,2016A000247,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471590,8.1.2,490,,,,0
+2019/2020,Saskatchewan,2016A000247,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471630,8.1.3,712,,,,0
+2019/2020,Saskatchewan,2016A000247,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471670,8.1.4,1087,,,,0
 2019/2020,Saskatchewan,2016A000247,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471551,8.2.1,53,,,,0
 2019/2020,Saskatchewan,2016A000247,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471591,8.2.2,171,,,,0
+2019/2020,Saskatchewan,2016A000247,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471631,8.2.3,294,,,,0
+2019/2020,Saskatchewan,2016A000247,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471671,8.2.4,433,,,,0
 2019/2020,Saskatchewan,2016A000247,Potash,July to September,Metric tonnes,214,thousands,3,v52471552,8.3.1,,x,,,0
 2019/2020,Saskatchewan,2016A000247,Potash,July to December,Metric tonnes,214,thousands,3,v52471592,8.3.2,38,,,,0
+2019/2020,Saskatchewan,2016A000247,Potash,July to March,Metric tonnes,214,thousands,3,v52471632,8.3.3,56,,,,0
+2019/2020,Saskatchewan,2016A000247,Potash,July to June,Metric tonnes,214,thousands,3,v52471672,8.3.4,84,,,,0
 2019/2020,Saskatchewan,2016A000247,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471553,8.4.1,19,,,,0
 2019/2020,Saskatchewan,2016A000247,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471593,8.4.2,58,,,,0
+2019/2020,Saskatchewan,2016A000247,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471633,8.4.3,97,,,,0
+2019/2020,Saskatchewan,2016A000247,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471673,8.4.4,161,,,,0
 2019/2020,Alberta,2016A000248,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471554,9.1.1,190,,,,0
 2019/2020,Alberta,2016A000248,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471594,9.1.2,386,,,,0
+2019/2020,Alberta,2016A000248,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471634,9.1.3,522,,,,0
+2019/2020,Alberta,2016A000248,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471674,9.1.4,723,,,,0
 2019/2020,Alberta,2016A000248,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471555,9.2.1,54,,,,0
 2019/2020,Alberta,2016A000248,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471595,9.2.2,130,,,,0
+2019/2020,Alberta,2016A000248,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471635,9.2.3,202,,,,0
+2019/2020,Alberta,2016A000248,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471675,9.2.4,270,,,,0
 2019/2020,Alberta,2016A000248,Potash,July to September,Metric tonnes,214,thousands,3,v52471556,9.3.1,,x,,,0
 2019/2020,Alberta,2016A000248,Potash,July to December,Metric tonnes,214,thousands,3,v52471596,9.3.2,36,,,,0
+2019/2020,Alberta,2016A000248,Potash,July to March,Metric tonnes,214,thousands,3,v52471636,9.3.3,49,,,,0
+2019/2020,Alberta,2016A000248,Potash,July to June,Metric tonnes,214,thousands,3,v52471676,9.3.4,79,,,,0
 2019/2020,Alberta,2016A000248,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471557,9.4.1,15,,,,0
 2019/2020,Alberta,2016A000248,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471597,9.4.2,34,,,,0
+2019/2020,Alberta,2016A000248,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471637,9.4.3,49,,,,0
+2019/2020,Alberta,2016A000248,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471677,9.4.4,75,,,,0
 2019/2020,British Columbia,2016A000259,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471558,10.1.1,6,,,,0
 2019/2020,British Columbia,2016A000259,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471598,10.1.2,16,,,,0
+2019/2020,British Columbia,2016A000259,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471638,10.1.3,24,,,,0
+2019/2020,British Columbia,2016A000259,Nitrogen,July to June,Metric tonnes,214,thousands,3,v52471678,10.1.4,33,,,,0
 2019/2020,British Columbia,2016A000259,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471559,10.2.1,,x,,,0
 2019/2020,British Columbia,2016A000259,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471599,10.2.2,,x,,,0
+2019/2020,British Columbia,2016A000259,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471639,10.2.3,8,,,,0
+2019/2020,British Columbia,2016A000259,Phosphate,July to June,Metric tonnes,214,thousands,3,v52471679,10.2.4,11,,,,0
 2019/2020,British Columbia,2016A000259,Potash,July to September,Metric tonnes,214,thousands,3,v52471560,10.3.1,,x,,,0
 2019/2020,British Columbia,2016A000259,Potash,July to December,Metric tonnes,214,thousands,3,v52471600,10.3.2,,x,,,0
+2019/2020,British Columbia,2016A000259,Potash,July to March,Metric tonnes,214,thousands,3,v52471640,10.3.3,4,,,,0
+2019/2020,British Columbia,2016A000259,Potash,July to June,Metric tonnes,214,thousands,3,v52471680,10.3.4,7,,,,0
 2019/2020,British Columbia,2016A000259,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471561,10.4.1,,x,,,0
 2019/2020,British Columbia,2016A000259,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471601,10.4.2,,x,,,0
+2019/2020,British Columbia,2016A000259,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471641,10.4.3,2,,,,0
+2019/2020,British Columbia,2016A000259,Sulphur,July to June,Metric tonnes,214,thousands,3,v52471681,10.4.4,4,,,,0
+2020/2021,Canada,2016A000011124,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471522,1.1.1,568,,,,0
+2020/2021,Canada,2016A000011124,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471562,1.1.2,1310,,,,0
+2020/2021,Canada,2016A000011124,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471602,1.1.3,1869,,,,0
+2020/2021,Canada,2016A000011124,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471523,1.2.1,237,,,,0
+2020/2021,Canada,2016A000011124,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471563,1.2.2,532,,,,0
+2020/2021,Canada,2016A000011124,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471603,1.2.3,827,,,,0
+2020/2021,Canada,2016A000011124,Potash,July to September,Metric tonnes,214,thousands,3,v52471524,1.3.1,82,,,,0
+2020/2021,Canada,2016A000011124,Potash,July to December,Metric tonnes,214,thousands,3,v52471564,1.3.2,190,,,,0
+2020/2021,Canada,2016A000011124,Potash,July to March,Metric tonnes,214,thousands,3,v52471604,1.3.3,333,,,,0
+2020/2021,Canada,2016A000011124,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471525,1.4.1,50,,,,0
+2020/2021,Canada,2016A000011124,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471565,1.4.2,154,,,,0
+2020/2021,Canada,2016A000011124,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471605,1.4.3,235,,,,0
+2020/2021,Eastern provinces,,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471526,2.1.1,55,,,,0
+2020/2021,Eastern provinces,,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471566,2.1.2,144,,,,0
+2020/2021,Eastern provinces,,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471606,2.1.3,213,,,,0
+2020/2021,Eastern provinces,,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471527,2.2.1,72,,,,0
+2020/2021,Eastern provinces,,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471567,2.2.2,157,,,,0
+2020/2021,Eastern provinces,,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471607,2.2.3,174,,,,0
+2020/2021,Eastern provinces,,Potash,July to September,Metric tonnes,214,thousands,3,v52471528,2.3.1,40,,,,0
+2020/2021,Eastern provinces,,Potash,July to December,Metric tonnes,214,thousands,3,v52471568,2.3.2,87,,,,0
+2020/2021,Eastern provinces,,Potash,July to March,Metric tonnes,214,thousands,3,v52471608,2.3.3,181,,,,0
+2020/2021,Eastern provinces,,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471529,2.4.1,5,,,,0
+2020/2021,Eastern provinces,,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471569,2.4.2,28,,,,0
+2020/2021,Eastern provinces,,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471609,2.4.3,37,,,,0
+2020/2021,Atlantic provinces,2016A00011,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471530,3.1.1,3,,,,0
+2020/2021,Atlantic provinces,2016A00011,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471570,3.1.2,15,,,,0
+2020/2021,Atlantic provinces,2016A00011,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471610,3.1.3,20,,,,0
+2020/2021,Atlantic provinces,2016A00011,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471531,3.2.1,8,,,,0
+2020/2021,Atlantic provinces,2016A00011,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471571,3.2.2,35,,,,0
+2020/2021,Atlantic provinces,2016A00011,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471611,3.2.3,38,,,,0
+2020/2021,Atlantic provinces,2016A00011,Potash,July to September,Metric tonnes,214,thousands,3,v52471532,3.3.1,,x,,,0
+2020/2021,Atlantic provinces,2016A00011,Potash,July to December,Metric tonnes,214,thousands,3,v52471572,3.3.2,,x,,,0
+2020/2021,Atlantic provinces,2016A00011,Potash,July to March,Metric tonnes,214,thousands,3,v52471612,3.3.3,,x,,,0
+2020/2021,Atlantic provinces,2016A00011,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471533,3.4.1,1,,,,0
+2020/2021,Atlantic provinces,2016A00011,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471573,3.4.2,7,,,,0
+2020/2021,Atlantic provinces,2016A00011,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471613,3.4.3,10,,,,0
+2020/2021,Quebec,2016A000224,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471534,4.1.1,12,,,,0
+2020/2021,Quebec,2016A000224,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471574,4.1.2,32,,,,0
+2020/2021,Quebec,2016A000224,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471614,4.1.3,55,,,,0
+2020/2021,Quebec,2016A000224,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471535,4.2.1,2,,,,0
+2020/2021,Quebec,2016A000224,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471575,4.2.2,32,,,,0
+2020/2021,Quebec,2016A000224,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471615,4.2.3,36,,,,0
+2020/2021,Quebec,2016A000224,Potash,July to September,Metric tonnes,214,thousands,3,v52471536,4.3.1,,x,,,0
+2020/2021,Quebec,2016A000224,Potash,July to December,Metric tonnes,214,thousands,3,v52471576,4.3.2,,x,,,0
+2020/2021,Quebec,2016A000224,Potash,July to March,Metric tonnes,214,thousands,3,v52471616,4.3.3,,x,,,0
+2020/2021,Quebec,2016A000224,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471537,4.4.1,1,,,,0
+2020/2021,Quebec,2016A000224,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471577,4.4.2,6,,,,0
+2020/2021,Quebec,2016A000224,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471617,4.4.3,7,,,,0
+2020/2021,Ontario,2016A000235,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471538,5.1.1,40,,,,0
+2020/2021,Ontario,2016A000235,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471578,5.1.2,96,,,,0
+2020/2021,Ontario,2016A000235,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471618,5.1.3,137,,,,0
+2020/2021,Ontario,2016A000235,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471539,5.2.1,62,,,,0
+2020/2021,Ontario,2016A000235,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471579,5.2.2,90,,,,0
+2020/2021,Ontario,2016A000235,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471619,5.2.3,99,,,,0
+2020/2021,Ontario,2016A000235,Potash,July to September,Metric tonnes,214,thousands,3,v52471540,5.3.1,29,,,,0
+2020/2021,Ontario,2016A000235,Potash,July to December,Metric tonnes,214,thousands,3,v52471580,5.3.2,64,,,,0
+2020/2021,Ontario,2016A000235,Potash,July to March,Metric tonnes,214,thousands,3,v52471620,5.3.3,140,,,,0
+2020/2021,Ontario,2016A000235,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471541,5.4.1,2,,,,0
+2020/2021,Ontario,2016A000235,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471581,5.4.2,15,,,,0
+2020/2021,Ontario,2016A000235,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471621,5.4.3,20,,,,0
+2020/2021,Prairie provinces,2016A00014,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471542,6.1.1,513,,,,0
+2020/2021,Prairie provinces,2016A00014,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471582,6.1.2,1167,,,,0
+2020/2021,Prairie provinces,2016A00014,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471622,6.1.3,1656,,,,0
+2020/2021,Prairie provinces,2016A00014,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471543,6.2.1,165,,,,0
+2020/2021,Prairie provinces,2016A00014,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471583,6.2.2,375,,,,0
+2020/2021,Prairie provinces,2016A00014,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471623,6.2.3,653,,,,0
+2020/2021,Prairie provinces,2016A00014,Potash,July to September,Metric tonnes,214,thousands,3,v52471544,6.3.1,42,,,,0
+2020/2021,Prairie provinces,2016A00014,Potash,July to December,Metric tonnes,214,thousands,3,v52471584,6.3.2,103,,,,0
+2020/2021,Prairie provinces,2016A00014,Potash,July to March,Metric tonnes,214,thousands,3,v52471624,6.3.3,152,,,,0
+2020/2021,Prairie provinces,2016A00014,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471545,6.4.1,45,,,,0
+2020/2021,Prairie provinces,2016A00014,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471585,6.4.2,126,,,,0
+2020/2021,Prairie provinces,2016A00014,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471625,6.4.3,198,,,,0
+2020/2021,Manitoba,2016A000246,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471546,7.1.1,92,,,,0
+2020/2021,Manitoba,2016A000246,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471586,7.1.2,236,,,,0
+2020/2021,Manitoba,2016A000246,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471626,7.1.3,316,,,,0
+2020/2021,Manitoba,2016A000246,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471547,7.2.1,43,,,,0
+2020/2021,Manitoba,2016A000246,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471587,7.2.2,92,,,,0
+2020/2021,Manitoba,2016A000246,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471627,7.2.3,143,,,,0
+2020/2021,Manitoba,2016A000246,Potash,July to September,Metric tonnes,214,thousands,3,v52471548,7.3.1,,x,,,0
+2020/2021,Manitoba,2016A000246,Potash,July to December,Metric tonnes,214,thousands,3,v52471588,7.3.2,31,,,,0
+2020/2021,Manitoba,2016A000246,Potash,July to March,Metric tonnes,214,thousands,3,v52471628,7.3.3,39,,,,0
+2020/2021,Manitoba,2016A000246,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471549,7.4.1,10,,,,0
+2020/2021,Manitoba,2016A000246,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471589,7.4.2,25,,,,0
+2020/2021,Manitoba,2016A000246,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471629,7.4.3,40,,,,0
+2020/2021,Saskatchewan,2016A000247,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471550,8.1.1,230,,,,0
+2020/2021,Saskatchewan,2016A000247,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471590,8.1.2,552,,,,0
+2020/2021,Saskatchewan,2016A000247,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471630,8.1.3,805,,,,0
+2020/2021,Saskatchewan,2016A000247,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471551,8.2.1,61,,,,0
+2020/2021,Saskatchewan,2016A000247,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471591,8.2.2,152,,,,0
+2020/2021,Saskatchewan,2016A000247,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471631,8.2.3,300,,,,0
+2020/2021,Saskatchewan,2016A000247,Potash,July to September,Metric tonnes,214,thousands,3,v52471552,8.3.1,14,,,,0
+2020/2021,Saskatchewan,2016A000247,Potash,July to December,Metric tonnes,214,thousands,3,v52471592,8.3.2,38,,,,0
+2020/2021,Saskatchewan,2016A000247,Potash,July to March,Metric tonnes,214,thousands,3,v52471632,8.3.3,,x,,,0
+2020/2021,Saskatchewan,2016A000247,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471553,8.4.1,23,,,,0
+2020/2021,Saskatchewan,2016A000247,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471593,8.4.2,69,,,,0
+2020/2021,Saskatchewan,2016A000247,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471633,8.4.3,108,,,,0
+2020/2021,Alberta,2016A000248,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471554,9.1.1,191,,,,0
+2020/2021,Alberta,2016A000248,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471594,9.1.2,378,,,,0
+2020/2021,Alberta,2016A000248,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471634,9.1.3,534,,,,0
+2020/2021,Alberta,2016A000248,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471555,9.2.1,62,,,,0
+2020/2021,Alberta,2016A000248,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471595,9.2.2,131,,,,0
+2020/2021,Alberta,2016A000248,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471635,9.2.3,210,,,,0
+2020/2021,Alberta,2016A000248,Potash,July to September,Metric tonnes,214,thousands,3,v52471556,9.3.1,,x,,,0
+2020/2021,Alberta,2016A000248,Potash,July to December,Metric tonnes,214,thousands,3,v52471596,9.3.2,33,,,,0
+2020/2021,Alberta,2016A000248,Potash,July to March,Metric tonnes,214,thousands,3,v52471636,9.3.3,,x,,,0
+2020/2021,Alberta,2016A000248,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471557,9.4.1,12,,,,0
+2020/2021,Alberta,2016A000248,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471597,9.4.2,32,,,,0
+2020/2021,Alberta,2016A000248,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471637,9.4.3,50,,,,0
+2020/2021,British Columbia,2016A000259,Nitrogen,July to September,Metric tonnes,214,thousands,3,v52471558,10.1.1,7,,,,0
+2020/2021,British Columbia,2016A000259,Nitrogen,July to December,Metric tonnes,214,thousands,3,v52471598,10.1.2,19,,,,0
+2020/2021,British Columbia,2016A000259,Nitrogen,July to March,Metric tonnes,214,thousands,3,v52471638,10.1.3,27,,,,0
+2020/2021,British Columbia,2016A000259,Phosphate,July to September,Metric tonnes,214,thousands,3,v52471559,10.2.1,2,,,,0
+2020/2021,British Columbia,2016A000259,Phosphate,July to December,Metric tonnes,214,thousands,3,v52471599,10.2.2,3,,,,0
+2020/2021,British Columbia,2016A000259,Phosphate,July to March,Metric tonnes,214,thousands,3,v52471639,10.2.3,5,,,,0
+2020/2021,British Columbia,2016A000259,Potash,July to September,Metric tonnes,214,thousands,3,v52471560,10.3.1,,x,,,0
+2020/2021,British Columbia,2016A000259,Potash,July to December,Metric tonnes,214,thousands,3,v52471600,10.3.2,,x,,,0
+2020/2021,British Columbia,2016A000259,Potash,July to March,Metric tonnes,214,thousands,3,v52471640,10.3.3,4,,,,0
+2020/2021,British Columbia,2016A000259,Sulphur,July to September,Metric tonnes,214,thousands,3,v52471561,10.4.1,,x,,,0
+2020/2021,British Columbia,2016A000259,Sulphur,July to December,Metric tonnes,214,thousands,3,v52471601,10.4.2,,x,,,0
+2020/2021,British Columbia,2016A000259,Sulphur,July to March,Metric tonnes,214,thousands,3,v52471641,10.4.3,3,,,,0

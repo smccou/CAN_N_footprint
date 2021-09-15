@@ -188,7 +188,7 @@ N_fert_sales <- read_csv("Data/food/fertilizer/fertilizer_shipments.csv", skip =
   group_by(GEO, `Fertilizer nutrient content`, UOM, SCALAR_FACTOR)%>%
   summarise(quantity = mean(VALUE))%>%
   mutate(sales_N_kg = quantity*1000000)
-
+ 
 #Recommended N Application Rates
 #added wheat as average of spring and winter (almost the same)
 N_recommended_rates <- read_csv("Data/Food/fertilizer/recommended_fertilizer.csv", skip = 3)%>%
@@ -1161,14 +1161,14 @@ ggplot(VNF_graph, aes(fill = `GEO`, y = `VNF kgN/kg`*1000, x = `GEO`))+
         axis.title.x = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "none",
-        axis.text.x = element_text(size = 11, angle = 90, hjust = 1, vjust = 0.25),
+        axis.text.x = element_text(size = 12, angle = 90, hjust = 1, vjust = 0.25),
         axis.text.y = element_text(size = 12),
         strip.text = element_text(size = 12),
         panel.grid = element_blank(),
         panel.border = element_blank(),
         plot.caption = element_text(hjust = 0))
 
-ggsave("Results_Images/fig_5_VNF_graph.pdf")  
+ggsave("Results_Images/fig_5_VNF_graph.pdf", height = 10, width = 10)  
 
 ```
 
@@ -1177,7 +1177,7 @@ ggsave("Results_Images/fig_5_VNF_graph.pdf")
 total_graph <- ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footprint sector`, y = `N kg/year`/1000000, x = reorder(GEO, - `N kg/year`)))+
   geom_bar(stat="identity") +
   scale_fill_brewer(palette="Paired")+
-  #labs(caption = "Total provincial N footprint (Gg/year)")+
+  labs(caption = "Total provincial N footprint (Gg/year)")+
   scale_y_continuous(expand=c(0,0)) +
   coord_flip()+
   theme_classic()+
@@ -1188,12 +1188,12 @@ total_graph <- ggplot(subset(N_footprint, GEO != "Canada"), aes(fill = `N footpr
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     legend.text=element_text(size=12),
-    plot.caption = element_text(hjust = 0))
+    plot.caption = element_text(hjust = 0, size = 12))
 
 sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(stat="identity") +
   scale_fill_brewer(palette="Paired")+
-  #labs(caption = "By sector (N kg/cap/year)")+
+  labs(caption = "By sector (N kg/cap/year)")+
   scale_y_continuous(expand=c(0,0)) +
   scale_x_discrete()+
   coord_flip()+
@@ -1205,12 +1205,12 @@ sector_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/c
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     legend.text=element_text(size=12),
-    plot.caption = element_text(hjust = 0))
+    plot.caption = element_text(hjust = 0, size = 12))
 
 sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y = `N kg/cap/year`, x = reorder(GEO, - `N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_brewer(palette="Paired")+
-  #labs(caption = "Sector contribution, % of total")+
+  labs(caption = "Sector contribution, % of total")+
   scale_y_continuous(expand=c(0,0)) +
   scale_x_discrete()+
   coord_flip()+
@@ -1222,7 +1222,7 @@ sector_percent_graph <- ggplot(N_footprint, aes(fill = `N footprint sector`, y =
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     legend.text=element_text(size=12),
-    plot.caption = element_text(hjust = 0))
+    plot.caption = element_text(hjust = 0, size = 12))
 
 ggarrange(total_graph, 
           ggarrange(sector_graph, sector_percent_graph,
@@ -1233,7 +1233,7 @@ ggarrange(total_graph,
           labels= "A",
           common.legend = TRUE)
 
-ggsave("Results_Images/fig_3_N_print_sectors_graph.pdf", width = 10)  
+ggsave("Results_Images/fig_3_N_print_sectors_graph.pdf", height = 10, width = 10)  
 
 ```
 
@@ -1245,7 +1245,7 @@ subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/yea
   geom_bar(stat="identity") +
   scale_fill_manual(values = mycolors)+
   #scale_fill_brewer(palette="Paired")+
-  #labs(caption = "By subsector (N kg/cap/year)")+
+  labs(caption = "By subsector (N kg/cap/year)")+
   scale_y_continuous(expand=c(0,0)) +
   coord_flip()+
   theme_classic()+
@@ -1257,13 +1257,13 @@ subsector_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/yea
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     legend.text=element_text(size=12),
-    plot.caption = element_text(hjust = 0))
+    plot.caption = element_text(hjust = 0, size = 12))
 
 subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg/cap/year`, x = reorder(GEO, -`N kg/cap/year`)))+
   geom_bar(position = "fill", stat="identity") +
   scale_fill_manual(values = mycolors)+
   scale_y_continuous(expand=c(0,0)) +
-  #labs(caption = "Subsector, % of total")+
+  labs(caption = "Subsector, contribution, fraction of total")+
   coord_flip()+
   guides(fill=guide_legend(ncol=1))+
   theme_classic()+
@@ -1274,14 +1274,14 @@ subsector_percent_graph <- ggplot(N_footprint, aes(fill = `Subsector`, y = `N kg
     axis.title.y = element_blank(),
     axis.ticks = element_blank(),
     legend.text=element_text(size=12),
-    plot.caption = element_text(hjust = 0))
+    plot.caption = element_text(hjust = 0, size = 12))
 
 ggarrange(subsector_graph, subsector_percent_graph,
                     labels = c("A","B"),
                     ncol = 2,
                     common.legend = TRUE)
 
-ggsave("Results_Images/fig_4_N_print_subsectors_graph.pdf", width = 10)  
+ggsave("Results_Images/fig_4_N_print_subsectors_graph.pdf", height = 8, width = 10)  
 
 ```
 
